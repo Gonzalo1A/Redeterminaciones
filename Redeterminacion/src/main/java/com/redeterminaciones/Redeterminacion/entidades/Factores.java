@@ -11,14 +11,12 @@ import lombok.Data;
 public class Factores {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String idFactores;
-    private Double redeterminacionFac;
-    private Double adecuacionProvisoria;
-    private Double factorItem;
+    private Double adecuacionProvisoriaFactor;
+    private Double itemFactor;
     private Double incidencia;
 
     public Factores() {
     }
-
 }

@@ -11,13 +11,12 @@ import lombok.Data;
 public class Remanentes {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String idRemanentes;
-    private Double teorico;
-    private Double real;
-    private Double valorMin;
+    private Double remanenteTeorico;
+    private Double remanenteReal;
+    private Double remanenteValorMin;
 
     public Remanentes() {
     }
-
 }
