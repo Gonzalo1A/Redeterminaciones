@@ -6,22 +6,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-@Data
 @Entity
-public class Item {
+@Data
+public class Remanentes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
-    private String numeroItem;
-    private String descripcion;
-    private String unidad;
-    private Double cantidad;
-    private Remanentes remanentes;
-    private Factores factores;
-    private Montos montos;
+    private String idRemanentes;
+    private Double teorico;
+    private Double real;
+    private Double valorMin;
 
-    public Item() {
+    public Remanentes() {
     }
 
 }

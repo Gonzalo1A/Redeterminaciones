@@ -8,20 +8,17 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Item {
+public class Factores {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
-    private String numeroItem;
-    private String descripcion;
-    private String unidad;
-    private Double cantidad;
-    private Remanentes remanentes;
-    private Factores factores;
-    private Montos montos;
+    private String idFactores;
+    private Double redeterminacionFac;
+    private Double adecuacionProvisoria;
+    private Double factorItem;
+    private Double incidencia;
 
-    public Item() {
+    public Factores() {
     }
 
 }
