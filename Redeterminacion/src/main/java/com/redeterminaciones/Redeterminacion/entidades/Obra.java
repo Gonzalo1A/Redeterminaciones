@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import java.util.Date;
 import lombok.Data;
 
@@ -28,6 +29,8 @@ public class Obra {
     private Date fechaDeFinalizacion;
     @Enumerated(EnumType.STRING)
     private TipoDeRedeterminaciones tipoDeRedet;
+    @OneToOne
+    private ComputoYPresupuesto computoYPresupuesto;
 
     public Obra() {
 
