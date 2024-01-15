@@ -13,7 +13,6 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table
 public class ComputoYPresupuesto {
 
     @Id
@@ -23,6 +22,5 @@ public class ComputoYPresupuesto {
     private Rubros rubro;
     private Double subTotales;
     private Double total;
-    @OneToOne
-    private Obra obra;
+    
 }
