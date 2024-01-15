@@ -9,4 +9,6 @@ public class ItemServicio {
 
     @Autowired
     private ItemRepositorio itemRepositorio;
+    
+    public void crearItem(){};
 }
