@@ -32,8 +32,8 @@ public class ObraServicio {
     }
 
     @Transactional
-    public void modificarObra(String nombre, String nuevoNombre, Double total, Date fechaPresentacionObra, Date fechaDeContrato, Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPazoDeObra, Date fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet, ComputoYPresupuesto computoYPresupuesto) {
-        Obra obraAModificar = buscarPorNombre(nombre);
+    public void modificarObra(String idObra, String nuevoNombre, Double total, Date fechaPresentacionObra, Date fechaDeContrato, Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPazoDeObra, Date fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet, ComputoYPresupuesto computoYPresupuesto) {
+        Obra obraAModificar = obraRepositorio.getById(idObra);
         if (obraAModificar != null) {
             obraAModificar.setNombre(nuevoNombre);
             obraAModificar.setTotal(total);
