@@ -12,7 +12,7 @@ import lombok.Data;
 public class Empresa {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String idEmpresas;
     
     private String nombre;

@@ -1,8 +1,8 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.Item;
-import com.redeterminaciones.Redeterminacion.entidades.Montos;
 import com.redeterminaciones.Redeterminacion.repositorios.ItemRepositorio;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ public class ItemServicio {
     @Autowired
     private ItemRepositorio itemRepositorio;
 
+    @Transactional
     public void crearItem(String idItem, String numeroItem, String descripcion, String unidad, Double cantidad) {
         Item item = new Item();
         item.setIdItem(idItem);
@@ -28,6 +29,7 @@ public class ItemServicio {
         return itemRepositorio.findAll();
     }
 
+    @Transactional
     public void modificarItem(String idItem, String numeroItem, String descripcion, String unidad, Double cantidad) {
         Optional<Item> respuesta = itemRepositorio.findById(idItem);
         if (respuesta.isPresent()) {
@@ -45,6 +47,7 @@ public class ItemServicio {
         return itemRepositorio.getOne(id);
     }
 
+    @Transactional
     public void eliminarItem(String id) {
         itemRepositorio.deleteById(id);
     }
