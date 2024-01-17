@@ -15,9 +15,9 @@ public class ItemServicio {
     private ItemRepositorio itemRepositorio;
 
     @Transactional
-    public void crearItem(String idItem, String numeroItem, String descripcion, String unidad, Double cantidad) {
+    public void crearItem (String numeroItem, String descripcion, String unidad, Double cantidad) {
         Item item = new Item();
-        item.setIdItem(idItem);
+        
         item.setDescripcion(descripcion);
         item.setNumeroItem(numeroItem);
         item.setUnidad(unidad);
@@ -34,7 +34,7 @@ public class ItemServicio {
         Optional<Item> respuesta = itemRepositorio.findById(idItem);
         if (respuesta.isPresent()) {
             Item item = respuesta.get();
-            item.setIdItem(idItem);
+            
             item.setDescripcion(descripcion);
             item.setNumeroItem(numeroItem);
             item.setUnidad(unidad);

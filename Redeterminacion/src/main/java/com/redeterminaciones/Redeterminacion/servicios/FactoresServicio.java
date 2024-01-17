@@ -15,7 +15,7 @@ public class FactoresServicio {
     private FactoresRepositorio factoresRepositorio;
 
     @Transactional
-    public void crearFactor(String idFactores, Double adecuacionMonetaria, Double itemFactor, Double incidencia) {
+    public void crearFactor(Double adecuacionMonetaria, Double itemFactor, Double incidencia) {
         Factores factores = new Factores();
         factores.setAdecuacionProvisoriaFactor(adecuacionMonetaria);
         factores.setItemFactor(itemFactor);

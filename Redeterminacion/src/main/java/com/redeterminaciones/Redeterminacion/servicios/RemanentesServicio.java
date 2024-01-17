@@ -13,9 +13,8 @@ public class RemanentesServicio {
     @Autowired
     private RemanentesRepositorio remanentesRepositorio;
 
-    public void crearRemanentes(String idRemanentes, Double remanenteTeorico, Double remanenteReal, Double remanenteValorMin) {
+    public void crearRemanentes(Double remanenteTeorico, Double remanenteReal, Double remanenteValorMin) {
         Remanentes remanentes = new Remanentes();
-        remanentes.setIdRemanentes(idRemanentes);
         remanentes.setRemanenteReal(remanenteReal);
         remanentes.setRemanenteTeorico(remanenteTeorico);
         remanentes.setRemanenteValorMin(remanenteValorMin);
@@ -30,7 +29,6 @@ public class RemanentesServicio {
         Optional<Remanentes> respuesta = remanentesRepositorio.findById(idRemanentes);
         if (respuesta.isPresent()) {
             Remanentes remanentes = respuesta.get();
-            remanentes.setIdRemanentes(idRemanentes);
             remanentes.setRemanenteReal(remanenteReal);
             remanentes.setRemanenteTeorico(remanenteTeorico);
             remanentes.setRemanenteValorMin(remanenteValorMin);
