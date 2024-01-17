@@ -14,20 +14,19 @@ public class EmpresaServicio {
     private EmpresaRepositorio empresaRepositorio;
 
     @Transactional
-    public void crearEmpresa(String nombre, Double oferta, ComputoYPresupuesto computoYPresupuesto) {
+    public void crearEmpresa(String nombre, Double oferta) {
         Empresa nueva = new Empresa();
         nueva.setNombre(nombre);
         nueva.setOferta(oferta);
-        nueva.setComputoYPresupuesto(computoYPresupuesto);
+        nueva.setObras(null);
         empresaRepositorio.save(nueva);
     }
 
     @Transactional
-    public void modificarEmpresa(String idEmpresa, String nombre, Double oferta, ComputoYPresupuesto computoYPresupuesto) {
+    public void modificarEmpresa(String idEmpresa, String nombre, Double oferta) {
         Empresa empresaModificar = empresaRepositorio.getById(idEmpresa);
         empresaModificar.setNombre(nombre);
         empresaModificar.setOferta(oferta);
-        empresaModificar.setComputoYPresupuesto(computoYPresupuesto);
         empresaRepositorio.save(empresaModificar);
     }
 
