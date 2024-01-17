@@ -16,7 +16,7 @@ import lombok.Data;
 public class Obra {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String idObra;
     
     private String nombre;
