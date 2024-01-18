@@ -9,23 +9,45 @@
                     </head>
                     <body>
                         <div>
-                            <form th:action="@{/registrarItem}" method="post" >
+                             <form th:action="@{/registrarEmpresa}" method="post" >
                                 <div class="form-floating mb-3">
-                                    <input type="number" class="form-control" id="numeroItem" placeholder="numero item" name="numeroItem">
-                                        <label for="numeroItem">numero item</label>
+                                    <input type="number" class="form-control" id="nombre" placeholder="nombre" name="nombre">
+                                        <label for="nombre">nombre</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="descripcion" placeholder="descripcion" name="descripcion">
-                                        <label for="descripcion">descripcion</label>
+                                    <input type="number" class="form-control" id="oferta" placeholder="oferta" name="oferta">
+                                        <label for="oferta">oferta</label>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <button class="btn btn-primary" type="submit">Submit form</button>
+                                </div>
+                            </form>
+                            <form th:action="@{/registrarObra}" method="post" >
+                                <div class="form-floating mb-3">
+                                    <input type="number" class="form-control" id="nombre" placeholder="nombre" name="nombre">
+                                        <label for="nombre">nombre</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="unidad" placeholder="unidad" name="unidad">
-                                        <label for="unidad">unidad</label>
+                                    <input type="text" class="form-control" id="total" placeholder="total" name="total">
+                                        <label for="total">total</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="cantidad" placeholder="cantidad" name="cantidad">
-                                        <label for="cantidad">cantidad</label>
+                                    <input type="number" class="form-control" id="porcentajeDeAnticipo" placeholder="porcentajeDeAnticipo" name="porcentajeDeAnticipo">
+                                        <label for="porcentajeDeAnticipo">porcentajeDeAnticipo</label>
                                 </div>
+                                <div class="form-floating mb-3">
+                                    <input type="date" class="form-control" id="fechaDeContrato" placeholder="fechaDeContrato" name="fechaDeContrato">
+                                        <label for="fechaDeContrato">fechaDeContrato</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="date" class="form-control" id="fechaDeFinalizacion" placeholder="fechaDeFinalizacion" name="fechaDeFinalizacion">
+                                        <label for="fechaDeFinalizacion">fechaDeFinalizacion</label>
+                                </div>
+                                <select id="id">
+                                    <option value="first">Decreto provincial 800/16</option>
+                                </select>
+
                                 <div class="col-12">
                                     <button class="btn btn-primary" type="submit">Submit form</button>
                                 </div>
