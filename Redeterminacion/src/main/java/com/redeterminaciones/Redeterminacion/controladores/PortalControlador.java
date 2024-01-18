@@ -26,7 +26,6 @@ public class PortalControlador {
     @Autowired
     private EmpresaServicio empresaServicio;
 
-
     @GetMapping("/")
     public String index() {
 
@@ -48,7 +47,7 @@ public class PortalControlador {
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         Date fecha1 = formato.parse(fechaDeContrato);
         Date fecha2 = formato.parse(fechaDeFinalizacion);
-        obraServicio.crearObra(nombre, total, fecha1, fecha2, fecha2, 
+        obraServicio.crearObra(nombre, total, fecha1, fecha2, fecha2,
                 porcentajeDeAnticipo, 0, fecha2, tipoDeRedeterminaciones, null);
         return "index.html";
     }
