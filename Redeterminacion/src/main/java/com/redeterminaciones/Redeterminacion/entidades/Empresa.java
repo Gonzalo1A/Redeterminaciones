@@ -13,7 +13,7 @@ public class Empresa {
     
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String idEmpresas;
+    private String id;
     
     private String nombre;
     private Double oferta;

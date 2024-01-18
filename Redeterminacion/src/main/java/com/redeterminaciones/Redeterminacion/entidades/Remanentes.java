@@ -12,7 +12,7 @@ public class Remanentes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String idRemanentes;
+    private String id;
     private Double remanenteTeorico;
     private Double remanenteReal;
     private Double remanenteValorMin;

@@ -24,7 +24,7 @@ public class ObraServicio {
         nuevaObra.setFechaDeContrato(fechaDeContrato);
         nuevaObra.setFechaDeReeplanteo(fechaDeReeplanteo);
         nuevaObra.setPorcentajeDeAnticipo(porcentajeDeAnticipo);
-        nuevaObra.setDiasPazoDeObra(diasPazoDeObra);
+        nuevaObra.getDiasPlazoDeObra();
         nuevaObra.setFechaDeFinalizacion(fechaDeFinalizacion);
         nuevaObra.setTipoDeRedet(tipoDeRedet);
         nuevaObra.setComputoYPresupuesto(computoYPresupuesto);
@@ -41,7 +41,7 @@ public class ObraServicio {
             obraAModificar.setFechaDeContrato(fechaDeContrato);
             obraAModificar.setFechaDeReeplanteo(fechaDeReeplanteo);
             obraAModificar.setPorcentajeDeAnticipo(porcentajeDeAnticipo);
-            obraAModificar.setDiasPazoDeObra(diasPazoDeObra);
+            obraAModificar.setDiasPlazoDeObra(diasPazoDeObra);
             obraAModificar.setFechaDeFinalizacion(fechaDeFinalizacion);
             obraAModificar.setTipoDeRedet(tipoDeRedet);
             obraAModificar.setComputoYPresupuesto(computoYPresupuesto);
