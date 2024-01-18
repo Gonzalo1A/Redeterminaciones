@@ -22,9 +22,7 @@ public class ComputoYPresupuesto {
     private Rubros rubro;
     private Double subTotales;
     private Double total;
-
     @OneToMany
     private List<Item> items;
     
-
 }

@@ -1,11 +1,15 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
+
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import com.redeterminaciones.Redeterminacion.servicios.EmpresaServicio;
+import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
+import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +25,8 @@ public class PortalControlador {
     private ItemServicio itemServicio;
     @Autowired
     private ObraServicio obraServicio;
+    @Autowired
+    private EmpresaServicio empresaServicio;
 
     @GetMapping("/")
     public String index() {
@@ -44,6 +50,12 @@ public class PortalControlador {
         Date fecha2 = formato.parse(fechaDeFinalizacion);
         obraServicio.crearObra(nombre, total, fecha1, fecha2, fecha2, 
                 porcentajeDeAnticipo, 0, fecha2, tipoDeRedeterminaciones, null);
+        return "index.html";
+    }
+
+    @PostMapping("/registrarEmpresa")
+    public String obraGuardar(@RequestParam String nombre, @RequestParam Double oferta) {
+        empresaServicio.crearEmpresa(nombre, oferta);
         return "index.html";
     }
 }
