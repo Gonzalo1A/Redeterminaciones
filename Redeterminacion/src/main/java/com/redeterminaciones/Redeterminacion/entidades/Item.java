@@ -13,7 +13,7 @@ public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String idItem;
+    private String id;
     private String numeroItem;
     private String descripcion;
     private String unidad;

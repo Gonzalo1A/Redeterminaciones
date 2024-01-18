@@ -12,7 +12,7 @@ public class Factores {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String idFactores;
+    private String id;
     private Double adecuacionProvisoriaFactor;
     private Double itemFactor;
     private Double incidencia;

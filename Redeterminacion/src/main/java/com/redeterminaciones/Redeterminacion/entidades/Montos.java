@@ -12,7 +12,7 @@ public class Montos {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String idMontos;
+    private String id;
     private Double nuevoMonto;
     private Double redeterminacionMonto;
     private Double adecuacionProvisoriaMonto;

@@ -14,7 +14,7 @@ public class Empresa {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String idEmpresas;
+    private String id;
     
     private String nombre;
     private Double oferta;

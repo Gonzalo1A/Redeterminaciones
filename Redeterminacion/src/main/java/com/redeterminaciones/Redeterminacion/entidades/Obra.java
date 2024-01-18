@@ -17,7 +17,7 @@ public class Obra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String idObra;
+    private String id;
     
     private String nombre;
     private Double total;
@@ -25,7 +25,7 @@ public class Obra {
     private Date fechaDeContrato;
     private Date fechaDeReeplanteo;
     private Double porcentajeDeAnticipo;
-    private int diasPazoDeObra;
+    private int diasPasoDeObra;
     private Date fechaDeFinalizacion;
     @Enumerated(EnumType.STRING)
     private TipoDeRedeterminaciones tipoDeRedet;
