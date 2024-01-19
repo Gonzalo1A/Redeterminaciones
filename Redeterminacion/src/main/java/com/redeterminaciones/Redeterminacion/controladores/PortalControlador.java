@@ -1,9 +1,6 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
-
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
-import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
-import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,7 +45,7 @@ public class PortalControlador {
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         Date fecha1 = formato.parse(fechaDeContrato);
         Date fecha2 = formato.parse(fechaDeFinalizacion);
-        obraServicio.crearObra(nombre, total, fecha1, fecha2, fecha2, 
+        obraServicio.crearObra(nombre, total, fecha1, fecha2, fecha2,
                 porcentajeDeAnticipo, 0, fecha2, tipoDeRedeterminaciones, null);
         return "index.html";
     }
