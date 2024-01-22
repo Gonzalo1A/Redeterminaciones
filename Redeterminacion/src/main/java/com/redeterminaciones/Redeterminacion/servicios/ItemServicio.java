@@ -13,15 +13,19 @@ public class ItemServicio {
 
     @Autowired
     private ItemRepositorio itemRepositorio;
+    @Autowired
+    private ComputoYPresupuestoServicio cypServicio;
 
     @Transactional
-    public void crearItem (String numeroItem, String descripcion, String unidad, Double cantidad) {
+    public void crearItem (String numeroItem, String descripcion, String unidad, Double cantidad, Double subTotal) {
         Item item = new Item();
         
         item.setDescripcion(descripcion);
         item.setNumeroItem(numeroItem);
         item.setUnidad(unidad);
         item.setCantidad(cantidad);
+        item.setSubTotal(subTotal);
+        
         itemRepositorio.save(item);
     }
 

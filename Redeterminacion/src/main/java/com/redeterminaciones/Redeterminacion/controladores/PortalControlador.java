@@ -33,8 +33,8 @@ public class PortalControlador {
 
     @PostMapping("/registrarItem")
     public String itemGuardar(@RequestParam String numeroItem, @RequestParam String descripcion,
-            @RequestParam String unidad, @RequestParam Double cantidad) {
-        itemServicio.crearItem(numeroItem, descripcion, unidad, cantidad);
+            @RequestParam String unidad, @RequestParam Double cantidad, @RequestParam Double subTotal) {
+        itemServicio.crearItem(numeroItem, descripcion, unidad, cantidad, subTotal);
         return "index.html";
     }
 
@@ -46,7 +46,7 @@ public class PortalControlador {
         Date fecha1 = formato.parse(fechaDeContrato);
         Date fecha2 = formato.parse(fechaDeFinalizacion);
         obraServicio.crearObra(nombre, total, fecha1, fecha2, fecha2,
-                porcentajeDeAnticipo, 0, fecha2, tipoDeRedeterminaciones, null);
+                porcentajeDeAnticipo, 1, fecha2, tipoDeRedeterminaciones, null);
         return "index.html";
     }
 
