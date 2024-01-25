@@ -51,8 +51,8 @@ public class PortalControlador {
     }
 
     @PostMapping("/registrarEmpresa")
-    public String obraGuardar(@RequestParam String nombre, @RequestParam Double oferta) {
+    public String empresaGuardar(@RequestParam String nombre, @RequestParam Double oferta) {
         empresaServicio.crearEmpresa(nombre, oferta);
-        return "index.html";
+        return "formObra.html";
     }
 }
