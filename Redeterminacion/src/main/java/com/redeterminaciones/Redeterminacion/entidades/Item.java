@@ -18,6 +18,7 @@ public class Item {
     private String descripcion;
     private String unidad;
     private Double cantidad;
+    private Double subTotal;
     @OneToOne
     private Remanentes remanentes;
     @OneToOne

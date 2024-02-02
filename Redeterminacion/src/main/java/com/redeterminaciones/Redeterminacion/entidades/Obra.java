@@ -25,7 +25,7 @@ public class Obra {
     private Date fechaDeContrato;
     private Date fechaDeReeplanteo;
     private Double porcentajeDeAnticipo;
-    private int diasPasoDeObra;
+    private int diasPlazoDeObra;
     private Date fechaDeFinalizacion;
     @Enumerated(EnumType.STRING)
     private TipoDeRedeterminaciones tipoDeRedet;
