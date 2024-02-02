@@ -20,7 +20,6 @@ public class Usuario {
     protected String password;
     @Enumerated(EnumType.STRING)
     protected Roles rol;
-
     public Usuario() {
     }
 
