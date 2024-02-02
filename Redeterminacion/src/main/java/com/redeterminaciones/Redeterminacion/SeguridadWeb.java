@@ -2,15 +2,10 @@ package com.redeterminaciones.Redeterminacion;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -20,22 +15,36 @@ public class SeguridadWeb {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers("/css/**", "/js/**", "/img/*", "/**").permitAll()
-                
-        );
+                .requestMatchers("/css/**", "/js/**", "/img/*", "/**")
+                .permitAll()
+        ).formLogin((t) -> {
+            t.loginPage("/usuario/login")
+                    .loginProcessingUrl("/logincheck")
+                    .usernameParameter("email")
+                    .passwordParameter("password")
+                    .defaultSuccessUrl("/")
+                    .permitAll();
+        }).logout(logout -> logout
+                .logoutSuccessUrl("/").permitAll()
+        ).csrf().disable();
+
         return http.build();
     }
+//     .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // Activar CSRF
+//        .and()
+//        .headers().frameOptions().sameOrigin() // Necesario si estás utilizando Spring Security junto con Spring Data JPA
+//        .and()
+//        .httpBasic();
+
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-    
-    @Bean
-    UserDetailsManager inMemoryUserDetailsManager(){
-        var user1 = User.withUsername("user").password("{noop}password").roles("USER").build();
-        var user2 = User.withUsername("admin").password("{noop}password").roles("USER","ADMIN").build();
-        return new InMemoryUserDetailsManager(user1,user2);
-    }
-    
 
+//    @Bean
+//    UserDetailsManager inMemoryUserDetailsManager() {
+//        var user1 = User.withUsername("user").password("{noop}password").roles("USER").build();
+//        var user2 = User.withUsername("admin").password("{noop}password").roles("USER", "ADMIN").build();
+//        return new InMemoryUserDetailsManager(user1, user2);
+//    }
 }

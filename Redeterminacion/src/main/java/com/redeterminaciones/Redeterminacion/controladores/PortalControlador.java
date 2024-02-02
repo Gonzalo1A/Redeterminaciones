@@ -33,8 +33,8 @@ public class PortalControlador {
 
     @PostMapping("/registrarItem")
     public String itemGuardar(@RequestParam String numeroItem, @RequestParam String descripcion,
-            @RequestParam String unidad, @RequestParam Double cantidad, @RequestParam Double subTotal) {
-        itemServicio.crearItem(numeroItem, descripcion, unidad, cantidad, subTotal);
+            @RequestParam String unidad, @RequestParam Double cantidad) {
+        itemServicio.crearItem(numeroItem, descripcion, unidad, cantidad);
         return "index.html";
     }
 
@@ -53,6 +53,6 @@ public class PortalControlador {
     @PostMapping("/registrarEmpresa")
     public String empresaGuardar(@RequestParam String nombre, @RequestParam Double oferta) {
         empresaServicio.crearEmpresa(nombre, oferta);
-        return "formObra.html";
+        return "index.html";
     }
 }
