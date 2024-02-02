@@ -17,14 +17,14 @@ public class ItemServicio {
     private ComputoYPresupuestoServicio cypServicio;
 
     @Transactional
-    public void crearItem (String numeroItem, String descripcion, String unidad, Double cantidad, Double subTotal) {
+    public void crearItem (String numeroItem, String descripcion, String unidad, Double cantidad) {
         Item item = new Item();
         
         item.setDescripcion(descripcion);
         item.setNumeroItem(numeroItem);
         item.setUnidad(unidad);
         item.setCantidad(cantidad);
-        item.setSubTotal(subTotal);
+//        item.setSubTotal(subTotal);
         
         itemRepositorio.save(item);
     }
