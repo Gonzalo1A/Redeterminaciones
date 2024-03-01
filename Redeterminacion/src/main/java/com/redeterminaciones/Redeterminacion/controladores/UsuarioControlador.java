@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,11 +30,18 @@ public class UsuarioControlador {
     }
 
     @PostMapping("/registro")
-    public String registro(@RequestParam String email, @RequestParam String password, @RequestParam String password2) throws RedeterminacionExcepcion {
+    public String registro(@RequestParam String email, @RequestParam String password, 
+            @RequestParam String password2, ModelMap model) {
         
-        usuarioServicio.crearUsuario(email, password, password2);
+        try {
+            usuarioServicio.crearUsuario(email, password, password2);
+            return "index.html";
+        } catch (RedeterminacionExcepcion ex) {
+            Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+            return "registroUsuario.html";
+        }
 
-        return "login.html";
+        
     }
 
     @GetMapping("/registrar/empresa")
