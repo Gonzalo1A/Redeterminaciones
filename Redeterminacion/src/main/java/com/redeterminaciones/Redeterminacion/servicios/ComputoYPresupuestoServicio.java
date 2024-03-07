@@ -16,20 +16,22 @@ public class ComputoYPresupuestoServicio {
     private ComputoYPresupuestoRepo computoYPresupuestoRepo;
 
     @Transactional
-    public void crearComputoYPresupuesto(Rubros rubro, Double subTotal, Double total, List<Item> items) {
+    public void crearComputoYPresupuesto(Rubros rubro, List<Item> items) {
         ComputoYPresupuesto nuevoComputo = new ComputoYPresupuesto();
         nuevoComputo.setRubro(rubro);
-        nuevoComputo.setSubTotales(subTotal);
-        nuevoComputo.setTotal(total);
         nuevoComputo.setItems(items);
+        Double total = null;
+        for (Item item : items) {
+            total += item.getSubTotal();
+        }
+        nuevoComputo.setTotal(total);
         computoYPresupuestoRepo.save(nuevoComputo);
     }
 
     @Transactional
-    public void moficarComputo(String idComputo, Rubros rubro, Double subTotal, Double total, List<Item> items) {
+    public void moficarComputo(String idComputo, Rubros rubro, Double total, List<Item> items) {
         ComputoYPresupuesto ModificarComputo = computoYPresupuestoRepo.getOne(idComputo);
         ModificarComputo.setRubro(rubro);
-        ModificarComputo.setSubTotales(subTotal);
         ModificarComputo.setTotal(total);
         ModificarComputo.setItems(items);
         computoYPresupuestoRepo.save(ModificarComputo);
