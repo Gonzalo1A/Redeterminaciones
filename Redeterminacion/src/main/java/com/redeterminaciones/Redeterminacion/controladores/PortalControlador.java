@@ -33,8 +33,8 @@ public class PortalControlador {
 
     @PostMapping("/registrarItem")
     public String itemGuardar(@RequestParam String numeroItem, @RequestParam String descripcion,
-            @RequestParam String unidad, @RequestParam Double cantidad) {
-        itemServicio.crearItem(numeroItem, descripcion, unidad, cantidad);
+            @RequestParam String unidad, @RequestParam Double cantidad, @RequestParam Double precioUnitario ) {
+        itemServicio.crearItem(numeroItem, descripcion, unidad, cantidad, precioUnitario);
         return "index.html";
     }
 
