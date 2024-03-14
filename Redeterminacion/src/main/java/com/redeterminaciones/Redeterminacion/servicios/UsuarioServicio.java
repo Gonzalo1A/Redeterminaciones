@@ -21,19 +21,23 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
-public class UsuarioServicio implements UserDetailsService{
+public class UsuarioServicio implements UserDetailsService {
 
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
 
     @Transactional
-    public void crearUsuario(String email, String password, String password2) throws RedeterminacionExcepcion {
+    public void crearUsuario(String email, String password, String password2, String empresa,
+            String direccion, String numeroCuit) throws RedeterminacionExcepcion {
         validar(email);
         validarPasword(password, password2);
         Usuario usuario = new Usuario();
         usuario.setEmail(email);
         usuario.setPassword(new BCryptPasswordEncoder().encode(password));
         usuario.setRol(Roles.CLIENTE);
+        usuario.setEmpresaNombre(empresa);
+        usuario.setDireccion(direccion);
+        usuario.setNumeroCuit(numeroCuit);
         usuarioRepositorio.save(usuario);
     }
 

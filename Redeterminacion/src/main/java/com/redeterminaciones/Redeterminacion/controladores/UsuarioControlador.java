@@ -30,18 +30,18 @@ public class UsuarioControlador {
     }
 
     @PostMapping("/registro")
-    public String registro(@RequestParam String email, @RequestParam String password, 
-            @RequestParam String password2, ModelMap model) {
-        
+    public String registro(@RequestParam String email, @RequestParam String password,
+            @RequestParam String password2, String nombreEmpresa,
+            String direccion, String numeroCuit, ModelMap model) {
+
         try {
-            usuarioServicio.crearUsuario(email, password, password2);
+            usuarioServicio.crearUsuario(email, password, password2, nombreEmpresa, direccion, numeroCuit);
             return "index.html";
         } catch (RedeterminacionExcepcion ex) {
             Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
             return "registroUsuario.html";
         }
 
-        
     }
 
     @GetMapping("/registrar/empresa")
