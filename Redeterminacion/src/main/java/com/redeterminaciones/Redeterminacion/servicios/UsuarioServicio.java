@@ -1,13 +1,13 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.Usuario;
-import com.redeterminaciones.Redeterminacion.enumeraciones.Roles;
 import com.redeterminaciones.Redeterminacion.excepciones.RedeterminacionExcepcion;
 import com.redeterminaciones.Redeterminacion.repositorios.UsuarioRepositorio;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,21 +34,19 @@ public class UsuarioServicio implements UserDetailsService {
         Usuario usuario = new Usuario();
         usuario.setEmail(email);
         usuario.setPassword(new BCryptPasswordEncoder().encode(password));
-        usuario.setRol(Roles.CLIENTE);
-        usuario.setEmpresaNombre(empresa);
-        usuario.setDireccion(direccion);
-        usuario.setNumeroCuit(numeroCuit);
         usuarioRepositorio.save(usuario);
     }
 
     @Transactional
-    public void modificar(String email) throws RedeterminacionExcepcion {
+    public void modificarUsuario(String id, String email) throws RedeterminacionExcepcion {
         validar(email);
-        Usuario usuario = new Usuario();
-        usuario.setEmail(email);
+        Optional<Usuario> respuesta = usuarioRepositorio.findById(id);
+        if (respuesta.isPresent()) {
+            Usuario usuario = respuesta.get();
+            usuario.setEmail(email);
+            usuarioRepositorio.save(usuario);
+        }
 
-        usuario.setRol(Roles.CLIENTE);
-        usuarioRepositorio.save(usuario);
     }
 
     public Usuario getUsuario(String id) {

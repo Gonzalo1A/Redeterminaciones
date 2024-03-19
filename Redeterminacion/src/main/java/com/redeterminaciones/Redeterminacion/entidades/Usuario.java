@@ -20,9 +20,7 @@ public class Usuario {
     protected String password;
     @Enumerated(EnumType.STRING)
     protected Roles rol;
-    protected String empresaNombre;
-    protected String direccion;
-    protected String numeroCuit;
+
     
     public Usuario() {
     }
