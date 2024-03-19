@@ -1,5 +1,6 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
+import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,8 +8,14 @@ import java.util.Date;
 import com.redeterminaciones.Redeterminacion.servicios.EmpresaServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
+import java.io.ByteArrayInputStream;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,9 +40,24 @@ public class PortalControlador {
 
     @PostMapping("/registrarItem")
     public String itemGuardar(@RequestParam String numeroItem, @RequestParam String descripcion,
-            @RequestParam String unidad, @RequestParam Double cantidad) {
-        itemServicio.crearItem(numeroItem, descripcion, unidad, cantidad);
+            @RequestParam String unidad, @RequestParam Double cantidad, @RequestParam Double precioUnitario) {
+        itemServicio.crearItem(numeroItem, descripcion, unidad, cantidad, precioUnitario);
         return "index.html";
+    }
+    
+    @GetMapping("/listaItems")
+    public String listasDeItems(ModelMap map){
+        List<Item> items = itemServicio.getAll();
+        map.addAttribute("items",items);
+        return "listaDeItems.html";
+    }
+           
+    @GetMapping("/exportItem")
+    public ResponseEntity<InputStreamResource> elExportador() throws Exception {
+        ByteArrayInputStream stream = itemServicio.elExportador();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=items.xls");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
     @PostMapping("/registrarObra")
