@@ -16,7 +16,7 @@ public class ObraServicio {
     private ObraRepositorio obraRepositorio;
 
     @Transactional
-    public void crearObra(String nombre, Double total, Date fechaPresentacionObra, Date fechaDeContrato, Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPlazoDeObra, Date fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet, ComputoYPresupuesto computoYPresupuesto) {
+    public Obra crearObra(String nombre, Double total, Date fechaPresentacionObra, Date fechaDeContrato, Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPlazoDeObra, Date fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet, ComputoYPresupuesto computoYPresupuesto) {
         Obra nuevaObra = new Obra();
         nuevaObra.setNombre(nombre);
         nuevaObra.setTotal(total);
@@ -29,6 +29,7 @@ public class ObraServicio {
         nuevaObra.setTipoDeRedet(tipoDeRedet);
         nuevaObra.setComputoYPresupuesto(computoYPresupuesto);
         obraRepositorio.save(nuevaObra);
+        return nuevaObra;
     }
 
     @Transactional

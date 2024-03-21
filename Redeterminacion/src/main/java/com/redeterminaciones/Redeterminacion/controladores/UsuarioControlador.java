@@ -1,7 +1,10 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
+import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
 import com.redeterminaciones.Redeterminacion.excepciones.RedeterminacionExcepcion;
+import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
 import com.redeterminaciones.Redeterminacion.servicios.UsuarioServicio;
+import jakarta.servlet.http.HttpSession;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ public class UsuarioControlador {
 
     @Autowired
     private UsuarioServicio usuarioServicio;
+    @Autowired
+    private ClienteEmpresaServicio clienteEmpresaServicio;
 
     @GetMapping("/login")
     public String login() {
@@ -30,18 +35,19 @@ public class UsuarioControlador {
     }
 
     @PostMapping("/registro")
-    public String registro(@RequestParam String email, @RequestParam String password, 
-            @RequestParam String password2, ModelMap model) {
-        
+    public String registro(@RequestParam String email, @RequestParam String password,
+            @RequestParam String password2, String nombreEmpresa,
+            String direccion, String numeroCuit, ModelMap model) {
+
         try {
-            usuarioServicio.crearUsuario(email, password, password2);
+            //usuarioServicio.crearUsuario(email, password, password2, nombreEmpresa, direccion, numeroCuit);
+            clienteEmpresaServicio.crearCliente(email, password, password2, nombreEmpresa, direccion, numeroCuit);
             return "index.html";
         } catch (RedeterminacionExcepcion ex) {
             Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
             return "registroUsuario.html";
         }
 
-        
     }
 
     @GetMapping("/registrar/empresa")
@@ -51,6 +57,7 @@ public class UsuarioControlador {
 
     @GetMapping("/registrar/obra")
     public String registrarObra() {
+        
         return "formObra.html";
     }
 

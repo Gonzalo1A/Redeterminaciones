@@ -3,17 +3,17 @@ package com.redeterminaciones.Redeterminacion.servicios;
 import com.redeterminaciones.Redeterminacion.entidades.ComputoYPresupuesto;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.enumeraciones.Rubros;
-import com.redeterminaciones.Redeterminacion.repositorios.ComputoYPresupuestoRepo;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.redeterminaciones.Redeterminacion.repositorios.ComputoYPresupuestoRepositorio;
 
 @Service
 public class ComputoYPresupuestoServicio {
 
     @Autowired
-    private ComputoYPresupuestoRepo computoYPresupuestoRepo;
+    private ComputoYPresupuestoRepositorio computoYPresupuestoRepo;
 
     @Transactional
     public void crearComputoYPresupuesto(Rubros rubro, List<Item> items) {
