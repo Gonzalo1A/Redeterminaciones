@@ -1,10 +1,8 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
-import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
 import com.redeterminaciones.Redeterminacion.excepciones.RedeterminacionExcepcion;
 import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
 import com.redeterminaciones.Redeterminacion.servicios.UsuarioServicio;
-import jakarta.servlet.http.HttpSession;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +53,7 @@ public class UsuarioControlador {
         return "formEmpresa.html";
     }
 
-    @GetMapping("/registrar/obra")
-    public String registrarObra() {
-        
-        return "formObra.html";
-    }
+    
 
     @GetMapping("/registrar/item")
     public String registrarItem() {

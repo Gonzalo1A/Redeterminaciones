@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ObraRepositorio extends JpaRepository<Obra, String> {
+
     @Query("SELECT o FROM Obra o WHERE o.nombre = :nombre")
-    public Obra buscarObraPorNombre(@Param("nombre") String nobre);
+    public Obra buscarObraPorNombre(@Param("nombre") String nombre);
 
 }

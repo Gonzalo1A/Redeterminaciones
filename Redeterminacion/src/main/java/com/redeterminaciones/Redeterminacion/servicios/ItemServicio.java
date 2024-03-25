@@ -5,11 +5,9 @@ import com.redeterminaciones.Redeterminacion.repositorios.ItemRepositorio;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -34,7 +32,7 @@ public class ItemServicio {
         item.setCantidad(cantidad);
         item.setPrecioUnitario(precioUnitario);
         item.setSubTotal(cantidad * precioUnitario);
-
+        
         itemRepositorio.save(item);
     }
 

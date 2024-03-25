@@ -6,6 +6,7 @@ import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminacion
 import com.redeterminaciones.Redeterminacion.repositorios.ObraRepositorio;
 import jakarta.transaction.Transactional;
 import java.util.Date;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,11 @@ public class ObraServicio {
     }
 
     @Transactional
-    public void modificarObra(String idObra, String nuevoNombre, Double total, Date fechaPresentacionObra, Date fechaDeContrato, Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPazoDeObra, Date fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet, ComputoYPresupuesto computoYPresupuesto) {
+    public void modificarObra(String idObra, String nuevoNombre,
+            Double total, Date fechaPresentacionObra, Date fechaDeContrato,
+            Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPazoDeObra,
+            Date fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet,
+            ComputoYPresupuesto computoYPresupuesto) {
         Obra obraAModificar = obraRepositorio.getById(idObra);
         if (obraAModificar != null) {
             obraAModificar.setNombre(nuevoNombre);
@@ -47,6 +52,16 @@ public class ObraServicio {
             obraAModificar.setTipoDeRedet(tipoDeRedet);
             obraAModificar.setComputoYPresupuesto(computoYPresupuesto);
             obraRepositorio.save(obraAModificar);
+        }
+    }
+
+    @Transactional
+    public void agregarCyP(String id, ComputoYPresupuesto computoYPresupuesto) {
+        Optional<Obra> respuesta = obraRepositorio.findById(id);
+        if (respuesta.isPresent()) {
+            Obra obra = respuesta.get();
+            obra.setComputoYPresupuesto(computoYPresupuesto);
+            obraRepositorio.save(obra);
         }
     }
 

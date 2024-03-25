@@ -2,6 +2,7 @@ package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.ComputoYPresupuesto;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
+import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.enumeraciones.Rubros;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -14,20 +15,25 @@ public class ComputoYPresupuestoServicio {
 
     @Autowired
     private ComputoYPresupuestoRepositorio computoYPresupuestoRepo;
+    @Autowired
+    private ObraServicio obServicio;
 
     @Transactional
-    public void crearComputoYPresupuesto(Rubros rubro, List<Item> items) {
-        ComputoYPresupuesto nuevoComputo = new ComputoYPresupuesto();
-        nuevoComputo.setRubro(rubro);
-        nuevoComputo.setItems(items);
+    public ComputoYPresupuesto crearComputoYPresupuesto(Rubros rubro, List<Item> items, String nombreObra) {
+        ComputoYPresupuesto cyp = new ComputoYPresupuesto();
+        cyp.setRubro(rubro);
+        cyp.setItems(items);
         Double total = null;
         for (Item item : items) {
             total += item.getSubTotal();
         }
-        nuevoComputo.setTotal(total);
-        computoYPresupuestoRepo.save(nuevoComputo);
+        cyp.setTotal(total);
+        computoYPresupuestoRepo.save(cyp);
+        Obra obraActual = obServicio.buscarPorNombre(nombreObra);
+        obServicio.agregarCyP(obraActual.getId(), cyp);
+        return cyp;
     }
-
+       
     @Transactional
     public void moficarComputo(String idComputo, Rubros rubro, Double total, List<Item> items) {
         ComputoYPresupuesto ModificarComputo = computoYPresupuestoRepo.getOne(idComputo);
@@ -40,6 +46,8 @@ public class ComputoYPresupuestoServicio {
     public ComputoYPresupuesto buscarPorId(String id) {
         return computoYPresupuestoRepo.getById(id);
     }
+    
+    
 
     @Transactional
     public void eliminarComputo(String id) {
