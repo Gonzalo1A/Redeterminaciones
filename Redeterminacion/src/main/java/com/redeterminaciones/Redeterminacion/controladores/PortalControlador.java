@@ -3,6 +3,7 @@ package com.redeterminaciones.Redeterminacion.controladores;
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.entidades.Usuario;
+
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
@@ -11,11 +12,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.redeterminaciones.Redeterminacion.servicios.EmpresaServicio;
+import com.redeterminaciones.Redeterminacion.servicios.ExelServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import jakarta.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
+
 import java.util.ArrayList;
+
+import java.io.File;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -42,6 +48,9 @@ public class PortalControlador {
     private ClienteEmpresaServicio clienteEmpresaServicio;
     @Autowired
     private ComputoYPresupuestoServicio computoYPresupuestoServicio;
+    @Autowired
+    private ExelServicio exelServicio;
+
 
     @GetMapping("/")
     public String index(ModelMap modelMap, HttpSession session) {
@@ -72,10 +81,16 @@ public class PortalControlador {
 
     @GetMapping("/exportItem")
     public ResponseEntity<InputStreamResource> elExportador() throws Exception {
-        ByteArrayInputStream stream = itemServicio.elExportador();
+        ByteArrayInputStream stream = exelServicio.elExportador();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=items.xls");
+        headers.add("Content-Disposition", "attachment; filename=items.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
+    }
+    
+    @PostMapping("/importItem")
+    public String importar(@RequestParam File fileExcel) throws Exception{
+        exelServicio.elImportador(fileExcel);
+        return "redirect:../listaItems ";
     }
 
     

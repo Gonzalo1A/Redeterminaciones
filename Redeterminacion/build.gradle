@@ -36,6 +36,11 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
         // https://mvnrepository.com/artifact/org.apache.poi/poi
         implementation group: 'org.apache.poi', name: 'poi', version: '5.2.5'
+        // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+        implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.5'
+        // https://mvnrepository.com/artifact/com.github.ozlerhakan/poiji
+        implementation group: 'com.github.ozlerhakan', name: 'poiji', version: '4.4.0'
+
 }
 
 tasks.named('test') {
