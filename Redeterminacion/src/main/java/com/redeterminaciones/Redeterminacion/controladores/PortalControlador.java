@@ -81,8 +81,10 @@ public class PortalControlador {
     
     @PostMapping("/importItem")
     public String importar(@RequestParam File fileExcel) throws Exception{
-        exelServicio.elImportador(fileExcel);
-        return "redirect:../listaItems ";
+        File achivo = new File("C:/Users/Octavio/Documents/items.xlsx");
+        exelServicio.elImportador(achivo);
+       
+        return "redirect:../listaItems";
     }
 
     @PostMapping("/registrarObra")
