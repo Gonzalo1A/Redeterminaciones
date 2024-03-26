@@ -12,6 +12,7 @@ import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import jakarta.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/")
@@ -76,11 +78,24 @@ public class PortalControlador {
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
+//    @PostMapping("/importItem")
+//    public String importar(@RequestParam File fileExcel) throws Exception{
+//        File achivo = new File("C:/Users/Octavio/Documents/items.xlsx");
+//        exelServicio.elImportador(achivo);
+//       
+//        return "redirect:/listaItems";
+//    }
     @PostMapping("/importItem")
-    public String importar(@RequestParam File fileExcel) throws Exception {
-        exelServicio.elImportador(fileExcel);
-        return "index.html";
-    }
+    public String importar(@RequestParam("fileExcel") MultipartFile fileExcel) {
+        try {
+            exelServicio.elImportador(fileExcel.getInputStream());
+            return "redirect:/listaItems";
+        } catch (Exception e) {
+            // Manejar la excepción adecuadamente (mostrar mensaje de error, redirigir a página de error, etc.)
+            System.out.println(e.getMessage());
+            return "redirect:/listaItems";
+        }
+    }  
 
     @PostMapping("/registrarEmpresa")
     public String empresaGuardar(@RequestParam String nombre, @RequestParam Double oferta) {
