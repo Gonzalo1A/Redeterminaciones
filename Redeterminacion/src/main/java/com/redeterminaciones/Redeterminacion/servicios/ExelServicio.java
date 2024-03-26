@@ -29,56 +29,56 @@ public class ExelServicio {
     @Autowired
     private ItemServicio itemServi;
 
-
-    
     public void elImportador(File archivo) throws Exception {
-    try (InputStream input = new FileInputStream(archivo)) {
-        XSSFWorkbook libro = new XSSFWorkbook(input);
-        Sheet hoja = libro.getSheetAt(0);
+        try (InputStream input = new FileInputStream(archivo)) {
+            XSSFWorkbook libro = new XSSFWorkbook(input);
+            Sheet hoja = libro.getSheetAt(0);
 
-        for (int i = 1; i <= hoja.getLastRowNum(); i++) {
-            Row filaActual = hoja.getRow(i);
-            if (filaActual != null) {
-                String numItem = "";
-                String descripcion = "";
-                String unidad = "";
-                Double cantidad = 0.0d;
-                Double precioUnitario = 0.0d;
+            for (int i = 1; i <= hoja.getLastRowNum(); i++) {
+                Row filaActual = hoja.getRow(i);
+                if (filaActual != null) {
+                    String numItem = "";
+                    String descripcion = "";
+                    String unidad = "";
+                    Double cantidad = 0.0d;
+                    Double precioUnitario = 0.0d;
 
-                Cell celdaNumItem = filaActual.getCell(0);
-                if (celdaNumItem != null) {
-                    if (celdaNumItem.getCellType() == CellType.STRING) {
-                        numItem = celdaNumItem.getStringCellValue();
-                    } else if (celdaNumItem.getCellType() == CellType.NUMERIC) {
-                        numItem = String.valueOf((int) celdaNumItem.getNumericCellValue());
+                    Cell celdaNumItem = filaActual.getCell(0);
+                    if (celdaNumItem != null) {
+                        if (celdaNumItem.getCellType() == CellType.STRING) {
+                            numItem = celdaNumItem.getStringCellValue();
+                        } else if (celdaNumItem.getCellType() == CellType.NUMERIC) {
+                            numItem = String.valueOf((int) celdaNumItem.getNumericCellValue());
+                        }
                     }
-                }
 
-                Cell celdaDescripcion = filaActual.getCell(1);
-                if (celdaDescripcion != null && celdaDescripcion.getCellType() == CellType.STRING) {
-                    descripcion = celdaDescripcion.getStringCellValue();
-                }
+                    Cell celdaDescripcion = filaActual.getCell(1);
+                    if (celdaDescripcion != null && celdaDescripcion.getCellType() == CellType.STRING) {
+                        descripcion = celdaDescripcion.getStringCellValue();
+                    }
 
-                Cell celdaUnidad = filaActual.getCell(2);
-                if (celdaUnidad != null && celdaUnidad.getCellType() == CellType.STRING) {
-                    unidad = celdaUnidad.getStringCellValue();
-                }
+                    Cell celdaUnidad = filaActual.getCell(2);
+                    if (celdaUnidad != null && celdaUnidad.getCellType() == CellType.STRING) {
+                        unidad = celdaUnidad.getStringCellValue();
+                    }
 
-                Cell celdaCantidad = filaActual.getCell(3);
-                if (celdaCantidad != null && celdaCantidad.getCellType() == CellType.NUMERIC) {
-                    cantidad = celdaCantidad.getNumericCellValue();
-                }
+                    Cell celdaCantidad = filaActual.getCell(3);
+                    if (celdaCantidad != null && celdaCantidad.getCellType() == CellType.NUMERIC) {
+                        cantidad = celdaCantidad.getNumericCellValue();
+                    } else if(celdaCantidad == null){
+                        
+                    }
 
-                Cell celdaPrecioUnitario = filaActual.getCell(4);
-                if (celdaPrecioUnitario != null && celdaPrecioUnitario.getCellType() == CellType.NUMERIC) {
-                    precioUnitario = celdaPrecioUnitario.getNumericCellValue();
-                }
+                    Cell celdaPrecioUnitario = filaActual.getCell(4);
+                    if (celdaPrecioUnitario != null && celdaPrecioUnitario.getCellType() == CellType.NUMERIC) {
+                        precioUnitario = celdaPrecioUnitario.getNumericCellValue();
+                    }
 
-                itemServi.crearItem(numItem, descripcion, unidad, cantidad, precioUnitario);
+                    itemServi.crearItem(numItem, descripcion, unidad, cantidad, precioUnitario);
+                }
             }
         }
     }
-}
 
     public ByteArrayInputStream elExportador() throws Exception {
         String[] columnas = {"Nro", "Descripcion", "Unidad", "Cantidad", "Precio Unitario", "Sub Total"};

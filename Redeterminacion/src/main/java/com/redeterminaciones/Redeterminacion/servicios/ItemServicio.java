@@ -25,7 +25,9 @@ public class ItemServicio {
         item.setUnidad(unidad);
         item.setCantidad(cantidad);
         item.setPrecioUnitario(precioUnitario);
-        item.setSubTotal(cantidad * precioUnitario);
+        if (cantidad != null || precioUnitario != null) {
+            item.setSubTotal(cantidad * precioUnitario);
+        }
 
         itemRepositorio.save(item);
     }
@@ -62,5 +64,4 @@ public class ItemServicio {
         return todos;
     }
 
-    
 }
