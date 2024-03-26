@@ -2,7 +2,6 @@ package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
-import com.redeterminaciones.Redeterminacion.enumeraciones.Rubros;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ComputoYPresupuestoServicio;
@@ -63,5 +62,10 @@ public class ObraControlador {
     public String calculoCYP(HttpSession session, ModelMap map) {
 //        cyps.crearComputoYPresupuesto(Rubros.HOLA, items);
         return "";
+    }
+
+    @GetMapping("/registrar/item")
+    public String registrarItem() {
+        return "formItem.html";
     }
 }

@@ -47,17 +47,7 @@ public class UsuarioControlador {
         }
 
     }
-
-    @GetMapping("/registrar/empresa")
-    public String registrarEmpresa() {
-        return "formEmpresa.html";
-    }
-
+  
     
-
-    @GetMapping("/registrar/item")
-    public String registrarItem() {
-        return "formItem.html";
-    }
 
 }
