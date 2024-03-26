@@ -10,7 +10,7 @@
                     <body>
                         <header th:replace="fragments/header"></header>
                         <div>
-                            <form th:action="@{/importItem}" method="post" >
+                            <form th:action="@{/importItem}" method="post" enctype="multipart/form-data">
                                 <div class="form-floating mb-3">
                                     <input type="file" class="form-control" id="listaItem" name="fileExcel">
                                         <label for="fileExcel">Importe Ex</label>

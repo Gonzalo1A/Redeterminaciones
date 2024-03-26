@@ -1,16 +1,12 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
-import com.poiji.bind.Poiji;
-import com.poiji.option.PoijiOptions;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -29,19 +25,22 @@ public class ExelServicio {
     @Autowired
     private ItemServicio itemServi;
 
-    public void elImportador(File archivo) throws Exception {
-        try (InputStream input = new FileInputStream(archivo)) {
-            XSSFWorkbook libro = new XSSFWorkbook(input);
+    public void elImportador(InputStream archivo) throws Exception {
+//        try (InputStream input = new FileInputStream(archivo)) {
+//            XSSFWorkbook libro = new XSSFWorkbook(input);
+        
+            XSSFWorkbook libro = new XSSFWorkbook(archivo);
+            
             Sheet hoja = libro.getSheetAt(0);
-
+            
             for (int i = 1; i <= hoja.getLastRowNum(); i++) {
                 Row filaActual = hoja.getRow(i);
                 if (filaActual != null) {
                     String numItem = "";
                     String descripcion = "";
                     String unidad = "";
-                    Double cantidad = 0.0d;
-                    Double precioUnitario = 0.0d;
+                    Double cantidad = null;
+                    Double precioUnitario = null;
 
                     Cell celdaNumItem = filaActual.getCell(0);
                     if (celdaNumItem != null) {
@@ -73,11 +72,10 @@ public class ExelServicio {
                     if (celdaPrecioUnitario != null && celdaPrecioUnitario.getCellType() == CellType.NUMERIC) {
                         precioUnitario = celdaPrecioUnitario.getNumericCellValue();
                     }
-
                     itemServi.crearItem(numItem, descripcion, unidad, cantidad, precioUnitario);
                 }
             }
-        }
+       // }
     }
 
     public ByteArrayInputStream elExportador() throws Exception {

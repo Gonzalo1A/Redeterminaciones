@@ -23,11 +23,11 @@ public class ItemServicio {
         item.setDescripcion(descripcion);
         item.setNumeroItem(numeroItem);
         item.setUnidad(unidad);
+        if (cantidad != null || precioUnitario != null) {
         item.setCantidad(cantidad);
         item.setPrecioUnitario(precioUnitario);
-        if (cantidad != null || precioUnitario != null) {
-            item.setSubTotal(cantidad * precioUnitario);
-        }
+        item.setSubTotal(cantidad * precioUnitario);
+       }
 
         itemRepositorio.save(item);
     }
