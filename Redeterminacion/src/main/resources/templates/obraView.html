@@ -8,20 +8,29 @@
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
                     </head>
                     <body>
+
                         <header th:replace="fragments/header"></header>
+                        
                         <table class="table table-dark table-striped">
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col">total</th>
+                                    <th scope="col">N° Item</th>
+                                    <th scope="col">Item Nombre</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Unidad</th>
+                                    <th scope="col">Precio Unitario</th>
+                                    <th scope="col">Sub Total</th>
                                 </tr>
                             </thead>
-                            <tbody th:each="obra : ${obras}">
+                            <tbody th:each="item : ${items}">
                                 <tr>
-                                    <th scope="row" th:text="${obra.id}"></th>
-                                    <td th:text="${obra.nombre}"></td>
-                                    <td th:text="${obra.total}"></td>
+                                    <th scope="row" th:text="${item.id}"></th>
+                                    <td th:text="${item.nombre}"></td>
+                                    <td th:text="${item.total}"></td>
+                                    <td th:text="${item.total}"></td>
+                                    <td th:text="${item.total}"></td>
+                                    <td th:text="${item.total}"></td>
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -30,16 +39,14 @@
                                         <a
                                             class="btn btn-outline-success d-grid gap-2"
                                             role="button"
-                                            th:href="@{/usuario/registrar/obra}"
+                                            th:href=""
                                             >Agregar Obra</a
                                         >
                                     </td>
                                 </tr>
                             </tfoot>
                         </table>
-                        </div>    
-                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-
+                        <div>
+                            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
                     </body>
                     </html>

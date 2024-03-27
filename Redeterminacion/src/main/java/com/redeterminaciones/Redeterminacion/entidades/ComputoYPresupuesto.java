@@ -16,7 +16,7 @@ import lombok.Data;
 public class ComputoYPresupuesto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     @Enumerated(EnumType.STRING)
     private Rubros rubro;

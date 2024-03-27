@@ -9,26 +9,20 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a th:if="${session.usuariosession != null}" class="nav-link active" aria-current="page" th:href="@{/usuario/registrar/empresa}">Empresa</a>
-                        </li>
-                        <li class="nav-item">
                             <a th:if="${session.usuariosession != null}" class="nav-link active" aria-current="page" th:href="@{/obra}">Obras</a>
-                        </li>
-                        <li class="nav-item">
-                            <a th:if="${session.usuariosession != null}"  class="nav-link active" aria-current="page" th:href="@{/listaItems}">Items</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
         <div class="text-end">
-            <a class="btn btn-outline-white" style="border: 0px" role="button" th:href="@{/usuario/login}">Ingresar</a>
-            <a class="btn btn-outline-white" style="border: 0px" role="button" th:href="@{/usuario/registrar}">Registrarse</a>
-            <a th:if="${session.usuariosession != null}" class="btn btn-outline-white" style="border: 0px" role="button" th:href="@{/logout}" >Cerrar sesiï¿½n</a>
+            <a th:if="${session.usuariosession == null}" class="btn btn-outline-white" style="border: 0px" role="button" th:href="@{/usuario/login}">Ingresar</a>
+            <a th:if="${session.usuariosession == null}" class="btn btn-outline-white" style="border: 0px" role="button" th:href="@{/usuario/registrar}">Registrarse</a>
+            <a th:if="${session.usuariosession != null}" class="btn btn-outline-white" style="border: 0px" role="button" th:href="@{/logout}" >Cerrar sesión</a>
             <div class="dropdown text-end">
                 <a class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">                </a>
                 <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-                    <li><a  class="dropdown-item" th:href="@{/logout}">Cerrar Sesiï¿½n</a></li>
+                    <li><a  "${session.usuariosession != null}" class="dropdown-item" th:href="@{/logout}">Cerrar Sesión</a></li>
                 </ul>
             </div>
         </div>
