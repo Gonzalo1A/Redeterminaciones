@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.redeterminaciones.Redeterminacion.repositorios.ComputoYPresupuestoRepositorio;
+import com.redeterminaciones.Redeterminacion.repositorios.ObraRepositorio;
+import java.util.Optional;
 
 @Service
 public class ComputoYPresupuestoServicio {
@@ -17,23 +19,18 @@ public class ComputoYPresupuestoServicio {
     private ComputoYPresupuestoRepositorio computoYPresupuestoRepo;
     @Autowired
     private ObraServicio obServicio;
+    @Autowired
+    private ObraRepositorio obraRepositorio;
 
     @Transactional
-    public ComputoYPresupuesto crearComputoYPresupuesto(Rubros rubro, List<Item> items, String nombreObra) {
+    public ComputoYPresupuesto crearComputoYPresupuesto(Rubros rubro, String id) throws Exception {
         ComputoYPresupuesto cyp = new ComputoYPresupuesto();
         cyp.setRubro(rubro);
-        cyp.setItems(items);
-        Double total = null;
-        for (Item item : items) {
-            total += item.getSubTotal();
-        }
-        cyp.setTotal(total);
         computoYPresupuestoRepo.save(cyp);
-        Obra obraActual = obServicio.buscarPorNombre(nombreObra);
-        obServicio.agregarCyP(obraActual.getId(), cyp);
+        obServicio.agregarCyP(cyp.getId(),id);
         return cyp;
     }
-       
+
     @Transactional
     public void moficarComputo(String idComputo, Rubros rubro, Double total, List<Item> items) {
         ComputoYPresupuesto ModificarComputo = computoYPresupuestoRepo.getOne(idComputo);
@@ -43,11 +40,16 @@ public class ComputoYPresupuestoServicio {
         computoYPresupuestoRepo.save(ModificarComputo);
     }
 
+    @Transactional
+    public void agregarItem(List<Item> items, String nombreObra) {
+        ComputoYPresupuesto cyp = obServicio.buscarPorNombre(nombreObra).getComputoYPresupuesto();
+        cyp.setItems(items);
+        computoYPresupuestoRepo.save(cyp);
+    }
+
     public ComputoYPresupuesto buscarPorId(String id) {
         return computoYPresupuestoRepo.getById(id);
     }
-    
-    
 
     @Transactional
     public void eliminarComputo(String id) {

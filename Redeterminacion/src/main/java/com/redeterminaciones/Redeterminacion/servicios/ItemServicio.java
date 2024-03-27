@@ -19,19 +19,20 @@ public class ItemServicio {
     private ComputoYPresupuestoServicio cypServicio;
 
     @Transactional
-    public void crearItem(String numeroItem, String descripcion, String unidad, Double cantidad, Double precioUnitario) {
+    public Item crearItem(String numeroItem, String descripcion, String unidad, Double cantidad, Double precioUnitario) {
         Item item = new Item();
 
         item.setDescripcion(descripcion);
         item.setNumeroItem(numeroItem);
         item.setUnidad(unidad);
         if (cantidad != null || precioUnitario != null) {
-        item.setCantidad(cantidad);
-        item.setPrecioUnitario(precioUnitario);
-        item.setSubTotal(cantidad * precioUnitario);
-       }
+            item.setCantidad(cantidad);
+            item.setPrecioUnitario(precioUnitario);
+            item.setSubTotal(cantidad * precioUnitario);
+        }
 
         itemRepositorio.save(item);
+        return item;
     }
 
     public List<Item> listarItems() {

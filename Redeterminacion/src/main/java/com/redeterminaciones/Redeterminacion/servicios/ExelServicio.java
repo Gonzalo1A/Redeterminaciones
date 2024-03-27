@@ -1,11 +1,11 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
+import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,11 +24,13 @@ public class ExelServicio {
 
     @Autowired
     private ItemServicio itemServi;
+    @Autowired
+    private ComputoYPresupuestoServicio cypServicio;
 
-    public void elImportador(InputStream archivo) throws Exception {
+    public List<Item> elImportador(InputStream archivo, ClienteEmpresa clienteEmpresa) throws Exception {
 //        try (InputStream input = new FileInputStream(archivo)) {
 //            XSSFWorkbook libro = new XSSFWorkbook(input);
-
+        List<Item> items = new ArrayList<>();
         XSSFWorkbook libro = new XSSFWorkbook(archivo);
 
         Sheet hoja = libro.getSheetAt(0);
@@ -72,10 +74,11 @@ public class ExelServicio {
                 if (celdaPrecioUnitario != null && celdaPrecioUnitario.getCellType() == CellType.NUMERIC) {
                     precioUnitario = celdaPrecioUnitario.getNumericCellValue();
                 }
-                itemServi.crearItem(numItem, descripcion, unidad, cantidad, precioUnitario);
+                Item item = itemServi.crearItem(numItem, descripcion, unidad, cantidad, precioUnitario);
+                items.add(item);
             }
         }
-        // }
+        return items;
     }
 
     public ByteArrayInputStream elExportador() throws Exception {
