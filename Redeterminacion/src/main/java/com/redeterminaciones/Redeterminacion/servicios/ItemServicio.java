@@ -15,8 +15,6 @@ public class ItemServicio {
 
     @Autowired
     private ItemRepositorio itemRepositorio;
-    @Autowired
-    private ComputoYPresupuestoServicio cypServicio;
 
     @Transactional
     public Item crearItem(String numeroItem, String descripcion, String unidad, Double cantidad, Double precioUnitario) {
@@ -28,7 +26,9 @@ public class ItemServicio {
         if (cantidad != null || precioUnitario != null) {
             item.setCantidad(cantidad);
             item.setPrecioUnitario(precioUnitario);
-            item.setSubTotal(cantidad * precioUnitario);
+            Double resultado = cantidad * precioUnitario;
+            resultado = (double) (Math.round(resultado * 10000)) / 10000;
+            item.setSubTotal(resultado);
         }
 
         itemRepositorio.save(item);

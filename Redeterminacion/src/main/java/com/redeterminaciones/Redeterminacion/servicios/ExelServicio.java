@@ -1,6 +1,7 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
+import com.redeterminaciones.Redeterminacion.entidades.ComputoYPresupuesto;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +12,7 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,6 +26,11 @@ public class ExelServicio {
 
     @Autowired
     private ItemServicio itemServi;
+
+    @Autowired
+    private ComputoYPresupuestoServicio cypServicio;
+    @Autowired
+    private ObraServicio obraServicio;
 
 
     public List<Item> elImportador(InputStream archivo, ClienteEmpresa clienteEmpresa) throws Exception {
@@ -80,33 +87,56 @@ public class ExelServicio {
         return items;
     }
 
-    public ByteArrayInputStream elExportador() throws Exception {
+    public ByteArrayInputStream elExportador(String nombreObra) throws Exception {
         String[] columnas = {"Nro", "Descripcion", "Unidad", "Cantidad", "Precio Unitario", "Sub Total"};
         ByteArrayOutputStream stream;
+        
+        ComputoYPresupuesto CyP = obraServicio.buscarPorNombre(nombreObra).getComputoYPresupuesto();
+        List<Item> todos = CyP.getItems();
+
         try (XSSFWorkbook libro = new XSSFWorkbook()) {
             stream = new ByteArrayOutputStream();
             org.apache.poi.ss.usermodel.Sheet hoja = libro.createSheet("Items");
             Row fila = hoja.createRow(0);
             XSSFCellStyle estilo = estiloEncabesados(libro);
+            XSSFCellStyle estiloDatos = estiloDatos(libro);
+            XSSFCellStyle estiloMoneda = estiloMoneda(libro);
+
             for (int i = 0; i < columnas.length; i++) {
                 Cell celda = fila.createCell(i);
                 celda.setCellValue(columnas[i]);
                 celda.setCellStyle(estilo);
                 hoja.autoSizeColumn(i);
             }
-            List<Item> todos = itemServi.getAll();
             int coordenadaRow = 1;
             for (Item item : todos) {
                 fila = hoja.createRow(coordenadaRow);
-                fila.createCell(0).setCellValue(item.getNumeroItem());
-                fila.createCell(1).setCellValue(item.getDescripcion());
-                fila.createCell(2).setCellValue(item.getUnidad());
+
+                Cell numItem = fila.createCell(0);
+                numItem.setCellValue(item.getNumeroItem());
+                numItem.setCellStyle(estiloDatos);
+
+                Cell descripcion = fila.createCell(1);
+                descripcion.setCellValue(item.getDescripcion());
+                descripcion.setCellStyle(estiloDatos);
+
+                Cell unidad = fila.createCell(2);
+                unidad.setCellValue(item.getUnidad());
+                unidad.setCellStyle(estiloDatos);
+
                 if (item.getCantidad() != null && item.getPrecioUnitario() != null && item.getSubTotal() != null) {
-                    fila.createCell(3).setCellValue(item.getCantidad());
-                    fila.createCell(4).setCellValue(item.getPrecioUnitario());
-                    fila.createCell(5).setCellValue(item.getSubTotal());
+                    Cell cantidad = fila.createCell(3);
+                    cantidad.setCellValue(item.getCantidad());
+                    cantidad.setCellStyle(estiloDatos);
+
+                    Cell precioUn = fila.createCell(4);
+                    precioUn.setCellValue(item.getPrecioUnitario());
+                    precioUn.setCellStyle(estiloMoneda);
+
+                    Cell subTotal = fila.createCell(5);
+                    subTotal.setCellValue(item.getSubTotal());
+                    subTotal.setCellStyle(estiloMoneda);
                 }
-                hoja.autoSizeColumn(coordenadaRow - 1);
                 coordenadaRow++;
             }
             for (int i = 0; i < columnas.length; i++) {
@@ -127,7 +157,31 @@ public class ExelServicio {
         estilo.setBorderTop(BorderStyle.THICK);
         estilo.setBorderLeft(BorderStyle.THICK);
         estilo.setBorderRight(BorderStyle.THICK);
-
+        estilo.setAlignment(HorizontalAlignment.CENTER);
         return estilo;
+    }
+
+    private XSSFCellStyle estiloDatos(XSSFWorkbook libro) {
+        XSSFCellStyle estilo = libro.createCellStyle();
+        estilo.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+        estilo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        estilo.setBorderBottom(BorderStyle.THIN);
+        estilo.setBorderTop(BorderStyle.THIN);
+        estilo.setBorderLeft(BorderStyle.THIN);
+        estilo.setBorderRight(BorderStyle.THIN);
+        return estilo;
+    }
+
+    private XSSFCellStyle estiloMoneda(XSSFWorkbook libro) {
+        XSSFCellStyle estilo = libro.createCellStyle();
+        estilo.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+        estilo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        estilo.setBorderBottom(BorderStyle.THIN);
+        estilo.setBorderTop(BorderStyle.THIN);
+        estilo.setBorderLeft(BorderStyle.THIN);
+        estilo.setBorderRight(BorderStyle.THIN);
+        estilo.setDataFormat(libro.createDataFormat().getFormat("$#,##0_);($#,##0)"));
+        return estilo;
+
     }
 }
