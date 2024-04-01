@@ -1,6 +1,7 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
+import com.redeterminaciones.Redeterminacion.entidades.ComputoYPresupuesto;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.enumeraciones.Rubros;
@@ -74,16 +75,19 @@ public class ObraControlador {
     @GetMapping("/listaItems/{nombre}")
     public String listasDeItems(@PathVariable String nombre, ModelMap map) {
         map.put("obra", obraServicio.buscarPorNombre(nombre));
-        List<Item> items = itemServicio.getAll();
-        map.addAttribute("items", items);
+        System.out.println("eeeeeeeeeeee" + nombre);
+        ComputoYPresupuesto cyp = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
+        if (cyp != null) {
+            map.addAttribute("items", cyp.getItems());
+        }
         return "listaDeItems.html";
     }
 
-    @GetMapping("/exportItem")
-    public ResponseEntity<InputStreamResource> elExportador() throws Exception {
-        ByteArrayInputStream stream = exelServicio.elExportador();
+    @GetMapping("/exportItem/{nombre}")
+    public ResponseEntity<InputStreamResource> elExportador(@PathVariable String nombre) throws Exception {
+        ByteArrayInputStream stream = exelServicio.elExportador(nombre);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=items.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=Items.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
@@ -95,7 +99,7 @@ public class ObraControlador {
 
             computoYPresupuestoServicio.crearComputoYPresupuesto(Rubros.HOLA, obraServicio.buscarPorNombre(nombre).getId());
             computoYPresupuestoServicio.agregarItem(items, nombre);
-            return "redirect:/listaItems/{nombre}";
+            return "redirect:/obra/listaItems/{nombre}";
         } catch (Exception e) {
             return "redirect:/listaItems/{nombre}";
         }
