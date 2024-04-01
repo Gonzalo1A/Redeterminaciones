@@ -1,6 +1,7 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
+import com.redeterminaciones.Redeterminacion.entidades.ComputoYPresupuesto;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.enumeraciones.Rubros;
@@ -92,7 +93,6 @@ public class ObraControlador {
         ClienteEmpresa clienteEmpresa = (ClienteEmpresa) session.getAttribute("usuariosession");
         try {
             List<Item> items = exelServicio.elImportador(fileExcel.getInputStream(), clienteEmpresa);
-
             computoYPresupuestoServicio.crearComputoYPresupuesto(Rubros.HOLA, obraServicio.buscarPorNombre(nombre).getId());
             computoYPresupuestoServicio.agregarItem(items, nombre);
             return "redirect:/listaItems/{nombre}";
@@ -101,10 +101,14 @@ public class ObraControlador {
         }
     }
 
-    @PostMapping("/cyp")
-    public String calculoCYP(HttpSession session, ModelMap map) {
-//        cyps.crearComputoYPresupuesto(Rubros.HOLA, items);
-        return "";
+    @GetMapping("/computo&presupuesto/{nombre}")
+    public String calculoCYP(@PathVariable String nombre, HttpSession session, ModelMap map) {
+        computoYPresupuestoServicio.calcularTotal(nombre);
+        ComputoYPresupuesto computoYPresupuesto = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
+        map.addAttribute("items", computoYPresupuesto.getItems());
+        map.addAttribute("total", computoYPresupuesto.getTotal());
+        
+        return "obraView.html";
     }
 
     @GetMapping("/registrar/item/{nombre}")

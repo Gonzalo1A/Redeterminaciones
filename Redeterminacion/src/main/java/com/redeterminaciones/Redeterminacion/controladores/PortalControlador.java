@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class PortalControlador {
 
-   
     @Autowired
     private ClienteEmpresaServicio clienteEmpresaServicio;
-    
 
     @GetMapping("/")
     public String index(ModelMap modelMap, HttpSession session) {

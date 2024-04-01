@@ -24,8 +24,7 @@ public class ExelServicio {
 
     @Autowired
     private ItemServicio itemServi;
-    @Autowired
-    private ComputoYPresupuestoServicio cypServicio;
+
 
     public List<Item> elImportador(InputStream archivo, ClienteEmpresa clienteEmpresa) throws Exception {
 //        try (InputStream input = new FileInputStream(archivo)) {
