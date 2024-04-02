@@ -26,19 +26,20 @@
                                     <td th:text="${obra.total}"></td>
                                     <td>
                                         <a th:href= "@{/obra/listaItems/__${obra.nombre}__}"><i class="fas fa-feather-alt"></i> Listar Items </a>
+                                        <a th:href= "@{/obra/computo&presupuesto/__${obra.nombre}__}"><i class="fas fa-feather-alt"></i> CyP </a>
                                     </td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td scope="rowgroup " >
+                                   
                                         <a
                                             class="btn btn-outline-success d-grid gap-2"
                                             role="button"
                                             th:href="@{/obra/registrar}"
                                             >Agregar Obra</a
                                         >
-                                    </td>
+                                    
                                     
                                 </tr>
                             </tfoot>

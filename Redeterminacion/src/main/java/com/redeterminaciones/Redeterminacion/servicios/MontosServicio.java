@@ -17,7 +17,6 @@ public class MontosServicio {
     @Transactional
     public void crearMontos( Double montoRedetermincacion, Double incremento, Double nuevoMonto, Double adecuacionProvisoria) {
         Montos montos = new Montos();
-
         montos.setIncremento(incremento);
         montos.setRedeterminacionMonto(montoRedetermincacion);
         montos.setNuevoMonto(nuevoMonto);
@@ -33,8 +32,7 @@ public class MontosServicio {
     public void modificarMontos(String idMontos, Double montoRedetermincacion, Double incremento, Double nuevoMonto, Double adecuacionProvisoria) {
         Optional<Montos> respuesta = montosRepositorio.findById(idMontos);
         if (respuesta.isPresent()) {
-            Montos montos = respuesta.get();
-            
+            Montos montos = respuesta.get();          
             montos.setIncremento(incremento);
             montos.setRedeterminacionMonto(montoRedetermincacion);
             montos.setNuevoMonto(nuevoMonto);

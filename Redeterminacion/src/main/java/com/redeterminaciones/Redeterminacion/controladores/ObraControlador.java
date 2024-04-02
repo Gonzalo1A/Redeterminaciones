@@ -75,7 +75,6 @@ public class ObraControlador {
     @GetMapping("/listaItems/{nombre}")
     public String listasDeItems(@PathVariable String nombre, ModelMap map) {
         map.put("obra", obraServicio.buscarPorNombre(nombre));
-        System.out.println("eeeeeeeeeeee" + nombre);
         ComputoYPresupuesto cyp = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
         if (cyp != null) {
             map.addAttribute("items", cyp.getItems());
@@ -106,10 +105,14 @@ public class ObraControlador {
         }
     }
 
-    @PostMapping("/cyp")
-    public String calculoCYP(HttpSession session, ModelMap map) {
-//        cyps.crearComputoYPresupuesto(Rubros.HOLA, items);
-        return "";
+    @GetMapping("/computo&presupuesto/{nombre}")
+    public String calculoCYP(@PathVariable String nombre, HttpSession session, ModelMap map) {
+        computoYPresupuestoServicio.calcularTotal(nombre);
+        ComputoYPresupuesto computoYPresupuesto = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
+        map.addAttribute("items", computoYPresupuesto.getItems());
+        map.addAttribute("total", computoYPresupuesto.getTotal());
+        
+        return "obraView.html";
     }
 
     @GetMapping("/registrar/item/{nombre}")

@@ -20,7 +20,7 @@ public class ComputoYPresupuesto {
     private String id;
     @Enumerated(EnumType.STRING)
     private Rubros rubro;
-    private Double total;
+    private String total;
     @OneToMany
     private List<Item> items;
     
