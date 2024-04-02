@@ -78,8 +78,10 @@ public class ExelServicio {
                 if (celdaPrecioUnitario != null && celdaPrecioUnitario.getCellType() == CellType.NUMERIC) {
                     precioUnitario = celdaPrecioUnitario.getNumericCellValue();
                 }
-                Item item = itemServi.crearItem(numItem, descripcion, unidad, cantidad, precioUnitario);
-                items.add(item);
+                if (numItem != "" && descripcion != "") {
+                    Item item = itemServi.crearItem(numItem, descripcion, unidad, cantidad, precioUnitario);
+                    items.add(item);
+                }
             }
         }
         return items;
@@ -88,7 +90,7 @@ public class ExelServicio {
     public ByteArrayInputStream elExportador(String nombreObra) throws Exception {
         String[] columnas = {"Nro", "Descripcion", "Unidad", "Cantidad", "Precio Unitario", "Sub Total"};
         ByteArrayOutputStream stream;
-        
+
         ComputoYPresupuesto CyP = obraServicio.buscarPorNombre(nombreObra).getComputoYPresupuesto();
         List<Item> todos = CyP.getItems();
 
@@ -137,6 +139,13 @@ public class ExelServicio {
                 }
                 coordenadaRow++;
             }
+            Row filaTotal = hoja.createRow(hoja.getLastRowNum() + 1);
+            Cell celdaText = filaTotal.createCell(4);
+            celdaText.setCellValue("Total:");
+            Cell total = filaTotal.createCell(5);
+            total.setCellStyle(estiloMoneda);
+            total.setCellValue("=SUMA(F2:F123)");
+
             for (int i = 0; i < columnas.length; i++) {
                 hoja.autoSizeColumn(i);
             }
@@ -161,8 +170,6 @@ public class ExelServicio {
 
     private XSSFCellStyle estiloDatos(XSSFWorkbook libro) {
         XSSFCellStyle estilo = libro.createCellStyle();
-        estilo.setFillForegroundColor(IndexedColors.AQUA.getIndex());
-        estilo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         estilo.setBorderBottom(BorderStyle.THIN);
         estilo.setBorderTop(BorderStyle.THIN);
         estilo.setBorderLeft(BorderStyle.THIN);
@@ -172,8 +179,6 @@ public class ExelServicio {
 
     private XSSFCellStyle estiloMoneda(XSSFWorkbook libro) {
         XSSFCellStyle estilo = libro.createCellStyle();
-        estilo.setFillForegroundColor(IndexedColors.AQUA.getIndex());
-        estilo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         estilo.setBorderBottom(BorderStyle.THIN);
         estilo.setBorderTop(BorderStyle.THIN);
         estilo.setBorderLeft(BorderStyle.THIN);
