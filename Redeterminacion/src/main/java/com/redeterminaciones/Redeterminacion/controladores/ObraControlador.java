@@ -58,15 +58,14 @@ public class ObraControlador {
     @PostMapping("/registrarObra")
     public String obraGuardar(@RequestParam String nombre, @RequestParam Double total,
             @RequestParam String fechaDeContrato, @RequestParam Double porcentajeDeAnticipo,
-            @RequestParam String fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedeterminaciones,
-            HttpSession session, ModelMap map) throws ParseException {
+            @RequestParam String fechaDeReeplanteo, @RequestParam int diasPlazoDeObra, TipoDeRedeterminaciones tipoDeRedeterminaciones,
+            @RequestParam String fechaPresentacionObra, HttpSession session, ModelMap map) throws ParseException {
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         Date fecha1 = formato.parse(fechaDeContrato);
-        Date fecha2 = formato.parse(fechaDeFinalizacion);
-//        List<Item> items = new ArrayList<>();
-//        ComputoYPresupuesto cyp = computoYPresupuestoServicio.crearComputoYPresupuesto(Rubros.HOLA, items);
-        Obra obra = obraServicio.crearObra(nombre, total, fecha1, fecha2, fecha2,
-                porcentajeDeAnticipo, 1, fecha2, tipoDeRedeterminaciones);
+        Date fecha2 = formato.parse(fechaDeReeplanteo);
+        Date fecha3 = formato.parse(fechaPresentacionObra);
+        Obra obra = obraServicio.crearObra(nombre, total, fecha3, fecha1, fecha2,
+                porcentajeDeAnticipo, diasPlazoDeObra, tipoDeRedeterminaciones);
         ClienteEmpresa clienteEmpresa = (ClienteEmpresa) session.getAttribute("usuariosession");
         clienteEmpresaServicio.guardarObra(obra, clienteEmpresa.getEmail());
         return "index.html";
@@ -99,7 +98,7 @@ public class ObraControlador {
             computoYPresupuestoServicio.agregarItem(items, nombre);
             return "redirect:/obra/listaItems/{nombre}";
         } catch (Exception e) {
-            return "redirect:/listaItems/{nombre}";
+            return "redirect:/obra/listaItems/{nombre}";
         }
     }
 
@@ -109,7 +108,7 @@ public class ObraControlador {
         ComputoYPresupuesto computoYPresupuesto = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
         map.addAttribute("items", computoYPresupuesto.getItems());
         map.addAttribute("total", computoYPresupuesto.getTotal());
-        
+
         return "obraView.html";
     }
 

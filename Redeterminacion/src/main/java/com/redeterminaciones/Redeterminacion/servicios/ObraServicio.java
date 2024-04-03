@@ -20,7 +20,9 @@ public class ObraServicio {
     private ComputoYPresupuestoRepositorio cyprepo;
 
     @Transactional
-    public Obra crearObra(String nombre, Double total, Date fechaPresentacionObra, Date fechaDeContrato, Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPlazoDeObra, Date fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet) {
+    public Obra crearObra(String nombre, Double total, Date fechaPresentacionObra, Date fechaDeContrato,
+            Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPlazoDeObra,
+            TipoDeRedeterminaciones tipoDeRedet) {
         Obra nuevaObra = new Obra();
         nuevaObra.setNombre(nombre);
         nuevaObra.setTotal(total);
@@ -29,7 +31,6 @@ public class ObraServicio {
         nuevaObra.setFechaDeReeplanteo(fechaDeReeplanteo);
         nuevaObra.setPorcentajeDeAnticipo(porcentajeDeAnticipo);
         nuevaObra.setDiasPlazoDeObra(diasPlazoDeObra);
-        nuevaObra.setFechaDeFinalizacion(fechaDeFinalizacion);
         nuevaObra.setTipoDeRedet(tipoDeRedet);
         obraRepositorio.save(nuevaObra);
         return nuevaObra;
@@ -66,7 +67,7 @@ public class ObraServicio {
         if (rOptional.isPresent()) {
             obra = rOptional.get();
         }
-        
+
         if (rOptional.isPresent()) {
             cyp = rOptional2.get();
         }

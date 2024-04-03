@@ -28,11 +28,19 @@
                                         <label for="fechaDeContrato">fechaDeContrato</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="date" class="form-control" id="fechaDeFinalizacion" placeholder="fechaDeFinalizacion" name="fechaDeFinalizacion">
-                                        <label for="fechaDeFinalizacion">fechaDeFinalizacion</label>
+                                    <input type="date" class="form-control" id="fechaDeReeplanteo" placeholder="fechaDeReeplanteo" name="fechaDeReeplanteo">
+                                        <label for="fechaDeReeplanteo">fechaDeReeplanteo</label>
                                 </div>
-                                <select id="id">
-                                    <option value="Decreto provincial 800/16">Decreto provincial 800/16</option>
+                                <div class="form-floating mb-3">
+                                    <input type="number" class="form-control" id="diasPlazoDeObra" placeholder="diasPlazoDeObra" name="diasPlazoDeObra">
+                                        <label for="diasPlazoDeObra">diasPlazoDeObra</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="date" class="form-control" id="fechaPresentacionObra" placeholder="fechaPresentacionObra" name="fechaPresentacionObra">
+                                        <label for="fechaPresentacionObra">fechaPresentacionObra</label>
+                                </div>
+                                <select id="id" name="tipoDeRedeterminaciones">
+                                    <option th:value="decreto816">Decreto provincial 800/16</option>
                                 </select>
 
                                 <div class="col-12">
