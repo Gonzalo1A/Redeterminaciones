@@ -21,14 +21,14 @@ public class Item {
     private Double subTotal;
     private Double precioUnitario;
 
-    @OneToOne
+   /* @OneToOne
     private Remanentes remanentes;
 
     @OneToOne
     private Factores factores;
 
     @OneToOne
-    private Montos montos;
+    private Montos montos;*/
 
     public Item() {
     }
