@@ -1,5 +1,6 @@
 package com.redeterminaciones.Redeterminacion.entidades;
 
+import com.redeterminaciones.Redeterminacion.enumeraciones.Rubros;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,8 +8,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.Date;
+import java.util.List;
 import lombok.Data;
 
 @Entity
@@ -31,6 +34,10 @@ public class Obra {
     private TipoDeRedeterminaciones tipoDeRedet;
     @OneToOne
     private ComputoYPresupuesto computoYPresupuesto;
+//    @OneToMany
+//    private List<Item> items;
+//    @Enumerated(EnumType.STRING)
+//    private Rubros rubro;
 
     public Obra() {
 

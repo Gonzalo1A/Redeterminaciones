@@ -1,15 +1,14 @@
 package com.redeterminaciones.Redeterminacion.repositorios;
 
-import com.redeterminaciones.Redeterminacion.entidades.Obra;
+import com.redeterminaciones.Redeterminacion.entidades.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ObraRepositorio extends JpaRepository<Obra, String> {
+public interface UsuarioRepositorio extends JpaRepository<Usuario, String> {
 
-    @Query("SELECT o FROM Obra o WHERE o.nombre = :nombre")
-    public Obra buscarObraPorNombre(@Param("nombre") String nombre);
-
+    @Query("SELECT u FROM Usuario u WHERE u.email = :email")
+    public Usuario buscarPorEmail(@Param("email") String email);
 }
