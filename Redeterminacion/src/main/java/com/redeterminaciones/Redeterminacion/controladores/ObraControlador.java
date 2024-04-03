@@ -94,8 +94,10 @@ public class ObraControlador {
         ClienteEmpresa clienteEmpresa = (ClienteEmpresa) session.getAttribute("usuariosession");
         try {
             List<Item> items = exelServicio.elImportador(fileExcel.getInputStream(), clienteEmpresa);
-            computoYPresupuestoServicio.crearComputoYPresupuesto(Rubros.HOLA, obraServicio.buscarPorNombre(nombre).getId());
-            computoYPresupuestoServicio.agregarItem(items, nombre);
+            if (items != null && items.size() != 0) {
+                computoYPresupuestoServicio.crearComputoYPresupuesto(Rubros.HOLA, obraServicio.buscarPorNombre(nombre).getId());
+                computoYPresupuestoServicio.agregarItem(items, nombre);
+            }
             return "redirect:/obra/listaItems/{nombre}";
         } catch (Exception e) {
             return "redirect:/obra/listaItems/{nombre}";
