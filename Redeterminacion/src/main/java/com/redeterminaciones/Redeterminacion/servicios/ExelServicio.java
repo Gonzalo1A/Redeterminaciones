@@ -28,8 +28,6 @@ public class ExelServicio {
     private ItemServicio itemServi;
 
     @Autowired
-    private ComputoYPresupuestoServicio cypServicio;
-    @Autowired
     private ObraServicio obraServicio;
 
     public List<Item> elImportador(InputStream archivo, ClienteEmpresa clienteEmpresa) throws Exception {
