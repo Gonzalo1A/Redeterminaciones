@@ -1,5 +1,6 @@
 package com.redeterminaciones.Redeterminacion.entidades;
 
+import com.redeterminaciones.Redeterminacion.enumeraciones.Rubros;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,8 +8,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.Date;
+import java.util.List;
 import lombok.Data;
 
 @Entity
@@ -20,7 +23,7 @@ public class Obra {
     private String id;
     
     private String nombre;
-    private Double total;
+    private String total;
     private Date fechaPresentacionObra;
     private Date fechaDeContrato;
     private Date fechaDeReeplanteo;
@@ -29,8 +32,11 @@ public class Obra {
     private Date fechaDeFinalizacion;
     @Enumerated(EnumType.STRING)
     private TipoDeRedeterminaciones tipoDeRedet;
-    @OneToOne
-    private ComputoYPresupuesto computoYPresupuesto;
+//    @OneToOne
+//    private ComputoYPresupuesto computoYPresupuesto;
+    @OneToMany
+    private List<Item> items;
+
 
     public Obra() {
 
