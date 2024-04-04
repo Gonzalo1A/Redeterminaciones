@@ -23,7 +23,7 @@ public class Obra {
     private String id;
     
     private String nombre;
-    private Double total;
+    private String total;
     private Date fechaPresentacionObra;
     private Date fechaDeContrato;
     private Date fechaDeReeplanteo;
@@ -32,12 +32,11 @@ public class Obra {
     private Date fechaDeFinalizacion;
     @Enumerated(EnumType.STRING)
     private TipoDeRedeterminaciones tipoDeRedet;
-    @OneToOne
-    private ComputoYPresupuesto computoYPresupuesto;
-//    @OneToMany
-//    private List<Item> items;
-//    @Enumerated(EnumType.STRING)
-//    private Rubros rubro;
+//    @OneToOne
+//    private ComputoYPresupuesto computoYPresupuesto;
+    @OneToMany
+    private List<Item> items;
+
 
     public Obra() {
 

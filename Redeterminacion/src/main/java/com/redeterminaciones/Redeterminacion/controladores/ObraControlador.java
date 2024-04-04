@@ -1,15 +1,11 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
-import com.redeterminaciones.Redeterminacion.entidades.ComputoYPresupuesto;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
-import com.redeterminaciones.Redeterminacion.enumeraciones.Rubros;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
-import com.redeterminaciones.Redeterminacion.servicios.ComputoYPresupuestoServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ExelServicio;
-import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import jakarta.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
@@ -36,12 +32,12 @@ public class ObraControlador {
 
     @Autowired
     private ObraServicio obraServicio;
-    @Autowired
-    private ItemServicio itemServicio;
+//    @Autowired
+//    private ItemServicio itemServicio;
     @Autowired
     private ClienteEmpresaServicio clienteEmpresaServicio;
-    @Autowired
-    private ComputoYPresupuestoServicio computoYPresupuestoServicio;
+//    @Autowired
+//    private ComputoYPresupuestoServicio computoYPresupuestoServicio;
     @Autowired
     private ExelServicio exelServicio;
 
@@ -56,7 +52,7 @@ public class ObraControlador {
     }
 
     @PostMapping("/registrarObra")
-    public String obraGuardar(@RequestParam String nombre, @RequestParam Double total,
+    public String obraGuardar(@RequestParam String nombre, 
             @RequestParam String fechaDeContrato, @RequestParam Double porcentajeDeAnticipo,
             @RequestParam String fechaDeReeplanteo, @RequestParam int diasPlazoDeObra, TipoDeRedeterminaciones tipoDeRedeterminaciones,
             @RequestParam String fechaPresentacionObra, HttpSession session, ModelMap map) throws ParseException {
@@ -64,7 +60,7 @@ public class ObraControlador {
         Date fecha1 = formato.parse(fechaDeContrato);
         Date fecha2 = formato.parse(fechaDeReeplanteo);
         Date fecha3 = formato.parse(fechaPresentacionObra);
-        Obra obra = obraServicio.crearObra(nombre, total, fecha3, fecha1, fecha2,
+        Obra obra = obraServicio.crearObra(nombre, fecha3, fecha1, fecha2,
                 porcentajeDeAnticipo, diasPlazoDeObra, tipoDeRedeterminaciones);
         ClienteEmpresa clienteEmpresa = (ClienteEmpresa) session.getAttribute("usuariosession");
         clienteEmpresaServicio.guardarObra(obra, clienteEmpresa.getEmail());
@@ -73,10 +69,11 @@ public class ObraControlador {
 
     @GetMapping("/listaItems/{nombre}")
     public String listasDeItems(@PathVariable String nombre, ModelMap map) {
-        map.put("obra", obraServicio.buscarPorNombre(nombre));
-        ComputoYPresupuesto cyp = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
-        if (cyp != null) {
-            map.addAttribute("items", cyp.getItems());
+        Obra obra = obraServicio.buscarPorNombre(nombre);
+        map.put("obra", obra);
+//        ComputoYPresupuesto cyp = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
+        if (obra.getItems() != null) {
+            map.addAttribute("items", obra.getItems());
         }
         return "listaDeItems.html";
     }
@@ -95,8 +92,9 @@ public class ObraControlador {
         try {
             List<Item> items = exelServicio.elImportador(fileExcel.getInputStream(), clienteEmpresa);
             if (items != null && items.size() != 0) {
-                computoYPresupuestoServicio.crearComputoYPresupuesto(Rubros.HOLA, obraServicio.buscarPorNombre(nombre).getId());
-                computoYPresupuestoServicio.agregarItem(items, nombre);
+                obraServicio.agregarItem(items, nombre);
+//                computoYPresupuestoServicio.crearComputoYPresupuesto(Rubros.HOLA, obraServicio.buscarPorNombre(nombre).getId());
+//                computoYPresupuestoServicio.agregarItem(items, nombre);
             }
             return "redirect:/obra/listaItems/{nombre}";
         } catch (Exception e) {
@@ -106,10 +104,10 @@ public class ObraControlador {
 
     @GetMapping("/computo&presupuesto/{nombre}")
     public String calculoCYP(@PathVariable String nombre, HttpSession session, ModelMap map) {
-        computoYPresupuestoServicio.calcularTotal(nombre);
-        ComputoYPresupuesto computoYPresupuesto = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
-        map.addAttribute("items", computoYPresupuesto.getItems());
-        map.addAttribute("total", computoYPresupuesto.getTotal());
+        obraServicio.calcularTotal(nombre);
+        Obra obra = obraServicio.buscarPorNombre(nombre);
+        map.addAttribute("items", obra.getItems());
+        map.addAttribute("total", obra.getTotal());
 
         return "obraView.html";
     }
