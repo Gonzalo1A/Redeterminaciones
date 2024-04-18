@@ -1,7 +1,6 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
-import com.redeterminaciones.Redeterminacion.entidades.ComputoYPresupuesto;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -89,8 +88,7 @@ public class ExelServicio {
     public ByteArrayInputStream elExportador(String nombreObra) throws Exception {
         String[] columnas = {"Nro", "Descripcion", "Unidad", "Cantidad", "Precio Unitario", "Sub Total"};
         ByteArrayOutputStream stream;
-        ComputoYPresupuesto CyP = obraServicio.buscarPorNombre(nombreObra).getComputoYPresupuesto();
-        List<Item> todos = CyP.getItems();
+        List<Item> todos = obraServicio.buscarPorNombre(nombreObra).getItems();
 
         try (XSSFWorkbook libro = new XSSFWorkbook()) {
             stream = new ByteArrayOutputStream();

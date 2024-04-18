@@ -18,12 +18,11 @@ public class ObraServicio {
 
     @Autowired
     private ObraRepositorio obraRepositorio;
-   
 
     @Transactional
     public Obra crearObra(String nombre, Date fechaPresentacionObra, Date fechaDeContrato,
             Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPlazoDeObra,
-            TipoDeRedeterminaciones tipoDeRedet) {
+            TipoDeRedeterminaciones tipoDeRedet, String comitente) {
         Obra nuevaObra = new Obra();
         nuevaObra.setNombre(nombre);
         nuevaObra.setFechaPresentacionObra(fechaPresentacionObra);
@@ -32,6 +31,7 @@ public class ObraServicio {
         nuevaObra.setPorcentajeDeAnticipo(porcentajeDeAnticipo);
         nuevaObra.setDiasPlazoDeObra(diasPlazoDeObra);
         nuevaObra.setTipoDeRedet(tipoDeRedet);
+        nuevaObra.setComitente(comitente);
         obraRepositorio.save(nuevaObra);
         return nuevaObra;
     }

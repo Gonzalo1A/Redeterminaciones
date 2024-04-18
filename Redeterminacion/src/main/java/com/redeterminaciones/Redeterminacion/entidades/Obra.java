@@ -30,6 +30,7 @@ public class Obra {
     private Double porcentajeDeAnticipo;
     private int diasPlazoDeObra;
     private Date fechaDeFinalizacion;
+    private String comitente;
     @Enumerated(EnumType.STRING)
     private TipoDeRedeterminaciones tipoDeRedet;
 //    @OneToOne
