@@ -1,15 +1,20 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
+import com.redeterminaciones.Redeterminacion.entidades.IOP;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -25,9 +30,10 @@ public class ExelServicio {
 
     @Autowired
     private ItemServicio itemServi;
-
     @Autowired
     private ObraServicio obraServicio;
+    @Autowired
+    private IOPServicio iopServicio;
 
     public List<Item> elImportador(InputStream archivo, ClienteEmpresa clienteEmpresa) throws Exception {
 //        try (InputStream input = new FileInputStream(archivo)) {
@@ -182,5 +188,44 @@ public class ExelServicio {
         estilo.setDataFormat(libro.createDataFormat().getFormat("$#,##0_);($#,##0)"));
         return estilo;
 
+    }
+
+    private void importarIOP(InputStream archivo) throws IOException {
+        XSSFWorkbook libro = new XSSFWorkbook(archivo);
+        Sheet hoja = libro.getSheetAt(0);
+        List<Date> fechasEncabesados = null;
+        Iterator<Row> filas;
+        Iterator<Cell> columnas;
+        filas = hoja.rowIterator();
+        String factor;
+        Date fecha;
+        Double valor;
+        while (filas.hasNext()) {
+            Row fila = filas.next();
+            Cell celda = fila.getCell(1);
+            if (fila.getRowNum() != 0) {
+                factor = celda.getStringCellValue();
+                iopServicio.crearIOP(factor);
+            }
+        }
+        Row fechas = hoja.getRow(0);
+        columnas = fechas.cellIterator();
+        while (columnas.hasNext()) {
+            Cell celda = columnas.next();
+            if (celda.getColumnIndex() != 0 && celda.getColumnIndex() != 1) {
+                if (celda.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(celda)) {
+                    fecha = (Date) celda.getDateCellValue();
+                    fechasEncabesados.add(fecha);
+                }
+            }
+        }
+        List<IOP> indidices = iopServicio.todosLosIndices();
+        for (IOP indidice : indidices) {
+            Row fila = hoja.getRow(indidice.getId());
+            Cell celda;
+            for (Date fechaAhora : fechasEncabesados) {
+                
+            }
+        }
     }
 }
