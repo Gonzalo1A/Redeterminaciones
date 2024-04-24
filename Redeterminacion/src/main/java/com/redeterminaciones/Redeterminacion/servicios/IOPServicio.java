@@ -36,6 +36,10 @@ public class IOPServicio {
         factor.setFechas(tablas);
         iopRepo.save(factor);
     }
+    
+    public IOP buscarIndice(Integer orden){
+        return iopRepo.getById(orden);
+    }
 
     public List<IOP> todosLosIndices() {
         return iopRepo.findAll();

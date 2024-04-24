@@ -193,13 +193,16 @@ public class ExelServicio {
     private void importarIOP(InputStream archivo) throws IOException {
         XSSFWorkbook libro = new XSSFWorkbook(archivo);
         Sheet hoja = libro.getSheetAt(0);
+
         List<Date> fechasEncabesados = null;
+        List<Double> listaDeValores = null;
         Iterator<Row> filas;
         Iterator<Cell> columnas;
         filas = hoja.rowIterator();
         String factor;
         Date fecha;
-        Double valor;
+        Double valor = null;
+
         while (filas.hasNext()) {
             Row fila = filas.next();
             Cell celda = fila.getCell(1);
@@ -208,24 +211,29 @@ public class ExelServicio {
                 iopServicio.crearIOP(factor);
             }
         }
+
         Row fechas = hoja.getRow(0);
         columnas = fechas.cellIterator();
         while (columnas.hasNext()) {
             Cell celda = columnas.next();
-            if (celda.getColumnIndex() != 0 && celda.getColumnIndex() != 1) {
-                if (celda.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(celda)) {
-                    fecha = (Date) celda.getDateCellValue();
-                    fechasEncabesados.add(fecha);
-                }
+            if (celda.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(celda)) {
+                fecha = (Date) celda.getDateCellValue();
+                fechasEncabesados.add(fecha);
             }
         }
-        List<IOP> indidices = iopServicio.todosLosIndices();
-        for (IOP indidice : indidices) {
-            Row fila = hoja.getRow(indidice.getId());
-            Cell celda;
-            for (Date fechaAhora : fechasEncabesados) {
-                
+
+        for (int i = 1; i <= hoja.getLastRowNum(); i++) {
+            Row filaActual = hoja.getRow(i);
+            columnas = filaActual.cellIterator();
+            while (columnas.hasNext()) {
+                Cell celda = columnas.next();
+                if (celda.getColumnIndex() != 0 && celda.getColumnIndex() != 1) {
+                    valor = celda.getNumericCellValue();
+                    listaDeValores.add(valor);
+                }
             }
+            iopServicio.agregarPorExel(i, fechasEncabesados, listaDeValores);
+            listaDeValores = null;
         }
     }
 }
