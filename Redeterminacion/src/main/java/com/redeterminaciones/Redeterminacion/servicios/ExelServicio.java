@@ -88,6 +88,7 @@ public class ExelServicio {
                 }
             }
         }
+        libro.close();
         return items;
     }
 
@@ -193,7 +194,6 @@ public class ExelServicio {
     private void importarIOP(InputStream archivo) throws IOException {
         XSSFWorkbook libro = new XSSFWorkbook(archivo);
         Sheet hoja = libro.getSheetAt(0);
-
         List<Date> fechasEncabesados = null;
         List<Double> listaDeValores = null;
         Iterator<Row> filas;
@@ -235,5 +235,6 @@ public class ExelServicio {
             iopServicio.agregarPorExel(i, fechasEncabesados, listaDeValores);
             listaDeValores = null;
         }
+        libro.close();
     }
 }

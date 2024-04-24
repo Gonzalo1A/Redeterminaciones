@@ -11,8 +11,8 @@ import lombok.Data;
 
 @Data
 @Entity
-public class IOP {
-
+public class IOP { //Indices de Obras Publicas
+   
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

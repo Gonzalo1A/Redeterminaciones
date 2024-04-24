@@ -97,7 +97,7 @@ public class ObraControlador {
     public ResponseEntity<InputStreamResource> elExportador(@PathVariable String nombre) throws Exception {
         ByteArrayInputStream stream = exelServicio.elExportador(nombre);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=Items.xlsx");
+        headers.add("Content-Disposition", "attachment; filename="+nombre+" Items.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
