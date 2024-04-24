@@ -1,5 +1,6 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
+import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.repositorios.ItemRepositorio;
@@ -58,6 +59,16 @@ public class ItemServicio {
     public void calularIncidenciaItem(Obra obra, Double total) {
         for (Item item : obra.getItems()) {
             item.setIncidenciaItem(total / item.getSubTotal());
+            itemRepositorio.save(item);
+        }
+    }
+    
+    @Transactional
+    public void agregarFactor(IncidenciaFactor incidencia,String idItem){
+        Optional<Item> respuesta = itemRepositorio.findById(idItem);
+        if (respuesta.isPresent()) {
+            Item item = respuesta.get();
+            item.getIncidenciaFactores().add(incidencia);
             itemRepositorio.save(item);
         }
     }

@@ -40,5 +40,9 @@ public class IOPServicio {
     public List<IOP> todosLosIndices() {
         return iopRepo.findAll();
     }
+    
+    public IOP buscarIOP(int id ){
+        return iopRepo.getReferenceById(id);
+    }
 
 }

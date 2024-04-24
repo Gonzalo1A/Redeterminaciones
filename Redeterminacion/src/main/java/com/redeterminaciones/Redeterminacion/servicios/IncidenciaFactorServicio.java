@@ -12,11 +12,12 @@ public class IncidenciaFactorServicio {
     @Autowired
     private IncidenciaFactorRepositorio incidenciaFactorRepositorio;
     
-    public void crearIncidenciaFactor(Float porcentaje, IOP factorReferencia) {
+    public IncidenciaFactor crearIncidenciaFactor(Float porcentaje, IOP factorReferencia) {
         IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
         incidenciaFactor.setIndice(factorReferencia);
         incidenciaFactor.setPorcentajeIncidencia(porcentaje);
         incidenciaFactorRepositorio.save(incidenciaFactor);
+        return incidenciaFactor;
     }
     
     public void modificarIncidenciaFactor(Float porcentaje, IOP factorReferencia) {
