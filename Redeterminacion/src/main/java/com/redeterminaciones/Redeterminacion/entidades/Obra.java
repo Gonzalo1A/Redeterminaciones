@@ -24,6 +24,7 @@ public class Obra {
     
     private String nombre;
     private String total;
+    
     private Date fechaPresentacionObra;
     private Date fechaDeContrato;
     private Date fechaDeReeplanteo;

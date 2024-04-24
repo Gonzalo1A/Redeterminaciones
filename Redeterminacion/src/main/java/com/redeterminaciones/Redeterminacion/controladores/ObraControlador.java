@@ -1,11 +1,16 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
+import com.redeterminaciones.Redeterminacion.entidades.IOP;
+import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ExelServicio;
+import com.redeterminaciones.Redeterminacion.servicios.IOPServicio;
+import com.redeterminaciones.Redeterminacion.servicios.IncidenciaFactorServicio;
+import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import jakarta.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
@@ -32,12 +37,14 @@ public class ObraControlador {
 
     @Autowired
     private ObraServicio obraServicio;
-//    @Autowired
-//    private ItemServicio itemServicio;
+    @Autowired
+    private ItemServicio itemServicio;
     @Autowired
     private ClienteEmpresaServicio clienteEmpresaServicio;
-//    @Autowired
-//    private ComputoYPresupuestoServicio computoYPresupuestoServicio;
+    @Autowired
+    private IncidenciaFactorServicio incidenciaFactorServicio;
+    @Autowired
+    private IOPServicio iOPServicio;
     @Autowired
     private ExelServicio exelServicio;
 
@@ -71,10 +78,18 @@ public class ObraControlador {
     public String listasDeItems(@PathVariable String nombre, ModelMap map) {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         map.put("obra", obra);
-//        ComputoYPresupuesto cyp = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
         if (obra.getItems() != null) {
             map.addAttribute("items", obra.getItems());
         }
+        return "listaDeItems.html";
+    }
+
+    @PostMapping("/cargarIncidendcia")
+    public String cargarIncidenciaFactor(@RequestParam String idItem, 
+            @RequestParam int numeroFactor, @RequestParam float porcentajeFactor) {
+        IOP iop = iOPServicio.buscarIOP(numeroFactor);
+        IncidenciaFactor inc = incidenciaFactorServicio.crearIncidenciaFactor(porcentajeFactor, iop);
+        itemServicio.agregarFactor(inc, idItem);
         return "listaDeItems.html";
     }
 
@@ -93,8 +108,6 @@ public class ObraControlador {
             List<Item> items = exelServicio.elImportador(fileExcel.getInputStream(), clienteEmpresa);
             if (items != null && items.size() != 0) {
                 obraServicio.agregarItem(items, nombre);
-//                computoYPresupuestoServicio.crearComputoYPresupuesto(Rubros.HOLA, obraServicio.buscarPorNombre(nombre).getId());
-//                computoYPresupuestoServicio.agregarItem(items, nombre);
             }
             return "redirect:/obra/listaItems/{nombre}";
         } catch (Exception e) {
@@ -104,11 +117,10 @@ public class ObraControlador {
 
     @GetMapping("/computo&presupuesto/{nombre}")
     public String calculoCYP(@PathVariable String nombre, HttpSession session, ModelMap map) {
-        obraServicio.calcularTotal(nombre);
         Obra obra = obraServicio.buscarPorNombre(nombre);
+        itemServicio.calularIncidenciaItem(obra, obraServicio.calcularTotal(nombre));
         map.addAttribute("items", obra.getItems());
         map.addAttribute("total", obra.getTotal());
-
         return "obraView.html";
     }
 

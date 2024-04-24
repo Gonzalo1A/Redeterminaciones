@@ -1,5 +1,6 @@
 package com.redeterminaciones.Redeterminacion.entidades;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,4 +19,5 @@ public class IOP {
     private String nombreFactor;
     @OneToMany
     private List<IndiceMensual> fechas;
+
 }

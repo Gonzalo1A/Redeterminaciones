@@ -67,7 +67,7 @@ public class ObraServicio {
     }
 
     @Transactional
-    public void calcularTotal(String nombreObra) {
+    public Double calcularTotal(String nombreObra) {
         Obra obra = buscarPorNombre(nombreObra);
         double total = 0d;
         for (Item item : obra.getItems()) {
@@ -78,6 +78,7 @@ public class ObraServicio {
         BigDecimal resultado = new BigDecimal(total);
         obra.setTotal(resultado.setScale(4, RoundingMode.HALF_UP).toString());
         obraRepositorio.save(obra);
+        return total;
     }
 
 //    @Transactional
