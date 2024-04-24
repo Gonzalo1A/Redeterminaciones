@@ -6,6 +6,8 @@ import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ExelServicio;
+import com.redeterminaciones.Redeterminacion.servicios.IncidenciaFactorServicio;
+import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import jakarta.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
@@ -32,12 +34,12 @@ public class ObraControlador {
 
     @Autowired
     private ObraServicio obraServicio;
-//    @Autowired
-//    private ItemServicio itemServicio;
+    @Autowired
+    private ItemServicio itemServicio;
     @Autowired
     private ClienteEmpresaServicio clienteEmpresaServicio;
-//    @Autowired
-//    private ComputoYPresupuestoServicio computoYPresupuestoServicio;
+    @Autowired
+    private  IncidenciaFactorServicio incidenciaFactorServicio;
     @Autowired
     private ExelServicio exelServicio;
 
@@ -52,7 +54,7 @@ public class ObraControlador {
     }
 
     @PostMapping("/registrarObra")
-    public String obraGuardar(@RequestParam String nombre, 
+    public String obraGuardar(@RequestParam String nombre,
             @RequestParam String fechaDeContrato, @RequestParam Double porcentajeDeAnticipo,
             @RequestParam String fechaDeReeplanteo, @RequestParam int diasPlazoDeObra, TipoDeRedeterminaciones tipoDeRedeterminaciones,
             @RequestParam String fechaPresentacionObra, HttpSession session, ModelMap map) throws ParseException {
@@ -68,10 +70,12 @@ public class ObraControlador {
     }
 
     @GetMapping("/listaItems/{nombre}")
-    public String listasDeItems(@PathVariable String nombre, ModelMap map) {
+    public String listasDeItems(@PathVariable String nombre, ModelMap map,
+            @RequestParam int numeroFactor, @RequestParam float porcentajeFactor) {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         map.put("obra", obra);
-//        ComputoYPresupuesto cyp = obraServicio.buscarPorNombre(nombre).getComputoYPresupuesto();
+        
+//        incidenciaFactorServicio.crearIncidenciaFactor(porcentajeFactor, factorReferencia);
         if (obra.getItems() != null) {
             map.addAttribute("items", obra.getItems());
         }
@@ -104,11 +108,10 @@ public class ObraControlador {
 
     @GetMapping("/computo&presupuesto/{nombre}")
     public String calculoCYP(@PathVariable String nombre, HttpSession session, ModelMap map) {
-        obraServicio.calcularTotal(nombre);
         Obra obra = obraServicio.buscarPorNombre(nombre);
+        itemServicio.calularIncidenciaItem(obra, obraServicio.calcularTotal(nombre));
         map.addAttribute("items", obra.getItems());
         map.addAttribute("total", obra.getTotal());
-
         return "obraView.html";
     }
 

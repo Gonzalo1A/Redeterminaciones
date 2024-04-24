@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -20,8 +22,11 @@ public class Item {
     private Double subTotal;
     private Double precioUnitario;
     private boolean rubro;
+    @OneToMany
+    private List<IncidenciaFactor> incidenciaFactores;
+    private Double incidenciaItem;
 
-   /* @OneToOne
+    /* @OneToOne
     private Remanentes remanentes;
 
     @OneToOne
@@ -29,7 +34,6 @@ public class Item {
 
     @OneToOne
     private Montos montos;*/
-
     public Item() {
     }
 
