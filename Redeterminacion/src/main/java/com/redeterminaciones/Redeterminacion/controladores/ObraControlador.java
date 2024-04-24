@@ -57,13 +57,13 @@ public class ObraControlador {
     public String obraGuardar(@RequestParam String nombre,
             @RequestParam String fechaDeContrato, @RequestParam Double porcentajeDeAnticipo,
             @RequestParam String fechaDeReeplanteo, @RequestParam int diasPlazoDeObra, TipoDeRedeterminaciones tipoDeRedeterminaciones,
-            @RequestParam String fechaPresentacionObra, HttpSession session, ModelMap map) throws ParseException {
+            @RequestParam String fechaPresentacionObra, @RequestParam String comitente, HttpSession session, ModelMap map) throws ParseException {
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         Date fecha1 = formato.parse(fechaDeContrato);
         Date fecha2 = formato.parse(fechaDeReeplanteo);
         Date fecha3 = formato.parse(fechaPresentacionObra);
         Obra obra = obraServicio.crearObra(nombre, fecha3, fecha1, fecha2,
-                porcentajeDeAnticipo, diasPlazoDeObra, tipoDeRedeterminaciones);
+                porcentajeDeAnticipo, diasPlazoDeObra, tipoDeRedeterminaciones, comitente);
         ClienteEmpresa clienteEmpresa = (ClienteEmpresa) session.getAttribute("usuariosession");
         clienteEmpresaServicio.guardarObra(obra, clienteEmpresa.getEmail());
         return "index.html";
