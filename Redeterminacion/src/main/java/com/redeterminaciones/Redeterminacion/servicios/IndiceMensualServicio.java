@@ -18,7 +18,7 @@ public class IndiceMensualServicio {
         IndiceMensual nuevo= new IndiceMensual();
         nuevo.setFecha(fecha);
         nuevo.setValor(valor);
-        //IOPfechaRepo.save(nuevo);
+        IOPfechaRepo.save(nuevo);
         return nuevo;
     }
 }

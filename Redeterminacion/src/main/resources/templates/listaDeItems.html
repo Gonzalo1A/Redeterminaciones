@@ -25,18 +25,51 @@
                                                     <span class="input-group-text">%</span>
                                                     <input type="text" class="form-control" id="indicePorcentaje" name="porcentajeFactor">
                                                         </div>
-                                            <button type="button" class="btn btn-primary" id="addInput">Agregar otro</button>
+                                                        <button type="button" class="btn btn-primary" id="addInput">Agregar otro</button>
                                                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Guardar</button>
                                                         </form>
                                                         </div>
                                                         </div>
                                                         </div>
                                                         </div>
+
+                                                        <div class="modal modal-sheet bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog" id="modalIOP">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content rounded-4 shadow">
+                                                                    <div class="modal-header p-5 pb-4 border-bottom-0">
+                                                                        <h1 class="fw-bold mb-0 fs-2">Incidencia Factor</h1>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body p-5 pt-0">
+                                                                        <form th:action="@{/obra/importIOP}" method="post" enctype="multipart/form-data">
+
+                                                                            <div class="form-floating mb-3">
+                                                                                <input type="file" class="form-control" id="listaIOP" name="fileExcel">
+                                                                                    <label for="fileExcel">Importe Exel</label>
+                                                                            </div>
+                                                                            <div class="col-12">
+                                                                                <button class="btn btn-primary" type="submit">Subir IOP</button>
+                                                                            </div>
+
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
                                                         <header th:replace="fragments/header"></header>
 
                                                         <div>
                                                             <a th:href="@{/obra/exportItem/__${obra.nombre}__}" class="btn btn-primary" tabindex="-1" role="button">Exportar Exel</a>
                                                             <a th:href="@{/obra/registrar/item/__${obra.nombre}__}" class="btn btn-primary" tabindex="-1" role="button">Importar Exel</a>
+                                                            <a th:href="@{/obra/exportIOP}" class="btn btn-primary" tabindex="-1" role="button">Exportar IOP</a>
+                                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalIOP">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                                                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                                                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                                                                </svg>
+                                                            </button>
                                                         </div> 
                                                         <div>
                                                             <table class="table table-striped">
@@ -59,7 +92,8 @@
                                                                         <td th:text="${item.cantidad}"></td>
                                                                         <td th:text="${item.precioUnitario}"></td>
                                                                         <td th:text="${item.subTotal}"></td>
-                                                                        <td th:text="${item.incidenciaItem}"><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalIncidenciaFactor">
+                                                                        <td th:text="${item.incidenciaItem}">
+                                                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalIncidenciaFactor">
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                                                                                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
                                                                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>

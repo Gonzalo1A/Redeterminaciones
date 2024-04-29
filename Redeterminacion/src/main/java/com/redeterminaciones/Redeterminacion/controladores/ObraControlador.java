@@ -14,6 +14,7 @@ import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import jakarta.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -85,7 +86,7 @@ public class ObraControlador {
     }
 
     @PostMapping("/cargarIncidendcia")
-    public String cargarIncidenciaFactor(@RequestParam String idItem, 
+    public String cargarIncidenciaFactor(@RequestParam String idItem,
             @RequestParam int numeroFactor, @RequestParam float porcentajeFactor) {
         IOP iop = iOPServicio.buscarIOP(numeroFactor);
         IncidenciaFactor inc = incidenciaFactorServicio.crearIncidenciaFactor(porcentajeFactor, iop);
@@ -97,15 +98,20 @@ public class ObraControlador {
     public ResponseEntity<InputStreamResource> elExportador(@PathVariable String nombre) throws Exception {
         ByteArrayInputStream stream = exelServicio.elExportador(nombre);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename="+nombre+" Items.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Items.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
+    @GetMapping("/registrar/item/{nombre}")
+    public String registrarItem(@PathVariable String nombre, ModelMap map) {
+        map.put("obra", obraServicio.buscarPorNombre(nombre));
+        return "formItem.html";
+    }
+
     @PostMapping("/importItem/{nombre}")
-    public String importar(@PathVariable String nombre, @RequestParam("fileExcel") MultipartFile fileExcel, HttpSession session) {
-        ClienteEmpresa clienteEmpresa = (ClienteEmpresa) session.getAttribute("usuariosession");
+    public String importar(@PathVariable String nombre, @RequestParam("fileExcel") MultipartFile fileExcel) {
         try {
-            List<Item> items = exelServicio.elImportador(fileExcel.getInputStream(), clienteEmpresa);
+            List<Item> items = exelServicio.elImportador(fileExcel.getInputStream());
             if (items != null && items.size() != 0) {
                 obraServicio.agregarItem(items, nombre);
             }
@@ -124,9 +130,17 @@ public class ObraControlador {
         return "obraView.html";
     }
 
-    @GetMapping("/registrar/item/{nombre}")
-    public String registrarItem(@PathVariable String nombre, ModelMap map) {
-        map.put("obra", obraServicio.buscarPorNombre(nombre));
-        return "formItem.html";
+    @PostMapping("/importIOP")
+    public String importarIOP(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException {
+        exelServicio.importarIOP(fileExcel.getInputStream());
+        return "redirect:/obra";
+    }
+
+    @GetMapping("/exportIOP")
+    public ResponseEntity<InputStreamResource> exportIOP() throws Exception {
+        ByteArrayInputStream stream = exelServicio.exportIOP();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=IOP-Cba.xlsx");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 }
