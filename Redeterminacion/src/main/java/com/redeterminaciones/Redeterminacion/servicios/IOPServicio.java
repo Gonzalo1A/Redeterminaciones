@@ -37,8 +37,8 @@ public class IOPServicio {
             Double valor = valores.get(i);
             tablas.add(fechaSer.crear(fecha, valor));
         }
-        iopRepo.save(factor);
         factor.setFechas(tablas);
+        iopRepo.save(factor);
     }
 
     public IOP buscarFactorPorNombre(String nombreFactor) {

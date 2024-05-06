@@ -81,7 +81,7 @@ public class ExelServicio {
                 if (celdaPrecioUnitario != null && celdaPrecioUnitario.getCellType() == CellType.NUMERIC) {
                     precioUnitario = celdaPrecioUnitario.getNumericCellValue();
                 }
-                if (numItem != "" && descripcion != "") {
+                if (!"".equals(numItem) && !"".equals(descripcion)) {
                     Item item = itemServi.crearItem(numItem, descripcion, unidad, cantidad, precioUnitario);
                     items.add(item);
                 }
@@ -200,11 +200,15 @@ public class ExelServicio {
         try (XSSFWorkbook libro = new XSSFWorkbook(); ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
             XSSFCellStyle estiloFechas = estiloEncabesados(libro);
             Sheet hoja = libro.createSheet("IOP-Cba");
-            
+
             /*Se ponen los titulos*/
             Row fila = hoja.createRow(0);
-            fila.createCell(0).setCellValue("Orden");
-            fila.createCell(1).setCellValue("Factor");
+            Cell celda = fila.createCell(0);
+            celda.setCellValue("Orden");
+            celda.setCellStyle(estiloFechas);
+            celda = fila.createCell(1);
+            celda.setCellValue("Factor");
+            celda.setCellStyle(estiloFechas);
 
             /*Traigo todos los indices y factores*/
             List<IOP> tabla = iopServicio.todosLosIndices();
@@ -230,6 +234,11 @@ public class ExelServicio {
                     fila.createCell(i + 2).setCellValue(fechasIndices.get(i).getValor());
                 }
                 inex++;
+
+            }
+            Row autoS = hoja.getRow(0);
+            for (Cell cell : autoS) {
+                hoja.autoSizeColumn(cell.getColumnIndex());
             }
             libro.write(stream);
             libro.close();
@@ -239,7 +248,7 @@ public class ExelServicio {
             throw e;
         }
     }
-    
+
     private XSSFCellStyle estiloEncabesados(XSSFWorkbook libro) {
         XSSFCellStyle estilo = libro.createCellStyle();
         estilo.setFillForegroundColor(IndexedColors.AQUA.getIndex());
