@@ -4,7 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Entity
@@ -12,10 +11,9 @@ import lombok.Data;
 public class IncidenciaFactor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    @OneToOne
-    private IOP indice;
+    private int indice;
     private Float porcentajeIncidencia;
 
 }
