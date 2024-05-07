@@ -1,20 +1,19 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
-import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
+import com.redeterminaciones.Redeterminacion.entidades.IndiceMensual;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -35,7 +34,7 @@ public class ExelServicio {
     @Autowired
     private IOPServicio iopServicio;
 
-    public List<Item> elImportador(InputStream archivo, ClienteEmpresa clienteEmpresa) throws Exception {
+    public List<Item> elImportador(InputStream archivo) throws Exception {
 //        try (InputStream input = new FileInputStream(archivo)) {
 //            XSSFWorkbook libro = new XSSFWorkbook(input);
         List<Item> items = new ArrayList<>();
@@ -82,12 +81,13 @@ public class ExelServicio {
                 if (celdaPrecioUnitario != null && celdaPrecioUnitario.getCellType() == CellType.NUMERIC) {
                     precioUnitario = celdaPrecioUnitario.getNumericCellValue();
                 }
-                if (numItem != "" && descripcion != "") {
+                if (!"".equals(numItem) && !"".equals(descripcion)) {
                     Item item = itemServi.crearItem(numItem, descripcion, unidad, cantidad, precioUnitario);
                     items.add(item);
                 }
             }
         }
+        libro.close();
         return items;
     }
 
@@ -153,9 +153,100 @@ public class ExelServicio {
             }
             libro.write(stream);
             libro.close();
-
         }
         return new ByteArrayInputStream(stream.toByteArray());
+    }
+
+    public void importarIOP(InputStream archivo) throws IOException {
+        try (XSSFWorkbook libro = new XSSFWorkbook(archivo)) {
+            Sheet hoja = libro.getSheetAt(0);
+            List<Date> fechasEncabesados = new ArrayList<>();
+
+            /*Registro y guardo los Factores*/
+            for (Row fila : hoja) {
+                Cell celda = fila.getCell(1);
+                if (fila.getRowNum() != 0) {
+                    String factor = celda.getStringCellValue();
+                    iopServicio.crearIOP(factor);
+                }
+            }
+            /*Se crea una lista con las fechas de los indices*/
+            Row fechas = hoja.getRow(0);
+            for (Cell celda : fechas) {
+                if (celda.getColumnIndex() != 0 && celda.getColumnIndex() != 1) {
+                    Date fecha = celda.getDateCellValue();
+                    fechasEncabesados.add(fecha);
+                }
+            }
+            /*Se crea una lista con los valores mensuales de los indices, se les asigna a sus factores con las fechas y se guarda en BDD*/
+            for (int i = 1; i <= hoja.getLastRowNum(); i++) {
+                Row filaActual = hoja.getRow(i);
+                List<Double> listaDeValores = new ArrayList<>();
+                for (Cell celda : filaActual) {
+                    if (celda.getColumnIndex() != 0 && celda.getColumnIndex() != 1) {
+                        Double valor = celda.getNumericCellValue();
+                        listaDeValores.add(valor);
+                    }
+                }
+                iopServicio.agregarPorExel(i, fechasEncabesados, listaDeValores);
+            }
+            libro.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ByteArrayInputStream exportIOP() throws IOException {
+        try (XSSFWorkbook libro = new XSSFWorkbook(); ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+            XSSFCellStyle estiloFechas = estiloEncabesados(libro);
+            Sheet hoja = libro.createSheet("IOP-Cba");
+
+            /*Se ponen los titulos*/
+            Row fila = hoja.createRow(0);
+            Cell celda = fila.createCell(0);
+            celda.setCellValue("Orden");
+            celda.setCellStyle(estiloFechas);
+            celda = fila.createCell(1);
+            celda.setCellValue("Factor");
+            celda.setCellStyle(estiloFechas);
+
+            /*Traigo todos los indices y factores*/
+            List<IOP> tabla = iopServicio.todosLosIndices();
+
+            /*Le doy todas las fechas registradas al excel*/
+            List<IndiceMensual> fechasIndices = tabla.get(0).getFechas();
+            Collections.sort(fechasIndices);
+            estiloFechas.setDataFormat(libro.createDataFormat().getFormat("MM-yyyy"));
+            for (int i = 0; i < fechasIndices.size(); i++) {
+                Cell fechaTitulo = fila.createCell(i + 2);
+                fechaTitulo.setCellValue(fechasIndices.get(i).getFecha());
+                fechaTitulo.setCellStyle(estiloFechas);
+            }
+            /*Traigo el orden y el nombre del factor y Le asigno los valores de los indidces a la tabla*/
+            int inex = 1;
+            for (IOP iop : tabla) {
+                fila = hoja.createRow(inex);
+                fila.createCell(0).setCellValue(iop.getId());
+                fila.createCell(1).setCellValue(iop.getNombreFactor());
+                fechasIndices = iop.getFechas();
+                Collections.sort(fechasIndices);
+                for (int i = 0; i < fechasIndices.size(); i++) {
+                    fila.createCell(i + 2).setCellValue(fechasIndices.get(i).getValor());
+                }
+                inex++;
+
+            }
+            Row autoS = hoja.getRow(0);
+            for (Cell cell : autoS) {
+                hoja.autoSizeColumn(cell.getColumnIndex());
+            }
+            libro.write(stream);
+            libro.close();
+            return new ByteArrayInputStream(stream.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     private XSSFCellStyle estiloEncabesados(XSSFWorkbook libro) {
@@ -188,44 +279,5 @@ public class ExelServicio {
         estilo.setDataFormat(libro.createDataFormat().getFormat("$#,##0_);($#,##0)"));
         return estilo;
 
-    }
-
-    private void importarIOP(InputStream archivo) throws IOException {
-        XSSFWorkbook libro = new XSSFWorkbook(archivo);
-        Sheet hoja = libro.getSheetAt(0);
-        List<Date> fechasEncabesados = null;
-        Iterator<Row> filas;
-        Iterator<Cell> columnas;
-        filas = hoja.rowIterator();
-        String factor;
-        Date fecha;
-        Double valor;
-        while (filas.hasNext()) {
-            Row fila = filas.next();
-            Cell celda = fila.getCell(1);
-            if (fila.getRowNum() != 0) {
-                factor = celda.getStringCellValue();
-                iopServicio.crearIOP(factor);
-            }
-        }
-        Row fechas = hoja.getRow(0);
-        columnas = fechas.cellIterator();
-        while (columnas.hasNext()) {
-            Cell celda = columnas.next();
-            if (celda.getColumnIndex() != 0 && celda.getColumnIndex() != 1) {
-                if (celda.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(celda)) {
-                    fecha = (Date) celda.getDateCellValue();
-                    fechasEncabesados.add(fecha);
-                }
-            }
-        }
-        List<IOP> indidices = iopServicio.todosLosIndices();
-        for (IOP indidice : indidices) {
-            Row fila = hoja.getRow(indidice.getId());
-            Cell celda;
-            for (Date fechaAhora : fechasEncabesados) {
-                
-            }
-        }
     }
 }
