@@ -56,15 +56,16 @@ public class ItemServicio {
     }
 
     @Transactional
-    public void calularIncidenciaItem(Obra obra, Double total) {
+    public void calularIncidenciaItem(Obra obra) {
+        Double total = Double.parseDouble(obra.getTotal());
         for (Item item : obra.getItems()) {
             item.setIncidenciaItem(total / item.getSubTotal());
             itemRepositorio.save(item);
         }
     }
-    
+
     @Transactional
-    public void agregarFactor(IncidenciaFactor incidencia,String idItem){
+    public void agregarFactor(IncidenciaFactor incidencia, String idItem) {
         Optional<Item> respuesta = itemRepositorio.findById(idItem);
         if (respuesta.isPresent()) {
             Item item = respuesta.get();

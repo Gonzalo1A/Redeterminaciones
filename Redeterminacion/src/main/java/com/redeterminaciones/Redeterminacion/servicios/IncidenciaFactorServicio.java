@@ -1,6 +1,5 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
-import com.redeterminaciones.Redeterminacion.entidades.IOP;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.repositorios.IncidenciaFactorRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ public class IncidenciaFactorServicio {
     @Autowired
     private IncidenciaFactorRepositorio incidenciaFactorRepositorio;
     
-    public IncidenciaFactor crearIncidenciaFactor(Float porcentaje, IOP factorReferencia) {
+    public IncidenciaFactor crearIncidenciaFactor(Float porcentaje, int factorReferencia) {
         IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
         incidenciaFactor.setIndice(factorReferencia);
         incidenciaFactor.setPorcentajeIncidencia(porcentaje);
@@ -20,7 +19,7 @@ public class IncidenciaFactorServicio {
         return incidenciaFactor;
     }
     
-    public void modificarIncidenciaFactor(Float porcentaje, IOP factorReferencia) {
+    public void modificarIncidenciaFactor(Float porcentaje, int factorReferencia) {
         IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
         incidenciaFactor.setIndice(factorReferencia);
         incidenciaFactor.setPorcentajeIncidencia(porcentaje);

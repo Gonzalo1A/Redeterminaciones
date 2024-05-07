@@ -67,7 +67,7 @@ public class ClienteEmpresaServicio {
 
     }
 
-    private void validarPasword(String password, String password2) throws RedeterminacionExcepcion { // Al cambiar la contraseña tiene que validarse 2 veces la nueva contraseña ingresada
+    private void validarPasword(String password, String password2) throws RedeterminacionExcepcion { // Al cambiar la contrasenia tiene que validarse 2 veces la nueva contrasebia ingresada
 
         if (password == null || password.trim().isEmpty()) {
             throw new RedeterminacionExcepcion("El password no puede ser nulo o estar vacio");

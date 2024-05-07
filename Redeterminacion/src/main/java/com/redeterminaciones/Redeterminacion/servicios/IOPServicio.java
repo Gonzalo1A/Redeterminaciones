@@ -40,6 +40,11 @@ public class IOPServicio {
         factor.setFechas(tablas);
         iopRepo.save(factor);
     }
+    
+    public String nombreDelFactor(int orden){
+        IOP nombre = iopRepo.getById(orden);
+        return nombre.getNombreFactor();
+    }
 
     public IOP buscarFactorPorNombre(String nombreFactor) {
         return iopRepo.buscarObraPorNombre(nombreFactor);
