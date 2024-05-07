@@ -11,7 +11,7 @@ import lombok.Data;
 public class IncidenciaFactor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private int indice;
     private Float porcentajeIncidencia;

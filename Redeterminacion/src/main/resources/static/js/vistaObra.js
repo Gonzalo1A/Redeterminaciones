@@ -1,21 +1,15 @@
-const myModal = document.getElementById('myModal')
-const myInput = document.getElementById('myInput')
 
-myModal.addEventListener('shown.bs.modal', () => {
-  myInput.focus()
-})
+document.addEventListener('DOMContentLoaded', function () {
+        // Obtener el botón que abre el modal
+        var modalButton = document.querySelector('[data-bs-target="#modalIncidenciaFactor"]');
 
-document.getElementById("addInput").addEventListener("click", function() {
-            // Clone the first input group
-            const originalInputGroup = document.querySelector(".input-group.mb-3");
-            const newInputGroup = originalInputGroup.cloneNode(true);
-
-            // Clear input values
-            const inputs = newInputGroup.querySelectorAll("input");
-            inputs.forEach(input => {
-                input.value = "";
-            });
-
-            // Append the cloned input group
-            document.querySelector(".container").appendChild(newInputGroup);
+        // Agregar un evento click al botón
+        modalButton.addEventListener('click', function (event) {
+            // Obtener el valor de item.id
+            var itemId = event.target.dataset.itemId;
+            console.log('Valor de item.id:', itemId);
+            // Asignar el valor de item.id al campo oculto en el formulario
+            document.getElementById('itemId').value = itemId;
         });
+    });
+    

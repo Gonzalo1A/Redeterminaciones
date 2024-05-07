@@ -86,11 +86,9 @@ public class ObraControlador {
     }
 
     @PostMapping("/cargarIncidendcia")
-    public String cargarIncidenciaFactor(@RequestParam String idItem,
-            @RequestParam int numeroFactor, @RequestParam float porcentajeFactor) {
-        IOP iop = iOPServicio.buscarIOP(numeroFactor);
-        IncidenciaFactor inc = incidenciaFactorServicio.crearIncidenciaFactor(porcentajeFactor, iop);
-        itemServicio.agregarFactor(inc, idItem);
+    public String cargarIncidenciaFactor(@RequestParam Long idItem,
+            @RequestParam String incidenciaFactor) {
+        itemServicio.agregarFactor(idItem, incidenciaFactorServicio.formatearValores(incidenciaFactor));
         return "listaDeItems.html";
     }
 

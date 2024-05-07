@@ -26,14 +26,6 @@ public class Item {
     private List<IncidenciaFactor> incidenciaFactores;
     private Double incidenciaItem;
 
-    /* @OneToOne
-    private Remanentes remanentes;
-
-    @OneToOne
-    private Factores factores;
-
-    @OneToOne
-    private Montos montos;*/
     public Item() {
     }
 
