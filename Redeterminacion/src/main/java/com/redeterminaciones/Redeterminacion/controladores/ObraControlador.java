@@ -110,8 +110,9 @@ public class ObraControlador {
     public String importar(@PathVariable String nombre, @RequestParam("fileExcel") MultipartFile fileExcel) {
         try {
             List<Item> items = exelServicio.elImportador(fileExcel.getInputStream());
-            if (items != null && items.size() != 0) {
+            if (items != null && !items.isEmpty()) {
                 obraServicio.agregarItem(items, nombre);
+                obraServicio.calcularTotal(nombre);
             }
             return "redirect:/obra/listaItems/{nombre}";
         } catch (Exception e) {
@@ -122,8 +123,8 @@ public class ObraControlador {
     @GetMapping("/computo&presupuesto/{nombre}")
     public String calculoCYP(@PathVariable String nombre, HttpSession session, ModelMap map) {
         Obra obra = obraServicio.buscarPorNombre(nombre);
-        Double total = obraServicio.calcularTotal(nombre);// deberia estar disponible al cargar los items
-        itemServicio.calularIncidenciaItem(obra, total);
+        obraServicio.calcularTotal(nombre);
+        itemServicio.calularIncidenciaItem(obra);
         map.addAttribute("items", obra.getItems());
         map.addAttribute("total", obra.getTotal());
         return "obraView.html";
@@ -140,6 +141,14 @@ public class ObraControlador {
         ByteArrayInputStream stream = exelServicio.exportIOP();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=IOP-Cba.xlsx");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
+    }
+    
+        @GetMapping("/exportPolinomica/{nombre}")
+    public ResponseEntity<InputStreamResource> polinomicaExcel(@PathVariable String nombre) throws Exception {
+        ByteArrayInputStream stream = exelServicio.polinomica(nombre);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Polinomica.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 }

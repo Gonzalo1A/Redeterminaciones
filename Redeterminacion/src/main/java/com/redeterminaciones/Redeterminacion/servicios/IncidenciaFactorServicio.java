@@ -1,6 +1,5 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
-import com.redeterminaciones.Redeterminacion.entidades.IOP;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.repositorios.IncidenciaFactorRepositorio;
 import java.util.ArrayList;
@@ -15,15 +14,18 @@ public class IncidenciaFactorServicio {
 
     @Autowired
     private IncidenciaFactorRepositorio incidenciaFactorRepositorio;
+
     private Pattern patron = Pattern.compile("(\\d+\\.\\d+)\\sX\\sF(\\d+)");
 
     public IncidenciaFactor crearIncidenciaFactor(int factorReferencia, float porcentaje) {
+
         IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
         incidenciaFactor.setIndice(factorReferencia);
         incidenciaFactor.setPorcentajeIncidencia(porcentaje);
         incidenciaFactorRepositorio.save(incidenciaFactor);
         return incidenciaFactor;
     }
+
 
     public List<IncidenciaFactor> formatearValores(String cadena) {
         List<IncidenciaFactor> listIncidencia = new ArrayList<>();
@@ -38,6 +40,7 @@ public class IncidenciaFactorServicio {
             listIncidencia.add(incFac);
         }
         return listIncidencia;
+
     }
 
 //    public void modificarIncidenciaFactor(Float porcentaje, IOP factorReferencia) {
