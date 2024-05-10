@@ -143,12 +143,21 @@ public class ObraControlador {
         headers.add("Content-Disposition", "attachment; filename=IOP-Cba.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
-    
-        @GetMapping("/exportPolinomica/{nombre}")
+
+    @GetMapping("/exportPolinomica/{nombre}")
     public ResponseEntity<InputStreamResource> polinomicaExcel(@PathVariable String nombre) throws Exception {
         ByteArrayInputStream stream = exelServicio.polinomica(nombre);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=" + nombre + " Polinomica.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
+
+    @GetMapping("/exportEstructuraDeCosto/{nombre}")
+    public ResponseEntity<InputStreamResource> costosExcel(@PathVariable String nombre) throws Exception {
+        ByteArrayInputStream stream = exelServicio.excelDeEstructutaDeCosto(nombre);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Estructura de costo.xlsx");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
+    }
+
 }

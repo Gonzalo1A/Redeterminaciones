@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import lombok.Data;
 
 @Entity
-@Data
 public class IncidenciaFactor {
 
     @Id
@@ -21,6 +20,30 @@ public class IncidenciaFactor {
     
     public IncidenciaFactor(int indice, Float porcentajeIncidencia) {
         this.indice = indice;
+        this.porcentajeIncidencia = porcentajeIncidencia;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getIndice() {
+        return indice;
+    }
+
+    public void setIndice(int indice) {
+        this.indice = indice;
+    }
+
+    public Float getPorcentajeIncidencia() {
+        return porcentajeIncidencia;
+    }
+
+    public void setPorcentajeIncidencia(Float porcentajeIncidencia) {
         this.porcentajeIncidencia = porcentajeIncidencia;
     }
 }

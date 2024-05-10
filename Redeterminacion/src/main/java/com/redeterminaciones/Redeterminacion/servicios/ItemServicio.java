@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ItemServicio {
-    
+
     @Autowired
     private ItemRepositorio itemRepositorio;
-    
+
     @Transactional
     public Item crearItem(String numeroItem, String descripcion, String unidad, Double cantidad, Double precioUnitario) {
         Item item = new Item();
-        
+
         item.setDescripcion(descripcion);
         item.setNumeroItem(numeroItem);
         item.setUnidad(unidad);
@@ -32,21 +32,21 @@ public class ItemServicio {
             resultado = (double) (Math.round(resultado * 10000)) / 10000;
             item.setSubTotal(resultado);
         }
-        
+
         itemRepositorio.save(item);
         return item;
     }
-    
+
     public List<Item> listarItems() {
         return itemRepositorio.findAll();
     }
-    
+
     @Transactional
     public void modificarItem(String idItem, String numeroItem, String descripcion, String unidad, Double cantidad) {
         Optional<Item> respuesta = itemRepositorio.findById(idItem);
         if (respuesta.isPresent()) {
             Item item = respuesta.get();
-            
+
             item.setDescripcion(descripcion);
             item.setNumeroItem(numeroItem);
             item.setUnidad(unidad);
@@ -54,13 +54,15 @@ public class ItemServicio {
             itemRepositorio.save(item);
         }
     }
-    
+
     @Transactional
     public void calularIncidenciaItem(Obra obra) {
         Double total = Double.parseDouble(obra.getTotal());
         for (Item item : obra.getItems()) {
-            item.setIncidenciaItem(total / item.getSubTotal());
-            itemRepositorio.save(item);
+            if (item.getSubTotal() != null) {
+                item.setIncidenciaItem(item.getSubTotal() / total);
+                itemRepositorio.save(item);
+            }
         }
     }
 
@@ -73,19 +75,19 @@ public class ItemServicio {
             itemRepositorio.save(item);
         }
     }
-    
+
     public Item getOne(String id) {
         return itemRepositorio.getOne(id);
     }
-    
+
     @Transactional
     public void eliminarItem(String id) {
         itemRepositorio.deleteById(id);
     }
-    
+
     public List<Item> getAll() {
         List<Item> todos = itemRepositorio.findAll();
         return todos;
     }
-    
+
 }
