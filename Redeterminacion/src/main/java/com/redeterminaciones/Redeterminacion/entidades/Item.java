@@ -26,7 +26,4 @@ public class Item {
     private List<IncidenciaFactor> incidenciaFactores;
     private Double incidenciaItem;
 
-    public Item() {
-    }
-
 }
