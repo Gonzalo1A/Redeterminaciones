@@ -36,6 +36,8 @@ public class ExelServicio {
     private ObraServicio obraServicio;
     @Autowired
     private IOPServicio iopServicio;
+    @Autowired
+    private IncidenciaFactorServicio incidenciaFactorServicio;
 
     public List<Item> elImportador(InputStream archivo) throws Exception {
         List<Item> items = new ArrayList<>();
@@ -248,140 +250,6 @@ public class ExelServicio {
         }
     }
 
-    public ByteArrayInputStream polinomica(String nombreObra) throws IOException {
-        try (XSSFWorkbook libro = new XSSFWorkbook(); ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-            Sheet hoja = libro.createSheet("Polinomica");
-            Row fila = hoja.createRow(0);
-            /*Nnum= Ordende Factor / Factor= Nombre del factor / Ponderador = (% de inc factor * % inc Item) / Monto = sum(% de inc factor * subtotal)*/
-            XSSFCellStyle estiloTitulo = estiloEncabesados(libro);
-            Cell celdaTitular = fila.createCell(0);
-            celdaTitular.setCellValue("Num");
-            celdaTitular.setCellStyle(estiloTitulo);
-            celdaTitular = fila.createCell(1);
-            celdaTitular.setCellValue("Factor");
-            celdaTitular.setCellStyle(estiloTitulo);
-            celdaTitular = fila.createCell(2);
-            celdaTitular.setCellValue("Ponderador");
-            celdaTitular.setCellStyle(estiloTitulo);
-            celdaTitular = fila.createCell(3);
-            celdaTitular.setCellValue("Monto Total");
-            celdaTitular.setCellStyle(estiloTitulo);
-            XSSFCellStyle estiloDatos = estiloDatos(libro);
-            XSSFCellStyle estiloPorcentaje = estiloPorcentual(libro);
-            XSSFCellStyle estiloMonto = estiloMoneda(libro);
-            XSSFCellStyle estiloOrden = estiloDatos(libro);
-            estiloOrden.setDataFormat(libro.createDataFormat().getFormat("0"));
-            estiloOrden.setAlignment(HorizontalAlignment.CENTER);
-            IncidenciaFactor factor1 = new IncidenciaFactor(1, 0.4f);
-            IncidenciaFactor factor2 = new IncidenciaFactor(2, 0.2f);
-            IncidenciaFactor factor3 = new IncidenciaFactor(3, 0.4f);
-
-            IncidenciaFactor factor11 = new IncidenciaFactor(11, 0.5f);
-            IncidenciaFactor factor13 = new IncidenciaFactor(13, 0.5f);
-
-            IncidenciaFactor factor14 = new IncidenciaFactor(2, 0.2f);
-            IncidenciaFactor factor15 = new IncidenciaFactor(3, 0.5f);
-            IncidenciaFactor factor20 = new IncidenciaFactor(20, 0.2f);
-            IncidenciaFactor factor21 = new IncidenciaFactor(21, 0.1f);
-
-            IncidenciaFactor factor33 = new IncidenciaFactor(1, 0.4f);
-            IncidenciaFactor factor45 = new IncidenciaFactor(45, 0.6f);
-
-            List<IncidenciaFactor> incFax = new ArrayList<>();
-            List<IncidenciaFactor> incFax2 = new ArrayList<>();
-            List<IncidenciaFactor> incFax3 = new ArrayList<>();
-            List<IncidenciaFactor> incFax4 = new ArrayList<>();
-
-            incFax.add(factor1);
-            incFax.add(factor2);
-            incFax.add(factor3);
-            incFax2.add(factor11);
-            incFax2.add(factor13);
-            incFax3.add(factor14);
-            incFax3.add(factor15);
-            incFax3.add(factor20);
-            incFax3.add(factor21);
-            incFax4.add(factor33);
-            incFax4.add(factor45);
-
-            /*Traigo todos los items de la obra*/
-            itemServi.calularIncidenciaItem(obraServicio.buscarPorNombre(nombreObra));
-            List<Item> items = obraServicio.buscarPorNombre(nombreObra).getItems();
-            List<IOP> indices = iopServicio.todosLosIndices();
-            items.get(1).setIncidenciaFactores(incFax);
-            items.get(2).setIncidenciaFactores(incFax4);
-            items.get(3).setIncidenciaFactores(incFax2);
-            items.get(4).setIncidenciaFactores(incFax3);
-            items.get(5).setIncidenciaFactores(incFax3);
-            items.get(6).setIncidenciaFactores(incFax3);
-            items.get(7).setIncidenciaFactores(incFax3);
-            items.get(8).setIncidenciaFactores(incFax3);
-            items.get(9).setIncidenciaFactores(incFax3);
-            int coordenadaFila = 1;
-            double sumaDelPorc = 0;
-            for (IOP indice : indices) {
-                fila = hoja.createRow(coordenadaFila);
-                int orden = indice.getId();
-                String factorNombre = indice.getNombreFactor();
-                double ponderador = 0;
-                double ponderadorTotal = 0;
-                double montoTotalFactor = 0;
-                for (Item item : items) {
-                    List<IncidenciaFactor> factores = item.getIncidenciaFactores();
-                    for (IncidenciaFactor incFactor : factores) {
-                        if (incFactor.getIndice() == orden && item.getIncidenciaFactores() != null) {
-                            ponderador = item.getIncidenciaItem() * incFactor.getPorcentajeIncidencia();
-                            ponderadorTotal = ponderadorTotal + ponderador;
-                            montoTotalFactor = montoTotalFactor + (incFactor.getPorcentajeIncidencia() * item.getSubTotal());
-                            break;
-                        }
-                    }
-                }
-                if (ponderador != 0) {
-                    /*Orden*/
-                    Cell celda = fila.createCell(0);
-                    celda.setCellValue(orden);
-                    celda.setCellStyle(estiloOrden);
-                    /*Factor*/
-                    celda = fila.createCell(1);
-                    celda.setCellValue(factorNombre);
-                    celda.setCellStyle(estiloDatos);
-                    /*Ponderador*/
-                    celda = fila.createCell(2);
-                    celda.setCellValue(ponderadorTotal);
-                    celda.setCellStyle(estiloPorcentaje);
-                    /*Monto Total*/
-                    celda = fila.createCell(3);
-                    celda.setCellValue(montoTotalFactor);
-                    celda.setCellStyle(estiloMonto);
-                    /*Muevo la coordenada de la fila a la siguiente*/
-                    sumaDelPorc += ponderadorTotal;
-                    coordenadaFila++;
-                }
-            }
-            fila = hoja.createRow(coordenadaFila);
-            celdaTitular = fila.createCell(2);
-            celdaTitular.setCellValue(sumaDelPorc);
-            celdaTitular.setCellStyle(estiloPorcentaje);
-            celdaTitular = fila.createCell(1);
-            celdaTitular.setCellValue("TOTALES");
-            celdaTitular.setCellStyle(estiloTitulo);
-            celdaTitular = fila.createCell(3);
-            celdaTitular.setCellValue(Double.parseDouble(obraServicio.buscarPorNombre(nombreObra).getTotal()));
-            celdaTitular.setCellStyle(estiloMonto);
-            for (int i = 1; i < 3; i++) {
-                hoja.autoSizeColumn(i);
-            }
-            libro.write(stream);
-            libro.close();
-            return new ByteArrayInputStream(stream.toByteArray());
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
-        }
-
-    }
-
     public ByteArrayInputStream excelDeEstructutaDeCosto(String nombreObra) throws Exception {
         String[] columnas = {"Nro", "DESCRIPCION", "UNIDAD", "CANTIDAD", "PRECIO UNITARIO", "PRECIO", "%INC", "FACTORES"};
         ByteArrayOutputStream stream;
@@ -391,50 +259,8 @@ public class ExelServicio {
             stream = new ByteArrayOutputStream();
             Sheet hoja = libro.createSheet("Estructuras de Costo");
             Row fila = hoja.createRow(0);
-
             XSSFCellStyle estiloDatos = estiloDatos(libro);
             XSSFCellStyle estiloMoneda = estiloMoneda(libro);
-
-            IncidenciaFactor factor1 = new IncidenciaFactor(1, 0.4f);
-            IncidenciaFactor factor2 = new IncidenciaFactor(2, 0.2f);
-            IncidenciaFactor factor3 = new IncidenciaFactor(3, 0.4f);
-
-            IncidenciaFactor factor11 = new IncidenciaFactor(11, 0.5f);
-            IncidenciaFactor factor13 = new IncidenciaFactor(13, 0.5f);
-
-            IncidenciaFactor factor14 = new IncidenciaFactor(2, 0.2f);
-            IncidenciaFactor factor15 = new IncidenciaFactor(3, 0.5f);
-            IncidenciaFactor factor20 = new IncidenciaFactor(20, 0.2f);
-            IncidenciaFactor factor21 = new IncidenciaFactor(21, 0.1f);
-
-            IncidenciaFactor factor33 = new IncidenciaFactor(1, 0.4f);
-            IncidenciaFactor factor45 = new IncidenciaFactor(45, 0.6f);
-
-            List<IncidenciaFactor> incFax = new ArrayList<>();
-            List<IncidenciaFactor> incFax2 = new ArrayList<>();
-            List<IncidenciaFactor> incFax3 = new ArrayList<>();
-            List<IncidenciaFactor> incFax4 = new ArrayList<>();
-            incFax.add(factor1);
-            incFax.add(factor2);
-            incFax.add(factor3);
-            incFax2.add(factor11);
-            incFax2.add(factor13);
-            incFax3.add(factor14);
-            incFax3.add(factor15);
-            incFax3.add(factor20);
-            incFax3.add(factor21);
-            incFax4.add(factor33);
-            incFax4.add(factor45);
-            todos.get(1).setIncidenciaFactores(incFax);
-            todos.get(2).setIncidenciaFactores(incFax4);
-            todos.get(3).setIncidenciaFactores(incFax2);
-            todos.get(4).setIncidenciaFactores(incFax3);
-            todos.get(5).setIncidenciaFactores(incFax3);
-            todos.get(6).setIncidenciaFactores(incFax3);
-            todos.get(7).setIncidenciaFactores(incFax3);
-            todos.get(8).setIncidenciaFactores(incFax3);
-            todos.get(9).setIncidenciaFactores(incFax3);
-
             for (int i = 0; i < columnas.length; i++) {
                 Cell celda = fila.createCell(i);
                 celda.setCellValue(columnas[i]);
@@ -454,14 +280,7 @@ public class ExelServicio {
                 descripcion.setCellStyle(estiloDatos);
 
                 Cell unidad = fila.createCell(2);
-                switch (item.getUnidad().toUpperCase()) {
-                    case "GLOBAL" -> unidad.setCellValue("GLB");
-                    case "METROS" -> unidad.setCellValue("m");
-                    case "METROS CUADRADOS" -> unidad.setCellValue("m2");
-                    case "METROS CUBICOS" -> unidad.setCellValue("m3");
-                    case "UNIDAD" -> unidad.setCellValue("UN");
-                    default -> unidad.setCellValue(item.getUnidad());
-                }
+                unidad.setCellValue(item.getUnidad());
                 unidad.setCellStyle(estiloDatos);
 
                 if (item.getCantidad() != null && item.getPrecioUnitario() != null && item.getSubTotal() != null) {
@@ -515,10 +334,220 @@ public class ExelServicio {
             for (int i = 0; i < columnas.length; i++) {
                 hoja.autoSizeColumn(i);
             }
+
+            Sheet hojaPolinomica = libro.createSheet("Polinomica");
+            Row filaPolin = hojaPolinomica.createRow(0);
+            /*Nnum= Ordende Factor / Factor= Nombre del factor / Ponderador = (% de inc factor * % inc Item) / Monto = sum(% de inc factor * subtotal)*/
+            XSSFCellStyle estiloTitulo = estiloEncabesados(libro);
+            Cell celdaTitular = filaPolin.createCell(0);
+            celdaTitular.setCellValue("Num");
+            celdaTitular.setCellStyle(estiloTitulo);
+            celdaTitular = filaPolin.createCell(1);
+            celdaTitular.setCellValue("Factor");
+            celdaTitular.setCellStyle(estiloTitulo);
+            celdaTitular = filaPolin.createCell(2);
+            celdaTitular.setCellValue("Ponderador");
+            celdaTitular.setCellStyle(estiloTitulo);
+            celdaTitular = filaPolin.createCell(3);
+            celdaTitular.setCellValue("Monto Total");
+            celdaTitular.setCellStyle(estiloTitulo);
+
+            XSSFCellStyle estiloPorcentaje = estiloPorcentual(libro);
+            XSSFCellStyle estiloMonto = estiloMoneda(libro);
+            XSSFCellStyle estiloOrden = estiloDatos(libro);
+            estiloOrden.setDataFormat(libro.createDataFormat().getFormat("0"));
+            estiloOrden.setAlignment(HorizontalAlignment.CENTER);
+            /*Traigo todos los todos de la obra*/
+            itemServi.calularIncidenciaItem(obraServicio.buscarPorNombre(nombreObra));
+            List<IOP> indices = iopServicio.todosLosIndices();
+            int coordenadaFila = 1;
+            double sumaDelPorc = 0;
+            for (IOP indice : indices) {
+                filaPolin = hojaPolinomica.createRow(coordenadaFila);
+                int orden = indice.getId();
+                String factorNombre = indice.getNombreFactor();
+                double ponderador = 0;
+                double ponderadorTotal = 0;
+                double montoTotalFactor = 0;
+                for (Item item : todos) {
+                    List<IncidenciaFactor> factores = item.getIncidenciaFactores();
+                    if (!factores.isEmpty()) {
+                        for (IncidenciaFactor incFactor : factores) {
+                            if (incFactor.getIndice() == orden) {
+                                ponderador = item.getIncidenciaItem() * incFactor.getPorcentajeIncidencia();
+                                ponderadorTotal = ponderadorTotal + ponderador;
+                                montoTotalFactor = montoTotalFactor + (incFactor.getPorcentajeIncidencia() * item.getSubTotal());
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (ponderador != 0) {
+                    /*Orden*/
+                    Cell celda = filaPolin.createCell(0);
+                    celda.setCellValue(orden);
+                    celda.setCellStyle(estiloOrden);
+                    /*Factor*/
+                    celda = filaPolin.createCell(1);
+                    celda.setCellValue(factorNombre);
+                    celda.setCellStyle(estiloDatos);
+                    /*Ponderador*/
+                    celda = filaPolin.createCell(2);
+                    celda.setCellValue(ponderadorTotal);
+                    celda.setCellStyle(estiloPorcentaje);
+                    /*Monto Total*/
+                    celda = filaPolin.createCell(3);
+                    celda.setCellValue(montoTotalFactor);
+                    celda.setCellStyle(estiloMonto);
+                    /*Muevo la coordenada de la filaPolin a la siguiente*/
+                    sumaDelPorc += ponderadorTotal;
+                    sumaDelPorc += ponderadorTotal;
+                    coordenadaFila++;
+                }
+            }
+            filaPolin = hojaPolinomica.createRow(coordenadaFila);
+            celdaTitular = filaPolin.createCell(0);
+            celdaTitular.setCellStyle(estiloTitulo);
+            celdaTitular = filaPolin.createCell(1);
+            celdaTitular.setCellValue("TOTALES");
+            celdaTitular.setCellStyle(estiloTitulo);
+            CellRangeAddress rango = new CellRangeAddress(coordenadaRow, coordenadaRow, 0, 1);
+            hoja.addMergedRegion(rango);
+
+            celdaTitular = filaPolin.createCell(2);
+            celdaTitular.setCellValue(sumaDelPorc);
+            celdaTitular.setCellStyle(estiloPorcentaje);
+
+            celdaTitular = filaPolin.createCell(3);
+            celdaTitular.setCellValue(Double.parseDouble(obraServicio.buscarPorNombre(nombreObra).getTotal()));
+            celdaTitular.setCellStyle(estiloMonto);
+
             libro.write(stream);
             libro.close();
+            return new ByteArrayInputStream(stream.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public ByteArrayInputStream incidenciaFactoresExcel(String nombreObra) throws Exception {
+        String[] columnas = {"ID", "Nro", "DESCRIPCION", "UNIDAD", "CANTIDAD", "PRECIO UNITARIO", "PRECIO", "%INC", "FACTORES"};
+        List<Item> todos = obraServicio.buscarPorNombre(nombreObra).getItems();
+        ByteArrayOutputStream stream;
+        try (XSSFWorkbook libro = new XSSFWorkbook()) {
+            stream = new ByteArrayOutputStream();
+            Sheet hoja = libro.createSheet("Ingreso de inc de Factores");
+            Row fila = hoja.createRow(0);
+            XSSFCellStyle estiloDatos = estiloDatos(libro);
+            XSSFCellStyle estiloMoneda = estiloMoneda(libro);
+
+            for (int i = 0; i < columnas.length; i++) {
+                Cell celda = fila.createCell(i);
+                celda.setCellValue(columnas[i]);
+                celda.setCellStyle(estiloEncabesados(libro));
+                hoja.autoSizeColumn(i);
+            }
+            int coordenadaRow = 1;
+            for (Item item : todos) {
+                fila = hoja.createRow(coordenadaRow);
+
+                Cell id = fila.createCell(0);
+                id.setCellValue(item.getId());
+
+                Cell numItem = fila.createCell(1);
+                numItem.setCellValue(item.getNumeroItem());
+                numItem.setCellStyle(estiloDatos);
+
+                Cell descripcion = fila.createCell(2);
+                descripcion.setCellValue(item.getDescripcion());
+                descripcion.setCellStyle(estiloDatos);
+
+                Cell unidad = fila.createCell(3);
+                unidad.setCellValue(item.getUnidad());
+                unidad.setCellStyle(estiloDatos);
+
+                if (item.getCantidad() != null && item.getPrecioUnitario() != null && item.getSubTotal() != null) {
+                    Cell cantidad = fila.createCell(4);
+                    cantidad.setCellValue(item.getCantidad());
+                    cantidad.setCellStyle(estiloDatos);
+
+                    Cell precioUn = fila.createCell(5);
+                    precioUn.setCellValue(item.getPrecioUnitario());
+                    precioUn.setCellStyle(estiloMoneda);
+
+                    Cell subTotal = fila.createCell(6);
+                    subTotal.setCellValue(item.getSubTotal());
+                    subTotal.setCellStyle(estiloMoneda);
+
+                    Cell incidencia = fila.createCell(7);
+                    incidencia.setCellValue(item.getIncidenciaItem());
+                    incidencia.setCellStyle(estiloDatos);
+
+                    String cadendaDeFactores = "";
+                    List<IncidenciaFactor> factores = item.getIncidenciaFactores();
+                    if (!factores.isEmpty()) {
+                        for (int i = 0; i < factores.size(); i++) {
+                            IncidenciaFactor factor = factores.get(i);
+                            cadendaDeFactores += factor.getPorcentajeIncidencia().toString() + "xF" + factor.getIndice();
+                            if (i != factores.size() - 1) {
+                                cadendaDeFactores += " + ";
+                            }
+                        }
+                        Cell incFactores = fila.createCell(8);
+                        incFactores.setCellValue(cadendaDeFactores);
+                        incFactores.setCellStyle(estiloDatos);
+                    }
+                } else {
+                    CellRangeAddress rango = new CellRangeAddress(coordenadaRow, coordenadaRow, 3, 8);
+                    for (int i = rango.getFirstColumn(); i <= rango.getLastColumn(); i++) {
+                        Cell celdaRango = fila.createCell(i);
+                        celdaRango.setCellStyle(estiloDatos);
+                    }
+                    hoja.addMergedRegion(rango);
+                }
+                coordenadaRow++;
+            }
+            fila = hoja.createRow(coordenadaRow);
+            Cell celdaText = fila.createCell(5);
+            celdaText.setCellValue("Total:");
+            celdaText.setCellStyle(estiloDatos);
+            Cell total = fila.createCell(6);
+            total.setCellValue(Double.parseDouble(obraServicio.buscarPorNombre(nombreObra).getTotal()));
+            total.setCellStyle(estiloMoneda);
+            for (int i = 0; i < columnas.length; i++) {
+                hoja.autoSizeColumn(i);
+            }
+            libro.write(stream);
+            libro.close();
+
         }
         return new ByteArrayInputStream(stream.toByteArray());
+    }
+
+    public void importarFactoresDeItemsPorExcel(InputStream archivo) throws IOException {
+        try (XSSFWorkbook libro = new XSSFWorkbook(archivo)) {
+            Sheet hoja = libro.getSheetAt(0);
+            for (int i = 1; i <= hoja.getLastRowNum(); i++) {
+                Row fila = hoja.getRow(i);
+                String factores = null;
+                Long id = null;
+                Cell celda = fila.getCell(0);
+                if (celda != null && celda.getCellType() == CellType.NUMERIC) {
+                    id = (long) celda.getNumericCellValue();
+                    celda = fila.getCell(8);
+                    if (celda != null && celda.getCellType() == CellType.STRING) {
+                        factores = celda.getStringCellValue();
+                    }
+                }
+                System.out.println(id + "       " + factores);
+                if (factores != null) {
+                    List<IncidenciaFactor> incidencias = incidenciaFactorServicio.formatearValores(factores);
+                    itemServi.agregarFactor(id, incidencias);
+                }
+            }
+        } catch (IOException e) {
+        }
     }
 
     private XSSFCellStyle estiloEncabesados(XSSFWorkbook libro) {

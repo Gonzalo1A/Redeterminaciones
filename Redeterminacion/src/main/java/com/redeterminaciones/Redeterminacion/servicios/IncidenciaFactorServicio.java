@@ -2,6 +2,7 @@ package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.repositorios.IncidenciaFactorRepositorio;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,8 +15,9 @@ public class IncidenciaFactorServicio {
 
     @Autowired
     private IncidenciaFactorRepositorio incidenciaFactorRepositorio;
-    private Pattern patron = Pattern.compile("(\\d+\\.\\d+)\\sX\\sF(\\d+)");
+    private final Pattern patron = Pattern.compile("(\\d+\\.\\d+)\\sX\\sF(\\d+)");
 
+    @Transactional
     public IncidenciaFactor crearIncidenciaFactor(int factorReferencia, float porcentaje) {
         IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
         incidenciaFactor.setIndice(factorReferencia);
@@ -24,6 +26,7 @@ public class IncidenciaFactorServicio {
         return incidenciaFactor;
     }
 
+    @Transactional
     public List<IncidenciaFactor> formatearValores(String cadena) {
         List<IncidenciaFactor> listIncidencia = new ArrayList<>();
         Matcher matcher = patron.matcher(cadena);

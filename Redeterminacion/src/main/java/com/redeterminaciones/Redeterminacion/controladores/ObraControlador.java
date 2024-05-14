@@ -1,8 +1,6 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
-import com.redeterminaciones.Redeterminacion.entidades.IOP;
-import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
@@ -144,11 +142,11 @@ public class ObraControlador {
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
-    @GetMapping("/exportPolinomica/{nombre}")
-    public ResponseEntity<InputStreamResource> polinomicaExcel(@PathVariable String nombre) throws Exception {
-        ByteArrayInputStream stream = exelServicio.polinomica(nombre);
+    @GetMapping("/exportIncidenciaFactor/{nombre}")
+    public ResponseEntity<InputStreamResource> incidenciaFactoresExcel(@PathVariable String nombre) throws Exception {
+        ByteArrayInputStream stream = exelServicio.incidenciaFactoresExcel(nombre);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Polinomica.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Factorizar.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
@@ -160,4 +158,9 @@ public class ObraControlador {
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
+    @PostMapping("/importFactoresExcel")
+    public String importarFactoresExcel(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException {
+        exelServicio.importarFactoresDeItemsPorExcel(fileExcel.getInputStream());
+        return "redirect:/obra";
+    }
 }
