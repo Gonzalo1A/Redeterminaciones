@@ -16,11 +16,11 @@ public class IncidenciaFactorServicio {
     @Autowired
     private IncidenciaFactorRepositorio incidenciaFactorRepositorio;
 
+
     private final Pattern patron = Pattern.compile("(\\d+\\.\\d+)\\sX\\sF(\\d+)");
 
     @Transactional
     public IncidenciaFactor crearIncidenciaFactor(int factorReferencia, float porcentaje) {
-
         IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
         incidenciaFactor.setIndice(factorReferencia);
         incidenciaFactor.setPorcentajeIncidencia(porcentaje);
@@ -28,6 +28,7 @@ public class IncidenciaFactorServicio {
         return incidenciaFactor;
     }
 
+    @Transactional
     public List<IncidenciaFactor> formatearValores(String cadena) {
         List<IncidenciaFactor> listIncidencia = new ArrayList<>();
         Matcher matcher = patron.matcher(cadena);

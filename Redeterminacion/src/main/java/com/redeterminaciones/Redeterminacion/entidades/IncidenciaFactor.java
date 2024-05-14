@@ -16,8 +16,4 @@ public class IncidenciaFactor {
     private int indice;
     private Float porcentajeIncidencia;
 
-    public IncidenciaFactor() {
-    }
-    
-   
 }
