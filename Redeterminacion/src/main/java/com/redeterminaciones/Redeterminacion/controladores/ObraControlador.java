@@ -80,7 +80,6 @@ public class ObraControlador {
     public String listasDeItems(@PathVariable String nombre, ModelMap map) {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         map.addAttribute("obra", obra);
-        map.addAttribute("nombreObra", obra.getNombre());
         if (obra.getItems() != null) {
             map.addAttribute("items", obra.getItems());
         }
@@ -120,6 +119,7 @@ public class ObraControlador {
             if (items != null && !items.isEmpty()) {
                 obraServicio.agregarItem(items, nombre);
                 obraServicio.calcularTotal(nombre);
+                itemServicio.calularIncidenciaItem(obraServicio.buscarPorNombre(nombre));
             }
             return "redirect:/obra/listaItems/{nombre}";
         } catch (Exception e) {
@@ -131,7 +131,6 @@ public class ObraControlador {
     public String calculoCYP(@PathVariable String nombre, HttpSession session, ModelMap map) {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         obraServicio.calcularTotal(nombre);
-        itemServicio.calularIncidenciaItem(obra);
         map.addAttribute("items", obra.getItems());
         map.addAttribute("total", obra.getTotal());
         return "obraView.html";
