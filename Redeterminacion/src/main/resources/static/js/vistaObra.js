@@ -6,25 +6,32 @@ $(document).ready(function () {
     });
 });
 
-function saveFactor(element) {
-    var itemId = $(element).attr('id'); // Obtiene el ID del elemento
-    var factorValue = $(element).val(); // Obtiene el valor del campo de entrada
-
-    // Envía los datos al controlador mediante AJAX
-    $.ajax({
-        url: '/obra/cargarIncidendcia', // Ruta del controlador
-        type: 'POST', // Método HTTP
-        data: {
-            idItem: itemId,
-            incidenciaFactor: factorValue
-        }, // Datos a enviar
-        success: function (response) {
-            // Maneja la respuesta del servidor
-            console.log('Valor de incidencia de factor guardado exitosamente');
-        },
-        error: function (xhr, status, error) {
-            // Maneja los errores
-            console.error('Error al guardar el valor de incidencia de factor:', error);
-        }
+function obtenerDatosInputs() {
+    var listaInputs = []; // Lista para almacenar los datos de los inputs
+    // Selecciona todos los inputs con la clase 'factor-input'
+    var inputs = document.querySelectorAll('.factor-input');
+    
+    inputs.forEach(function(input) {
+        var id = input.getAttribute('id'); // Obtén el ID del atributo th:data-name
+        var valor = input.value; // Obtén el valor del input
+        listaInputs.push({itemId: id, incidencia: valor}); // Agrega el ID y el valor a la lista
     });
+    
+    return listaInputs; // Devuelve la lista de datos
+}
+function guardarDatos() {
+    var listaDatos = obtenerDatosInputs(); // Obtiene la lista de datos de los inputs
+    var nombreObra = document.getElementById('guardarDatosBtn').getAttribute('data-name'); // Obtén el nombre de la obra
+    
+    // Realiza una solicitud AJAX al backend para enviar la lista de datos y el nombre de la obra
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/obra/cargarIncidencia", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // Hacer algo después de que se ha completado la solicitud
+        }
+    };
+    var data = JSON.stringify({nombreObra: nombreObra, listaDatos: listaDatos});
+    xhr.send(data);
 }

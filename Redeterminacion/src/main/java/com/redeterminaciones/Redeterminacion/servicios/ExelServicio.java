@@ -260,44 +260,44 @@ public class ExelServicio {
             fila.createCell(2).setCellValue("Ponderador");
             fila.createCell(3).setCellValue("Monto Total");
             
-            IncidenciaFactor factor1 = new IncidenciaFactor(1, 0.4f);
-            IncidenciaFactor factor2 = new IncidenciaFactor(2, 0.2f);
-            IncidenciaFactor factor3 = new IncidenciaFactor(3, 0.4f);
-
-            IncidenciaFactor factor11 = new IncidenciaFactor(11, 0.5f);
-            IncidenciaFactor factor13 = new IncidenciaFactor(13, 0.5f);
-
-            IncidenciaFactor factor14 = new IncidenciaFactor(2, 0.2f);
-            IncidenciaFactor factor15 = new IncidenciaFactor(3, 0.5f);
-            IncidenciaFactor factor20 = new IncidenciaFactor(20, 0.2f);
-            IncidenciaFactor factor21 = new IncidenciaFactor(21, 0.1f);
-
-            IncidenciaFactor factor33 = new IncidenciaFactor(1, 0.4f);
-            IncidenciaFactor factor45 = new IncidenciaFactor(45, 0.6f);
-
-            List<IncidenciaFactor> incFax = new ArrayList<>();
-            List<IncidenciaFactor> incFax2 = new ArrayList<>();
-            List<IncidenciaFactor> incFax3 = new ArrayList<>();
-            List<IncidenciaFactor> incFax4 = new ArrayList<>();
-            incFax.add(factor1);
-            incFax.add(factor2);
-            incFax.add(factor3);
-            incFax2.add(factor11);
-            incFax2.add(factor13);
-            incFax3.add(factor14);
-            incFax3.add(factor15);
-            incFax3.add(factor20);
-            incFax3.add(factor21);
-            incFax4.add(factor33);
-            incFax4.add(factor45);
+//            IncidenciaFactor factor1 = new IncidenciaFactor(1, 0.4f);
+//            IncidenciaFactor factor2 = new IncidenciaFactor(2, 0.2f);
+//            IncidenciaFactor factor3 = new IncidenciaFactor(3, 0.4f);
+//
+//            IncidenciaFactor factor11 = new IncidenciaFactor(11, 0.5f);
+//            IncidenciaFactor factor13 = new IncidenciaFactor(13, 0.5f);
+//
+//            IncidenciaFactor factor14 = new IncidenciaFactor(2, 0.2f);
+//            IncidenciaFactor factor15 = new IncidenciaFactor(3, 0.5f);
+//            IncidenciaFactor factor20 = new IncidenciaFactor(20, 0.2f);
+//            IncidenciaFactor factor21 = new IncidenciaFactor(21, 0.1f);
+//
+//            IncidenciaFactor factor33 = new IncidenciaFactor(1, 0.4f);
+//            IncidenciaFactor factor45 = new IncidenciaFactor(45, 0.6f);
+//
+//            List<IncidenciaFactor> incFax = new ArrayList<>();
+//            List<IncidenciaFactor> incFax2 = new ArrayList<>();
+//            List<IncidenciaFactor> incFax3 = new ArrayList<>();
+//            List<IncidenciaFactor> incFax4 = new ArrayList<>();
+//            incFax.add(factor1);
+//            incFax.add(factor2);
+//            incFax.add(factor3);
+//            incFax2.add(factor11);
+//            incFax2.add(factor13);
+//            incFax3.add(factor14);
+//            incFax3.add(factor15);
+//            incFax3.add(factor20);
+//            incFax3.add(factor21);
+//            incFax4.add(factor33);
+//            incFax4.add(factor45);
 
             /*Traigo todos los items de la obra*/
             List<Item> items = obraServicio.buscarPorNombre(nombreObra).getItems();
             List<IOP> indices = iopServicio.todosLosIndices();
-            items.get(2).setIncidenciaFactores(incFax);
-            items.get(17).setIncidenciaFactores(incFax4);
-            items.get(40).setIncidenciaFactores(incFax2);
-            items.get(65).setIncidenciaFactores(incFax3);
+//            items.get(2).setIncidenciaFactores(incFax);
+//            items.get(17).setIncidenciaFactores(incFax4);
+//            items.get(40).setIncidenciaFactores(incFax2);
+//            items.get(65).setIncidenciaFactores(incFax3);
             int coordenadaFila = 1;
             for (IOP indice : indices) {
                 fila = hoja.createRow(coordenadaFila);

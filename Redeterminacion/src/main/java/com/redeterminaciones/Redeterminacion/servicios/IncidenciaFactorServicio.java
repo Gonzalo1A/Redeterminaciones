@@ -2,6 +2,7 @@ package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.repositorios.IncidenciaFactorRepositorio;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -15,8 +16,9 @@ public class IncidenciaFactorServicio {
     @Autowired
     private IncidenciaFactorRepositorio incidenciaFactorRepositorio;
 
-    private Pattern patron = Pattern.compile("(\\d+\\.\\d+)\\sX\\sF(\\d+)");
+    private final Pattern patron = Pattern.compile("(\\d+\\.\\d+)\\sX\\sF(\\d+)");
 
+    @Transactional
     public IncidenciaFactor crearIncidenciaFactor(int factorReferencia, float porcentaje) {
 
         IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
@@ -25,7 +27,6 @@ public class IncidenciaFactorServicio {
         incidenciaFactorRepositorio.save(incidenciaFactor);
         return incidenciaFactor;
     }
-
 
     public List<IncidenciaFactor> formatearValores(String cadena) {
         List<IncidenciaFactor> listIncidencia = new ArrayList<>();
@@ -42,6 +43,17 @@ public class IncidenciaFactorServicio {
         return listIncidencia;
 
     }
+
+//    public List<ValoresIncidenciaLista> listaPreparada(Map<String, Object> datosIncidencia) {
+//        List<Map<String, Object>> listaIncidenciasMap = (List<Map<String, Object>>) datosIncidencia.get("listaIncidancias");
+//        List<ValoresIncidenciaLista> listaIncidencias = new ArrayList<>();
+//
+//        for (Map<String, Object> incidenciaMap : listaIncidenciasMap) {
+//            ValoresIncidenciaLista incidencia = new ValoresIncidenciaLista();
+//            incidencia.setIncidencia(incidenciaMap.get("incidencia"));
+//            listaIncidencias.add(incidencia);
+//        }
+//    }
 
 //    public void modificarIncidenciaFactor(Float porcentaje, IOP factorReferencia) {
 //        IncidenciaFactor incidenciaFactor = new IncidenciaFactor();

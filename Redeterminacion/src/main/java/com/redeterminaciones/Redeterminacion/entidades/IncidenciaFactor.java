@@ -19,8 +19,5 @@ public class IncidenciaFactor {
     public IncidenciaFactor() {
     }
     
-    public IncidenciaFactor(int indice, Float porcentajeIncidencia) {
-        this.indice = indice;
-        this.porcentajeIncidencia = porcentajeIncidencia;
-    }
+   
 }

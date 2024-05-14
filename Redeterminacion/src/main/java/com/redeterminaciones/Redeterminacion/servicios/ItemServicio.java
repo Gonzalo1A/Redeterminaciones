@@ -31,6 +31,9 @@ public class ItemServicio {
             Double resultado = cantidad * precioUnitario;
             resultado = (double) (Math.round(resultado * 10000)) / 10000;
             item.setSubTotal(resultado);
+            item.setRubro(false);
+        }else{
+            item.setRubro(true);
         }
         
         itemRepositorio.save(item);
@@ -42,7 +45,7 @@ public class ItemServicio {
     }
     
     @Transactional
-    public void modificarItem(String idItem, String numeroItem, String descripcion, String unidad, Double cantidad) {
+    public void modificarItem(Long idItem, String numeroItem, String descripcion, String unidad, Double cantidad) {
         Optional<Item> respuesta = itemRepositorio.findById(idItem);
         if (respuesta.isPresent()) {
             Item item = respuesta.get();
@@ -66,7 +69,7 @@ public class ItemServicio {
 
     @Transactional
     public void agregarFactor(Long idItem, List<IncidenciaFactor> incidencias) {
-        Optional<Item> respuesta = itemRepositorio.findById(idItem.toString());
+        Optional<Item> respuesta = itemRepositorio.findById(idItem);
         if (respuesta.isPresent()) {
             Item item = respuesta.get();
             item.setIncidenciaFactores(incidencias);
@@ -74,12 +77,12 @@ public class ItemServicio {
         }
     }
     
-    public Item getOne(String id) {
+    public Item getOne(Long id) {
         return itemRepositorio.getOne(id);
     }
     
     @Transactional
-    public void eliminarItem(String id) {
+    public void eliminarItem(Long id) {
         itemRepositorio.deleteById(id);
     }
     

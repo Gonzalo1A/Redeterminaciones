@@ -1,10 +1,10 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.ClienteEmpresa;
-import com.redeterminaciones.Redeterminacion.entidades.IOP;
-import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
+import com.redeterminaciones.Redeterminacion.entidades.DatosRecibidos;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
+import com.redeterminaciones.Redeterminacion.entidades.ValoresIncidenciaLista;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ExelServicio;
@@ -28,6 +28,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,18 +79,24 @@ public class ObraControlador {
     @GetMapping("/listaItems/{nombre}")
     public String listasDeItems(@PathVariable String nombre, ModelMap map) {
         Obra obra = obraServicio.buscarPorNombre(nombre);
-        map.put("obra", obra);
+        map.addAttribute("obra", obra);
+        map.addAttribute("nombreObra", obra.getNombre());
         if (obra.getItems() != null) {
             map.addAttribute("items", obra.getItems());
         }
         return "listaDeItems.html";
     }
 
-    @PostMapping("/cargarIncidendcia")
-    public String cargarIncidenciaFactor(@RequestParam Long idItem,
-            @RequestParam String incidenciaFactor) {
-        itemServicio.agregarFactor(idItem, incidenciaFactorServicio.formatearValores(incidenciaFactor));
-        return "listaDeItems.html";
+    @PostMapping("/cargarIncidencia")
+    public String cargarIncidenciaFactor(@RequestBody DatosRecibidos datos) {
+        String nombreObra = datos.getNombreObra();
+        List<ValoresIncidenciaLista> listaIncidencias = datos.getListaDatos();
+        for (ValoresIncidenciaLista incidencia : listaIncidencias) {
+            if (incidencia.getIncidencia() != null) {
+                itemServicio.agregarFactor(incidencia.getItemId(), incidenciaFactorServicio.formatearValores(incidencia.getIncidencia()));
+            }
+        }
+        return "redirect:/obra/listaItems/" + nombreObra;
     }
 
     @GetMapping("/exportItem/{nombre}")
@@ -143,8 +150,8 @@ public class ObraControlador {
         headers.add("Content-Disposition", "attachment; filename=IOP-Cba.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
-    
-        @GetMapping("/exportPolinomica/{nombre}")
+
+    @GetMapping("/exportPolinomica/{nombre}")
     public ResponseEntity<InputStreamResource> polinomicaExcel(@PathVariable String nombre) throws Exception {
         ByteArrayInputStream stream = exelServicio.polinomica(nombre);
         HttpHeaders headers = new HttpHeaders();
