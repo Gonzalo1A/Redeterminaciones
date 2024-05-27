@@ -38,7 +38,5 @@ public class Obra {
     private List<Item> items;
 
 
-    public Obra() {
-
-    }
+  
 }
