@@ -18,6 +18,6 @@ public class IOP { //Indices de Obras Publicas
     private Integer id;
     private String nombreFactor;
     @OneToMany
-    private List<IndiceMensual> fechas;
+    private List<ValorMes> fechas;
 
 }

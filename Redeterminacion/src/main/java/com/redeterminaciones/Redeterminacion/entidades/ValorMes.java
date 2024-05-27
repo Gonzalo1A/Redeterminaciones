@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity
-public class IndiceMensual implements Comparable<IndiceMensual> {
+public class ValorMes implements Comparable<ValorMes> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,7 +23,7 @@ public class IndiceMensual implements Comparable<IndiceMensual> {
     private Date fecha;
 
     @Override
-    public int compareTo(IndiceMensual other) {
+    public int compareTo(ValorMes other) {
         return this.fecha.compareTo(other.fecha);
     }
 }
