@@ -5,6 +5,7 @@ import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.repositorios.ItemRepositorio;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,7 @@ public class ItemServicio {
             resultado = (double) (Math.round(resultado * 10000)) / 10000;
             item.setSubTotal(resultado);
             item.setRubro(false);
-        }else{
+        } else {
             item.setRubro(true);
         }
 
@@ -69,6 +70,24 @@ public class ItemServicio {
         }
     }
 
+    public List<String> cadenaIncidencias(List<Item> item) {
+        List<String> cadenas = new ArrayList<>();
+        for (Item items : item) {
+            int actual = 0;
+            String incidencias = "";
+            for (IncidenciaFactor cad : items.getIncidenciaFactores()) {
+                int fin = items.getIncidenciaFactores().size() - 1;
+                incidencias += cad.getPorcentajeIncidencia().toString() + " X F" + cad.getIndice();
+                if (fin != actual) {
+                    incidencias += " + ";
+                    actual++;
+                }
+            }
+            cadenas.add(incidencias);
+        }
+        return cadenas;
+    }
+
     @Transactional
     public void agregarFactor(Long idItem, List<IncidenciaFactor> incidencias) {
 
@@ -81,7 +100,6 @@ public class ItemServicio {
         }
     }
 
-    
     public Item getOne(Long id) {
         return itemRepositorio.getOne(id);
     }

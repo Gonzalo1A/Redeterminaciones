@@ -10,32 +10,32 @@
                     <body>
                         <header th:replace="fragments/header"></header>
                         <div>
-                            <form th:action="@{/obra/registrarObra}" method="post" >
-                                <div class="form-floating mb-3">
+                            <form th:action="@{/obra/registrarObra}" method="post" class="row g-3 align-items-center">
+                                <div class="form-floating col-auto">
                                     <input type="text" class="form-control" id="nombre" placeholder="nombre" name="nombre">
                                         <label for="nombre">nombre</label>
                                 </div>
-                                <div class="form-floating mb-3">
+                                <div class="form-floating col-auto">
                                     <input type="number" class="form-control" id="porcentajeDeAnticipo" placeholder="porcentajeDeAnticipo" name="porcentajeDeAnticipo">
                                         <label for="porcentajeDeAnticipo">porcentajeDeAnticipo</label>
                                 </div>
-                                <div class="form-floating mb-3">
+                                <div class="form-floating col-auto">
                                     <input type="date" class="form-control" id="fechaDeContrato" placeholder="fechaDeContrato" name="fechaDeContrato">
                                         <label for="fechaDeContrato">fechaDeContrato</label>
                                 </div>
-                                <div class="form-floating mb-3">
+                                <div class="form-floating col-auto">
                                     <input type="date" class="form-control" id="fechaDeReeplanteo" placeholder="fechaDeReeplanteo" name="fechaDeReeplanteo">
                                         <label for="fechaDeReeplanteo">fechaDeReeplanteo</label>
                                 </div>
-                                <div class="form-floating mb-3">
+                                <div class="form-floating col-auto">
                                     <input type="number" class="form-control" id="diasPlazoDeObra" placeholder="diasPlazoDeObra" name="diasPlazoDeObra">
                                         <label for="diasPlazoDeObra">diasPlazoDeObra</label>
-                                </div>
-                                <div class="form-floating mb-3">
+                                </div> 
+                                <div class="form-floating col-auto">
                                     <input type="date" class="form-control" id="fechaPresentacionObra" placeholder="fechaPresentacionObra" name="fechaPresentacionObra">
                                         <label for="fechaPresentacionObra">fechaPresentacionObra</label>
                                 </div>
-                                <div class="form-floating mb-3">
+                                <div class="form-floating col-auto">
                                     <input type="text" class="form-control" id="comitente" placeholder="comitente" name="comitente">
                                         <label for="comitente">Comitente</label>
                                 </div>

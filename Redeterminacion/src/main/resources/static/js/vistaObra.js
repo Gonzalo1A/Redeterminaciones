@@ -16,7 +16,7 @@ function obtenerDatosInputs() {
         var valor = input.value; // Obtén el valor del input
         listaInputs.push({itemId: id, incidencia: valor}); // Agrega el ID y el valor a la lista
     });
-    
+
     return listaInputs; // Devuelve la lista de datos
 }
 function guardarDatos() {

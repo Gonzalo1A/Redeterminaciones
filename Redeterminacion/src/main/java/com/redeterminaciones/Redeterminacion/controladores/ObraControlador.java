@@ -8,7 +8,6 @@ import com.redeterminaciones.Redeterminacion.entidades.ValoresIncidenciaLista;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ExelServicio;
-import com.redeterminaciones.Redeterminacion.servicios.IOPServicio;
 import com.redeterminaciones.Redeterminacion.servicios.IncidenciaFactorServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
@@ -46,8 +45,6 @@ public class ObraControlador {
     @Autowired
     private IncidenciaFactorServicio incidenciaFactorServicio;
     @Autowired
-    private IOPServicio iOPServicio;
-    @Autowired
     private ExelServicio exelServicio;
 
     @GetMapping("/")
@@ -79,7 +76,9 @@ public class ObraControlador {
     @GetMapping("/listaItems/{nombre}")
     public String listasDeItems(@PathVariable String nombre, ModelMap map) {
         Obra obra = obraServicio.buscarPorNombre(nombre);
+        List<String> valInc = itemServicio.cadenaIncidencias(obra.getItems());
         map.addAttribute("obra", obra);
+        map.addAttribute("cadenasCargadas", valInc);
         if (obra.getItems() != null) {
             map.addAttribute("items", obra.getItems());
         }
@@ -136,21 +135,6 @@ public class ObraControlador {
         return "obraView.html";
     }
 
-    @PostMapping("/importIOP")
-    public String importarIOP(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException {
-        exelServicio.importarIOP(fileExcel.getInputStream());
-        return "redirect:/obra";
-    }
-
-    @GetMapping("/exportIOP")
-    public ResponseEntity<InputStreamResource> exportIOP() throws Exception {
-        ByteArrayInputStream stream = exelServicio.exportIOP();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=IOP-Cba.xlsx");
-        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
-    }
-
-
     @GetMapping("/exportIncidenciaFactor/{nombre}")
     public ResponseEntity<InputStreamResource> incidenciaFactoresExcel(@PathVariable String nombre) throws Exception {
         ByteArrayInputStream stream = exelServicio.incidenciaFactoresExcel(nombre);
@@ -171,5 +155,17 @@ public class ObraControlador {
     public String importarFactoresExcel(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException {
         exelServicio.importarFactoresDeItemsPorExcel(fileExcel.getInputStream());
         return "redirect:/obra";
+    }
+    
+    @GetMapping("/estructura_costo/{nombre}")
+    public String estructura(@PathVariable String nombre,ModelMap map){
+        Obra obra = obraServicio.buscarPorNombre(nombre);
+        List<String> valInc = itemServicio.cadenaIncidencias(obra.getItems());
+        map.addAttribute("obra", obra);
+        map.addAttribute("cadenasCargadas", valInc);
+        if (obra.getItems() != null) {
+            map.addAttribute("items", obra.getItems());
+        }
+        return "doc_estructura.html";
     }
 }

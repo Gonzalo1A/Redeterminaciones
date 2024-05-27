@@ -25,5 +25,7 @@ public class Item {
     @OneToMany
     private List<IncidenciaFactor> incidenciaFactores;
     private Double incidenciaItem;
+    @OneToMany
+    private List<AvanceObraReal> avanceObraReal;
 
 }

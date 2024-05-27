@@ -2,7 +2,7 @@ package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
-import com.redeterminaciones.Redeterminacion.entidades.IndiceMensual;
+import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -215,7 +215,7 @@ public class ExelServicio {
             List<IOP> tabla = iopServicio.todosLosIndices();
 
             /*Le doy todas las fechas registradas al excel*/
-            List<IndiceMensual> fechasIndices = tabla.get(0).getFechas();
+            List<ValorMes> fechasIndices = tabla.get(0).getFechas();
             Collections.sort(fechasIndices);
             estiloFechas.setDataFormat(libro.createDataFormat().getFormat("MM-yyyy"));
             for (int i = 0; i < fechasIndices.size(); i++) {

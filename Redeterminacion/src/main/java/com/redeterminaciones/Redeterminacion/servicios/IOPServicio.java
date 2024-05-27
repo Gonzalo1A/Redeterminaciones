@@ -1,7 +1,7 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
-import com.redeterminaciones.Redeterminacion.entidades.IndiceMensual;
+import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.IOPRepositorio;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class IOPServicio {
     @Transactional
     public void agregarPorExel(Integer id, List<Date> fechas, List<Double> valores) {
         IOP factor = iopRepo.getById(id);
-        List<IndiceMensual> tablas = new ArrayList<>();
+        List<ValorMes> tablas = new ArrayList<>();
         for (int i = 0; i < fechas.size(); i++) {
             Date fecha = fechas.get(i);
             Double valor = valores.get(i);

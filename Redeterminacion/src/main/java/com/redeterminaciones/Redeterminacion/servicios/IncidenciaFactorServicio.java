@@ -16,8 +16,7 @@ public class IncidenciaFactorServicio {
     @Autowired
     private IncidenciaFactorRepositorio incidenciaFactorRepositorio;
 
-
-    private final Pattern patron = Pattern.compile("(\\d+\\.\\d+)\\sX\\sF(\\d+)");
+    private final Pattern patron = Pattern.compile("(\\d+[,.]\\d+)\\s*?[Xx*.]\\s*?[Ff](\\d+)");
 
     @Transactional
     public IncidenciaFactor crearIncidenciaFactor(int factorReferencia, float porcentaje) {
@@ -45,23 +44,6 @@ public class IncidenciaFactorServicio {
 
     }
 
-//    public List<ValoresIncidenciaLista> listaPreparada(Map<String, Object> datosIncidencia) {
-//        List<Map<String, Object>> listaIncidenciasMap = (List<Map<String, Object>>) datosIncidencia.get("listaIncidancias");
-//        List<ValoresIncidenciaLista> listaIncidencias = new ArrayList<>();
-//
-//        for (Map<String, Object> incidenciaMap : listaIncidenciasMap) {
-//            ValoresIncidenciaLista incidencia = new ValoresIncidenciaLista();
-//            incidencia.setIncidencia(incidenciaMap.get("incidencia"));
-//            listaIncidencias.add(incidencia);
-//        }
-//    }
-
-//    public void modificarIncidenciaFactor(Float porcentaje, IOP factorReferencia) {
-//        IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
-//        incidenciaFactor.setIndice(factorReferencia);
-//        incidenciaFactor.setPorcentajeIncidencia(porcentaje);
-//        incidenciaFactorRepositorio.save(incidenciaFactor);
-//    }
     public IncidenciaFactor buscarIncidenciaFactor(String id) {
         return incidenciaFactorRepositorio.getReferenceById(id);
     }

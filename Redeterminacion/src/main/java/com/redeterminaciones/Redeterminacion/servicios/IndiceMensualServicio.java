@@ -1,6 +1,6 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
-import com.redeterminaciones.Redeterminacion.entidades.IndiceMensual;
+import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import jakarta.transaction.Transactional;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,8 @@ public class IndiceMensualServicio {
     private IndiceMensualRepositorio IOPfechaRepo;
 
     @Transactional
-    public IndiceMensual crear(Date fecha, Double valor) {
-        IndiceMensual nuevo = new IndiceMensual();
+    public ValorMes crear(Date fecha, Double valor) {
+        ValorMes nuevo = new ValorMes();
         nuevo.setFecha(fecha);
         nuevo.setValor(valor);
         IOPfechaRepo.save(nuevo);
@@ -25,7 +25,7 @@ public class IndiceMensualServicio {
 
     @Transactional
     public void modificarIndiceMensual(String id, Date fecha, Double valor) {
-        Optional<IndiceMensual> respuesta = IOPfechaRepo.findById(id);
+        Optional<ValorMes> respuesta = IOPfechaRepo.findById(id);
         respuesta.ifPresent(indiceMensual -> {
             indiceMensual.setFecha(fecha);
             indiceMensual.setValor(valor);
@@ -35,13 +35,13 @@ public class IndiceMensualServicio {
     
     @Transactional
     public void eliminarIndiceMensual(String id){
-        Optional<IndiceMensual> respuesta = IOPfechaRepo.findById(id);
+        Optional<ValorMes> respuesta = IOPfechaRepo.findById(id);
         respuesta.ifPresent(indiceMensual -> {
             IOPfechaRepo.delete(indiceMensual);
         });
     }
 
-    public IndiceMensual buscaIndiceMensual(String id) {
+    public ValorMes buscaIndiceMensual(String id) {
         return IOPfechaRepo.getById(id);
     }
 

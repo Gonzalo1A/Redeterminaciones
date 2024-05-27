@@ -28,6 +28,7 @@ public class ObraServicio {
         nuevaObra.setFechaPresentacionObra(fechaPresentacionObra);
         nuevaObra.setFechaDeContrato(fechaDeContrato);
         nuevaObra.setFechaDeReeplanteo(fechaDeReeplanteo);
+        nuevaObra.setFechaDeFinalizacion(calularFecha(fechaDeReeplanteo, diasPlazoDeObra));
         nuevaObra.setPorcentajeDeAnticipo(porcentajeDeAnticipo);
         nuevaObra.setDiasPlazoDeObra(diasPlazoDeObra);
         nuevaObra.setTipoDeRedet(tipoDeRedet);
@@ -81,22 +82,11 @@ public class ObraServicio {
         return total;
     }
 
-//    @Transactional
-//    public void agregarCyP(String idCyp, String idObra) {
-//        Optional<Obra> rOptional = obraRepositorio.findById(idObra);
-//        Optional<ComputoYPresupuesto> rOptional2 = cyprepo.findById(idCyp);
-//        ComputoYPresupuesto cyp = new ComputoYPresupuesto();
-//        Obra obra = new Obra();
-//        if (rOptional.isPresent()) {
-//            obra = rOptional.get();
-//        }
-//
-//        if (rOptional.isPresent()) {
-//            cyp = rOptional2.get();
-//        }
-//        obra.setComputoYPresupuesto(cyp);
-//        obraRepositorio.save(obra);
-//    }
+    private Date calularFecha(Date fechaReplanteo, int dias) {
+        long a = fechaReplanteo.getTime() + dias * 86400000;
+        return new Date(a);
+    }
+
     public Obra buscarPorNombre(String nombre) {
         return obraRepositorio.buscarObraPorNombre(nombre);
     }
