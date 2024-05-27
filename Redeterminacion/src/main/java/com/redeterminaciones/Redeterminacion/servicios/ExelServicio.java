@@ -2,7 +2,9 @@ package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
+
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
+
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,6 +38,7 @@ public class ExelServicio {
     private ObraServicio obraServicio;
     @Autowired
     private IOPServicio iopServicio;
+
     @Autowired
     private IncidenciaFactorServicio incidenciaFactorServicio;
 
@@ -250,6 +253,7 @@ public class ExelServicio {
         }
     }
 
+
     public ByteArrayInputStream excelDeEstructutaDeCosto(String nombreObra) throws Exception {
         String[] columnas = {"Nro", "DESCRIPCION", "UNIDAD", "CANTIDAD", "PRECIO UNITARIO", "PRECIO", "%INC", "FACTORES"};
         ByteArrayOutputStream stream;
@@ -302,17 +306,32 @@ public class ExelServicio {
 
                     String cadendaDeFactores = "";
                     List<IncidenciaFactor> factores = item.getIncidenciaFactores();
+                    Cell incFactores = fila.createCell(7);
+                    incFactores.setCellStyle(estiloDatos);
+                    boolean bandera = false;
+                    Float sumatoria = 0f;
+                    int ordenRepetido = 0;
+
                     if (!factores.isEmpty()) {
                         for (int i = 0; i < factores.size(); i++) {
                             IncidenciaFactor factor = factores.get(i);
+                            sumatoria += factor.getPorcentajeIncidencia();
                             cadendaDeFactores += factor.getPorcentajeIncidencia().toString() + "xF" + factor.getIndice();
+                            if (ordenRepetido == factor.getIndice()) {
+                                bandera = true;
+                            }
+                            ordenRepetido = factor.getIndice();
                             if (i != factores.size() - 1) {
                                 cadendaDeFactores += " + ";
                             }
                         }
-                        Cell incFactores = fila.createCell(7);
                         incFactores.setCellValue(cadendaDeFactores);
-                        incFactores.setCellStyle(estiloDatos);
+                        if (sumatoria > 1 || sumatoria < 1 || bandera) {
+                            XSSFCellStyle error = estiloDatos(libro);
+                            error.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+                            error.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                            incFactores.setCellStyle(error);
+                        }
                     }
                 } else {
                     CellRangeAddress rango = new CellRangeAddress(coordenadaRow, coordenadaRow, 2, 7);
@@ -403,7 +422,6 @@ public class ExelServicio {
                     celda.setCellStyle(estiloMonto);
                     /*Muevo la coordenada de la filaPolin a la siguiente*/
                     sumaDelPorc += ponderadorTotal;
-                    sumaDelPorc += ponderadorTotal;
                     coordenadaFila++;
                 }
             }
@@ -433,126 +451,7 @@ public class ExelServicio {
         }
     }
 
-    public ByteArrayInputStream incidenciaFactoresExcel(String nombreObra) throws Exception {
-        String[] columnas = {"ID", "Nro", "DESCRIPCION", "UNIDAD", "CANTIDAD", "PRECIO UNITARIO", "PRECIO", "%INC", "FACTORES"};
-        List<Item> todos = obraServicio.buscarPorNombre(nombreObra).getItems();
-        ByteArrayOutputStream stream;
-        try (XSSFWorkbook libro = new XSSFWorkbook()) {
-            stream = new ByteArrayOutputStream();
-            Sheet hoja = libro.createSheet("Ingreso de inc de Factores");
-            Row fila = hoja.createRow(0);
-            XSSFCellStyle estiloDatos = estiloDatos(libro);
-            XSSFCellStyle estiloMoneda = estiloMoneda(libro);
-
-            for (int i = 0; i < columnas.length; i++) {
-                Cell celda = fila.createCell(i);
-                celda.setCellValue(columnas[i]);
-                celda.setCellStyle(estiloEncabesados(libro));
-                hoja.autoSizeColumn(i);
-            }
-            int coordenadaRow = 1;
-            for (Item item : todos) {
-                fila = hoja.createRow(coordenadaRow);
-
-                Cell id = fila.createCell(0);
-                id.setCellValue(item.getId());
-
-                Cell numItem = fila.createCell(1);
-                numItem.setCellValue(item.getNumeroItem());
-                numItem.setCellStyle(estiloDatos);
-
-                Cell descripcion = fila.createCell(2);
-                descripcion.setCellValue(item.getDescripcion());
-                descripcion.setCellStyle(estiloDatos);
-
-                Cell unidad = fila.createCell(3);
-                unidad.setCellValue(item.getUnidad());
-                unidad.setCellStyle(estiloDatos);
-
-                if (item.getCantidad() != null && item.getPrecioUnitario() != null && item.getSubTotal() != null) {
-                    Cell cantidad = fila.createCell(4);
-                    cantidad.setCellValue(item.getCantidad());
-                    cantidad.setCellStyle(estiloDatos);
-
-                    Cell precioUn = fila.createCell(5);
-                    precioUn.setCellValue(item.getPrecioUnitario());
-                    precioUn.setCellStyle(estiloMoneda);
-
-                    Cell subTotal = fila.createCell(6);
-                    subTotal.setCellValue(item.getSubTotal());
-                    subTotal.setCellStyle(estiloMoneda);
-
-                    Cell incidencia = fila.createCell(7);
-                    incidencia.setCellValue(item.getIncidenciaItem());
-                    incidencia.setCellStyle(estiloDatos);
-
-                    String cadendaDeFactores = "";
-                    List<IncidenciaFactor> factores = item.getIncidenciaFactores();
-                    if (!factores.isEmpty()) {
-                        for (int i = 0; i < factores.size(); i++) {
-                            IncidenciaFactor factor = factores.get(i);
-                            cadendaDeFactores += factor.getPorcentajeIncidencia().toString() + "xF" + factor.getIndice();
-                            if (i != factores.size() - 1) {
-                                cadendaDeFactores += " + ";
-                            }
-                        }
-                        Cell incFactores = fila.createCell(8);
-                        incFactores.setCellValue(cadendaDeFactores);
-                        incFactores.setCellStyle(estiloDatos);
-                    }
-                } else {
-                    CellRangeAddress rango = new CellRangeAddress(coordenadaRow, coordenadaRow, 3, 8);
-                    for (int i = rango.getFirstColumn(); i <= rango.getLastColumn(); i++) {
-                        Cell celdaRango = fila.createCell(i);
-                        celdaRango.setCellStyle(estiloDatos);
-                    }
-                    hoja.addMergedRegion(rango);
-                }
-                coordenadaRow++;
-            }
-            fila = hoja.createRow(coordenadaRow);
-            Cell celdaText = fila.createCell(5);
-            celdaText.setCellValue("Total:");
-            celdaText.setCellStyle(estiloDatos);
-            Cell total = fila.createCell(6);
-            total.setCellValue(Double.parseDouble(obraServicio.buscarPorNombre(nombreObra).getTotal()));
-            total.setCellStyle(estiloMoneda);
-            for (int i = 0; i < columnas.length; i++) {
-                hoja.autoSizeColumn(i);
-            }
-            libro.write(stream);
-            libro.close();
-
-        }
-        return new ByteArrayInputStream(stream.toByteArray());
-    }
-
-    public void importarFactoresDeItemsPorExcel(InputStream archivo) throws IOException {
-        try (XSSFWorkbook libro = new XSSFWorkbook(archivo)) {
-            Sheet hoja = libro.getSheetAt(0);
-            for (int i = 1; i <= hoja.getLastRowNum(); i++) {
-                Row fila = hoja.getRow(i);
-                String factores = null;
-                Long id = null;
-                Cell celda = fila.getCell(0);
-                if (celda != null && celda.getCellType() == CellType.NUMERIC) {
-                    id = (long) celda.getNumericCellValue();
-                    celda = fila.getCell(8);
-                    if (celda != null && celda.getCellType() == CellType.STRING) {
-                        factores = celda.getStringCellValue();
-                    }
-                }
-                System.out.println(id + "       " + factores);
-                if (factores != null) {
-                    List<IncidenciaFactor> incidencias = incidenciaFactorServicio.formatearValores(factores);
-                    itemServi.agregarFactor(id, incidencias);
-                }
-            }
-        } catch (IOException e) {
-        }
-    }
-
-    private XSSFCellStyle estiloEncabesados(XSSFWorkbook libro) {
+    public XSSFCellStyle estiloEncabesados(XSSFWorkbook libro) {
         XSSFCellStyle estilo = libro.createCellStyle();
         XSSFFont fuente = libro.createFont();
         fuente.setBold(true);
@@ -568,7 +467,7 @@ public class ExelServicio {
         return estilo;
     }
 
-    private XSSFCellStyle estiloDatos(XSSFWorkbook libro) {
+    public XSSFCellStyle estiloDatos(XSSFWorkbook libro) {
         XSSFCellStyle estilo = libro.createCellStyle();
         estilo.setBorderBottom(BorderStyle.THIN);
         estilo.setBorderTop(BorderStyle.THIN);
@@ -578,7 +477,7 @@ public class ExelServicio {
         return estilo;
     }
 
-    private XSSFCellStyle estiloPorcentual(XSSFWorkbook libro) {
+    public XSSFCellStyle estiloPorcentual(XSSFWorkbook libro) {
         XSSFCellStyle estilo = libro.createCellStyle();
         estilo.setBorderBottom(BorderStyle.THIN);
         estilo.setBorderTop(BorderStyle.THIN);
@@ -588,7 +487,7 @@ public class ExelServicio {
         return estilo;
     }
 
-    private XSSFCellStyle estiloMoneda(XSSFWorkbook libro) {
+    public XSSFCellStyle estiloMoneda(XSSFWorkbook libro) {
         XSSFCellStyle estilo = libro.createCellStyle();
         estilo.setBorderBottom(BorderStyle.THIN);
         estilo.setBorderTop(BorderStyle.THIN);

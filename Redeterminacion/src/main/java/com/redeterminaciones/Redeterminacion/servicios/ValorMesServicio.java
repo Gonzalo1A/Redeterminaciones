@@ -5,14 +5,14 @@ import jakarta.transaction.Transactional;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.redeterminaciones.Redeterminacion.repositorios.IndiceMensualRepositorio;
 import java.util.Optional;
+import com.redeterminaciones.Redeterminacion.repositorios.ValorMesRepositorio;
 
 @Service
-public class IndiceMensualServicio {
+public class ValorMesServicio {
 
     @Autowired
-    private IndiceMensualRepositorio IOPfechaRepo;
+    private ValorMesRepositorio IOPfechaRepo;
 
     @Transactional
     public ValorMes crear(Date fecha, Double valor) {
@@ -32,9 +32,10 @@ public class IndiceMensualServicio {
             IOPfechaRepo.save(indiceMensual);
         });
     }
-    
+
     @Transactional
-    public void eliminarIndiceMensual(String id){
+
+    public void eliminarIndiceMensual(String id) {
         Optional<ValorMes> respuesta = IOPfechaRepo.findById(id);
         respuesta.ifPresent(indiceMensual -> {
             IOPfechaRepo.delete(indiceMensual);

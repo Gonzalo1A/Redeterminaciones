@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IndiceMensualRepositorio extends JpaRepository<ValorMes, String>{
+
+public interface ValorMesRepositorio extends JpaRepository<ValorMes, String>{
     
 }

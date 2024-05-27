@@ -99,7 +99,7 @@ public class ObraControlador {
 
     @GetMapping("/exportItem/{nombre}")
     public ResponseEntity<InputStreamResource> elExportador(@PathVariable String nombre) throws Exception {
-        ByteArrayInputStream stream = exelServicio.elExportador(nombre);
+        ByteArrayInputStream stream = itemServicio.exportarModeloParaIngresarItemsPorExcel(obraServicio.buscarPorNombre(nombre));
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=" + nombre + " Items.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
@@ -114,7 +114,7 @@ public class ObraControlador {
     @PostMapping("/importItem/{nombre}")
     public String importar(@PathVariable String nombre, @RequestParam("fileExcel") MultipartFile fileExcel) {
         try {
-            List<Item> items = exelServicio.elImportador(fileExcel.getInputStream());
+            List<Item> items = itemServicio.importarItemsPorExcel(fileExcel.getInputStream());
             if (items != null && !items.isEmpty()) {
                 obraServicio.agregarItem(items, nombre);
                 obraServicio.calcularTotal(nombre);
@@ -137,7 +137,7 @@ public class ObraControlador {
 
     @GetMapping("/exportIncidenciaFactor/{nombre}")
     public ResponseEntity<InputStreamResource> incidenciaFactoresExcel(@PathVariable String nombre) throws Exception {
-        ByteArrayInputStream stream = exelServicio.incidenciaFactoresExcel(nombre);
+        ByteArrayInputStream stream = incidenciaFactorServicio.exportarLaIncidenciaDeFactoresExcel(obraServicio.buscarPorNombre(nombre));
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=" + nombre + " Factorizar.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
@@ -152,8 +152,22 @@ public class ObraControlador {
     }
 
     @PostMapping("/importFactoresExcel")
-    public String importarFactoresExcel(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException {
-        exelServicio.importarFactoresDeItemsPorExcel(fileExcel.getInputStream());
+    public String importarFactoresExcel(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException, Exception {
+        incidenciaFactorServicio.importarFactoresDeItemsPorExcel(fileExcel.getInputStream());
+        return "redirect:/obra";
+    }
+
+    @GetMapping("/exportModeloDeAvanceDeObraTeorico/{nombre}")
+    public ResponseEntity<InputStreamResource> modeloDeAvanceTeorico(@PathVariable String nombre) throws Exception {
+        ByteArrayInputStream stream = itemServicio.exportarModeloParaAvanceDeObraTeoricoExcel(obraServicio.buscarPorNombre(nombre));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Avance de Obra Teorico.xlsx");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
+    }
+
+    @PostMapping("/importAvanceTeoricoPorExcel")
+    public String importarAvanceTeoricoExcel(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException, Exception {
+        itemServicio.importarAvanceDeObraTeoricoPorExcel(fileExcel.getInputStream());
         return "redirect:/obra";
     }
     

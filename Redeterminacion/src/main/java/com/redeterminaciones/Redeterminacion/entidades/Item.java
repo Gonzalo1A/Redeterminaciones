@@ -23,6 +23,8 @@ public class Item {
     private Double precioUnitario;
     private boolean rubro;
     @OneToMany
+    private List<ValorMes> avanceTeorico;
+    @OneToMany
     private List<IncidenciaFactor> incidenciaFactores;
     private Double incidenciaItem;
     @OneToMany
