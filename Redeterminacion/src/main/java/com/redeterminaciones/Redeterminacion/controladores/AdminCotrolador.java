@@ -31,13 +31,13 @@ public class AdminCotrolador {
 
     @PostMapping("/importIOP")
     public String importarIOP(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException {
-        exelServicio.importarIOP(fileExcel.getInputStream());
+        iOPServicio.importarIOP(fileExcel.getInputStream());
         return "redirect:/admin/dashboard";
     }
 
     @GetMapping("/exportIOP")
     public ResponseEntity<InputStreamResource> exportIOP() throws Exception {
-        ByteArrayInputStream stream = exelServicio.exportIOP();
+        ByteArrayInputStream stream = iOPServicio.exportarIOP();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=IOP-Cba.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));

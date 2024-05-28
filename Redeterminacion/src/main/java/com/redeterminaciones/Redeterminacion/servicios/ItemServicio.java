@@ -1,12 +1,12 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
+import com.redeterminaciones.Redeterminacion.entidades.EstilosDeExel;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.ItemRepositorio;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -40,8 +40,6 @@ public class ItemServicio {
 
     @Autowired
     private ItemRepositorio itemRepositorio;
-    @Autowired
-    private ExelServicio excelServicio;
     @Autowired
     private ValorMesServicio valorMesServi;
 
@@ -126,7 +124,6 @@ public class ItemServicio {
         }
     }
 
-
     @Transactional
     public void agregarAvanceTeorico(Long idItem, List<ValorMes> avanceTeorico) {
         Optional<Item> respuesta = itemRepositorio.findById(idItem);
@@ -159,9 +156,9 @@ public class ItemServicio {
         try (XSSFWorkbook libro = new XSSFWorkbook()) {
             stream = new ByteArrayOutputStream();
             Sheet hoja = libro.createSheet("Items");
-            XSSFCellStyle estilo = excelServicio.estiloEncabesados(libro);
-            XSSFCellStyle estiloDatos = excelServicio.estiloDatos(libro);
-            XSSFCellStyle estiloMoneda = excelServicio.estiloMoneda(libro);
+            XSSFCellStyle estilo = EstilosDeExel.estiloEncabesados(libro);
+            XSSFCellStyle estiloDatos = EstilosDeExel.estiloDatos(libro);
+            XSSFCellStyle estiloMoneda = EstilosDeExel.estiloMoneda(libro);
 
             Row fila = hoja.createRow(0);
             for (int i = 0; i < columnas.length; i++) {
@@ -280,28 +277,28 @@ public class ItemServicio {
             stream = new ByteArrayOutputStream();
             Sheet hoja = libro.createSheet("Avance de obra teorico");
             Row fila = hoja.createRow(0);
-            XSSFCellStyle encabesadosFechas = excelServicio.estiloEncabesados(libro);
+            XSSFCellStyle encabesadosFechas = EstilosDeExel.estiloEncabesados(libro);
             encabesadosFechas.setDataFormat(libro.createDataFormat().getFormat("MM-yyyy"));
-            XSSFCellStyle estiloDatos = excelServicio.estiloDatos(libro);
-            XSSFCellStyle estiloMoneda = excelServicio.estiloMoneda(libro);
-            XSSFCellStyle estiloRubros = excelServicio.estiloDatos(libro);
+            XSSFCellStyle estiloDatos = EstilosDeExel.estiloDatos(libro);
+            XSSFCellStyle estiloMoneda = EstilosDeExel.estiloMoneda(libro);
+            XSSFCellStyle estiloRubros = EstilosDeExel.estiloDatos(libro);
             estiloRubros.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
             estiloRubros.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             XSSFFont fuente = libro.createFont();
             fuente.setBold(true);
             fuente.setColor(IndexedColors.WHITE.getIndex());
-            XSSFCellStyle estiloAzul = excelServicio.estiloDatos(libro);
+            XSSFCellStyle estiloAzul = EstilosDeExel.estiloDatos(libro);
             estiloAzul.setFillForegroundColor(IndexedColors.BLUE.getIndex());
             estiloAzul.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             estiloAzul.setFont(fuente);
-            XSSFCellStyle estiloCeleste = excelServicio.estiloDatos(libro);
+            XSSFCellStyle estiloCeleste = EstilosDeExel.estiloDatos(libro);
             estiloCeleste.setFillForegroundColor(IndexedColors.SKY_BLUE.getIndex());
             estiloCeleste.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
             for (int i = 0; i < columnas.length; i++) {
                 Cell celda = fila.createCell(i);
                 celda.setCellValue(columnas[i]);
-                celda.setCellStyle(excelServicio.estiloEncabesados(libro));
+                celda.setCellStyle(EstilosDeExel.estiloEncabesados(libro));
             }
 
             List<Date> mesesDeObra = new ArrayList<>();
