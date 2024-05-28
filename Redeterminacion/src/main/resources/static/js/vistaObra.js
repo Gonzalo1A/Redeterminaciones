@@ -25,7 +25,7 @@ function guardarDatos() {
     
     // Realiza una solicitud AJAX al backend para enviar la lista de datos y el nombre de la obra
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/obra/cargarIncidencia", true);
+    xhr.open("POST", "/item/cargarIncidencia", true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {

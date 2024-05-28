@@ -25,7 +25,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-5 pt-0">
-                        <form th:action="@{/obra/importFactoresExcel}" method="post" enctype="multipart/form-data">
+                        <form th:action="@{/item/importFactoresExcel}" method="post" enctype="multipart/form-data">
 
                             <div class="form-floating mb-3">
                                 <input type="file" class="form-control" id="listaIOP" name="fileExcel">
@@ -67,20 +67,20 @@
 
         <div>
             <a
-                th:href="@{/obra/exportItem/__${obra.nombre}__}"
+                th:href="@{/item/export/__${obra.nombre}__}"
                 class="btn btn-primary"
                 tabindex="-1"
                 role="button"
                 >Exportar Exel</a
             >
             <a
-                th:href="@{/obra/registrar/item/__${obra.nombre}__}"
+                th:href="@{/item/registrar/__${obra.nombre}__}"
                 class="btn btn-primary"
                 tabindex="-1"
                 role="button"
                 >Importar Exel</a
             >           
-            <a th:href="@{/obra/exportIncidenciaFactor/__${obra.nombre}__}" class="btn btn-primary" tabindex="-1" role="button">Planilla de ingreso de factores</a>
+            <a th:href="@{/item/exportIncidenciaFactor/__${obra.nombre}__}" class="btn btn-primary" tabindex="-1" role="button">Planilla de ingreso de factores</a>
             <a th:href="@{/obra/exportModeloDeAvanceDeObraTeorico/__${obra.nombre}__}" class="btn btn-primary" tabindex="-1" role="button">Excel Avance De Obra Teorico</a>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalIngresoFactoreseXCEL">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">

@@ -10,7 +10,7 @@
                     <body>
                         <header th:replace="fragments/header"></header>
                         <div>
-                            <form th:action="@{/obra/importItem/__${obra.nombre}__}" method="post" enctype="multipart/form-data">
+                            <form th:action="@{/item/import/__${obra.nombre}__}" method="post" enctype="multipart/form-data">
                                 <input hidden th:value= "${obra.nombre}" name="nombre">
                                 <div class="form-floating mb-3">
                                     <input type="file" class="form-control" id="listaItem" name="fileExcel">
