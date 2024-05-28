@@ -1,5 +1,6 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
+import com.redeterminaciones.Redeterminacion.entidades.EstilosDeExel;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
@@ -27,8 +28,6 @@ public class IncidenciaFactorServicio {
 
     @Autowired
     private IncidenciaFactorRepositorio incidenciaFactorRepositorio;
-    @Autowired
-    private ExelServicio excelServicio;
     @Autowired
     private ItemServicio itemServi;
 
@@ -96,13 +95,13 @@ public class IncidenciaFactorServicio {
             stream = new ByteArrayOutputStream();
             Sheet hoja = libro.createSheet("Ingreso de inc de Factores");
             Row fila = hoja.createRow(0);
-            XSSFCellStyle estiloDatos = excelServicio.estiloDatos(libro);
-            XSSFCellStyle estiloMoneda = excelServicio.estiloMoneda(libro);
+            XSSFCellStyle estiloDatos = EstilosDeExel.estiloDatos(libro);
+            XSSFCellStyle estiloMoneda = EstilosDeExel.estiloMoneda(libro);
 
             for (int i = 0; i < columnas.length; i++) {
                 Cell celda = fila.createCell(i);
                 celda.setCellValue(columnas[i]);
-                celda.setCellStyle(excelServicio.estiloEncabesados(libro));
+                celda.setCellStyle(EstilosDeExel.estiloEncabesados(libro));
                 hoja.autoSizeColumn(i);
             }
             int coordenadaRow = 1;

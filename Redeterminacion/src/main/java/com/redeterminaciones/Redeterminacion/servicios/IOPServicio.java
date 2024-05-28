@@ -1,5 +1,6 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
+import com.redeterminaciones.Redeterminacion.entidades.EstilosDeExel;
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.IOPRepositorio;
@@ -27,8 +28,6 @@ public class IOPServicio {
     private IOPRepositorio iopRepo;
     @Autowired
     private ValorMesServicio fechaSer;
-    @Autowired
-    private ExelServicio excelServicio;
 
     @Transactional
     public void crearIOP(String nombre) {
@@ -76,7 +75,7 @@ public class IOPServicio {
 
     public ByteArrayInputStream exportarIOP() throws IOException {
         try (XSSFWorkbook libro = new XSSFWorkbook(); ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-            XSSFCellStyle estiloFechas = excelServicio.estiloEncabesados(libro);
+            XSSFCellStyle estiloFechas = EstilosDeExel.estiloEncabesados(libro);
             Sheet hoja = libro.createSheet("IOP-Cba");
 
             /*Se ponen los titulos*/

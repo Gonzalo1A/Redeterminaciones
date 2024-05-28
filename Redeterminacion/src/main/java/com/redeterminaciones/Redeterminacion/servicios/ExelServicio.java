@@ -1,5 +1,6 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
+import com.redeterminaciones.Redeterminacion.entidades.EstilosDeExel;
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
@@ -7,7 +8,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -16,7 +16,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class ExelServicio {
     private ObraServicio obraServicio;
     @Autowired
     private IOPServicio iopServicio;
-    
+
     public ByteArrayInputStream excelDeEstructutaDeCosto(String nombreObra) throws Exception {
         String[] columnas = {"Nro", "DESCRIPCION", "UNIDAD", "CANTIDAD", "PRECIO UNITARIO", "PRECIO", "%INC", "FACTORES"};
         ByteArrayOutputStream stream;
@@ -38,12 +37,12 @@ public class ExelServicio {
             stream = new ByteArrayOutputStream();
             Sheet hoja = libro.createSheet("Estructuras de Costo");
             Row fila = hoja.createRow(0);
-            XSSFCellStyle estiloDatos = estiloDatos(libro);
-            XSSFCellStyle estiloMoneda = estiloMoneda(libro);
+            XSSFCellStyle estiloDatos = EstilosDeExel.estiloDatos(libro);
+            XSSFCellStyle estiloMoneda = EstilosDeExel.estiloMoneda(libro);
             for (int i = 0; i < columnas.length; i++) {
                 Cell celda = fila.createCell(i);
                 celda.setCellValue(columnas[i]);
-                celda.setCellStyle(estiloEncabesados(libro));
+                celda.setCellStyle(EstilosDeExel.estiloEncabesados(libro));
                 hoja.autoSizeColumn(i);
             }
             int coordenadaRow = 1;
@@ -102,7 +101,7 @@ public class ExelServicio {
                         }
                         incFactores.setCellValue(cadendaDeFactores);
                         if (sumatoria > 1 || sumatoria < 1 || bandera) {
-                            XSSFCellStyle error = estiloDatos(libro);
+                            XSSFCellStyle error = EstilosDeExel.estiloDatos(libro);
                             error.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
                             error.setFillPattern(FillPatternType.SOLID_FOREGROUND);
                             incFactores.setCellStyle(error);
@@ -133,7 +132,7 @@ public class ExelServicio {
             Row filaPolin = hojaPolinomica.createRow(0);
             /*Nnum= Ordende Factor / Factor= Nombre del factor / Ponderador = (% de inc factor * % inc Item) / Monto = sum(% de inc factor * subtotal)*/
 
-            XSSFCellStyle estiloTitulo = estiloEncabesados(libro);
+            XSSFCellStyle estiloTitulo = EstilosDeExel.estiloEncabesados(libro);
             Cell celdaTitular = filaPolin.createCell(0);
             celdaTitular.setCellValue("Num");
             celdaTitular.setCellStyle(estiloTitulo);
@@ -147,9 +146,9 @@ public class ExelServicio {
             celdaTitular.setCellValue("Monto Total");
             celdaTitular.setCellStyle(estiloTitulo);
 
-            XSSFCellStyle estiloPorcentaje = estiloPorcentual(libro);
-            XSSFCellStyle estiloMonto = estiloMoneda(libro);
-            XSSFCellStyle estiloOrden = estiloDatos(libro);
+            XSSFCellStyle estiloPorcentaje = EstilosDeExel.estiloPorcentual(libro);
+            XSSFCellStyle estiloMonto = EstilosDeExel.estiloMoneda(libro);
+            XSSFCellStyle estiloOrden = EstilosDeExel.estiloDatos(libro);
             estiloOrden.setDataFormat(libro.createDataFormat().getFormat("0"));
             estiloOrden.setAlignment(HorizontalAlignment.CENTER);
             /*Traigo todos los todos de la obra*/
@@ -224,51 +223,5 @@ public class ExelServicio {
             e.printStackTrace();
             throw e;
         }
-    }
-
-    public XSSFCellStyle estiloEncabesados(XSSFWorkbook libro) {
-        XSSFCellStyle estilo = libro.createCellStyle();
-        XSSFFont fuente = libro.createFont();
-        fuente.setBold(true);
-        fuente.setColor(IndexedColors.BLUE1.getIndex());
-        estilo.setFillForegroundColor(IndexedColors.AQUA.getIndex());
-        estilo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        estilo.setBorderBottom(BorderStyle.THICK);
-        estilo.setBorderTop(BorderStyle.THICK);
-        estilo.setBorderLeft(BorderStyle.THICK);
-        estilo.setBorderRight(BorderStyle.THICK);
-        estilo.setAlignment(HorizontalAlignment.CENTER);
-        estilo.setFont(fuente);
-        return estilo;
-    }
-
-    public XSSFCellStyle estiloDatos(XSSFWorkbook libro) {
-        XSSFCellStyle estilo = libro.createCellStyle();
-        estilo.setBorderBottom(BorderStyle.THIN);
-        estilo.setBorderTop(BorderStyle.THIN);
-        estilo.setBorderLeft(BorderStyle.THIN);
-        estilo.setBorderRight(BorderStyle.THIN);
-        estilo.setDataFormat(libro.createDataFormat().getFormat("0.0000"));
-        return estilo;
-    }
-
-    public XSSFCellStyle estiloPorcentual(XSSFWorkbook libro) {
-        XSSFCellStyle estilo = libro.createCellStyle();
-        estilo.setBorderBottom(BorderStyle.THIN);
-        estilo.setBorderTop(BorderStyle.THIN);
-        estilo.setBorderLeft(BorderStyle.THIN);
-        estilo.setBorderRight(BorderStyle.THIN);
-        estilo.setDataFormat(libro.createDataFormat().getFormat("0.00%"));
-        return estilo;
-    }
-
-    public XSSFCellStyle estiloMoneda(XSSFWorkbook libro) {
-        XSSFCellStyle estilo = libro.createCellStyle();
-        estilo.setBorderBottom(BorderStyle.THIN);
-        estilo.setBorderTop(BorderStyle.THIN);
-        estilo.setBorderLeft(BorderStyle.THIN);
-        estilo.setBorderRight(BorderStyle.THIN);
-        estilo.setDataFormat(libro.createDataFormat().getFormat("$#,##.00_);($#,##.00)"));
-        return estilo;
     }
 }
