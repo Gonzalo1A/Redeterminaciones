@@ -19,7 +19,7 @@ public class ValorMes implements Comparable<ValorMes> {
     private String id;
     private Double valor;
     @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "MM-yyyy")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date fecha;
 
     @Override

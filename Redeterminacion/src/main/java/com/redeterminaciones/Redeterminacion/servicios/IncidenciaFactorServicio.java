@@ -31,9 +31,7 @@ public class IncidenciaFactorServicio {
     @Autowired
     private ItemServicio itemServi;
 
-
     private final Pattern patron = Pattern.compile("(\\d+[,.]\\d+)\\s*?[Xx*.]\\s*?[Ff](\\d+)");
-
 
     @Transactional
     public IncidenciaFactor crearIncidenciaFactor(int factorReferencia, float porcentaje) {
@@ -61,7 +59,6 @@ public class IncidenciaFactorServicio {
 
     }
 
-
 //    public List<ValoresIncidenciaLista> listaPreparada(Map<String, Object> datosIncidencia) {
 //        List<Map<String, Object>> listaIncidenciasMap = (List<Map<String, Object>>) datosIncidencia.get("listaIncidancias");
 //        List<ValoresIncidenciaLista> listaIncidencias = new ArrayList<>();
@@ -78,7 +75,6 @@ public class IncidenciaFactorServicio {
 //        incidenciaFactor.setPorcentajeIncidencia(porcentaje);
 //        incidenciaFactorRepositorio.save(incidenciaFactor);
 //    }
-
     public IncidenciaFactor buscarIncidenciaFactor(String id) {
         return incidenciaFactorRepositorio.getReferenceById(id);
     }
