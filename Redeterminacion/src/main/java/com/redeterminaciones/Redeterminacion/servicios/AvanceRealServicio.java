@@ -14,6 +14,7 @@ public class AvanceRealServicio {
 
     @Autowired
     private AvanceRealRepositorio avanceRealRepositorio;
+    
 
     @Transactional
     public AvanceObraReal crearAvanceReal() {
@@ -23,7 +24,7 @@ public class AvanceRealServicio {
         return avanceObra;
     }
 
-    public void cargarAvance(Item item, ValorMes valorMes) {
+    public List<AvanceObraReal> cargarAvance(Item item, ValorMes valorMes) {
         AvanceObraReal avanceObraReal = crearAvanceReal();
         List<AvanceObraReal> listaAvance = item.getAvanceObraReal();
         avanceObraReal.setValorMes(valorMes);
@@ -36,6 +37,7 @@ public class AvanceRealServicio {
         }
         listaAvance.add(avanceObraReal);
         avanceRealRepositorio.save(avanceObraReal);
+        return listaAvance;
     }
 
     public AvanceObraReal getAvanceObraReal(String id) {

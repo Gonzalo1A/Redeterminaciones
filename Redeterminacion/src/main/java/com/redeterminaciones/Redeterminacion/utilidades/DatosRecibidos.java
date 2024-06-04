@@ -1,11 +1,11 @@
-package com.redeterminaciones.Redeterminacion.entidades;
+package com.redeterminaciones.Redeterminacion.utilidades;
 
 import java.util.List;
 
 public class DatosRecibidos {
 
     private String nombreObra;
-    private List<ValoresIncidenciaLista> listaDatos;
+    private List<ConjuntoIdValorFecha> listaDatos;
 
     public String getNombreObra() {
         return nombreObra;
@@ -15,11 +15,11 @@ public class DatosRecibidos {
         this.nombreObra = nombreObra;
     }
 
-    public List<ValoresIncidenciaLista> getListaDatos() {
+    public List<ConjuntoIdValorFecha> getListaDatos() {
         return listaDatos;
     }
 
-    public void setListaDatos(List<ValoresIncidenciaLista> listaDatos) {
+    public void setListaDatos(List<ConjuntoIdValorFecha> listaDatos) {
         this.listaDatos = listaDatos;
     }
 

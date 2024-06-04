@@ -1,14 +1,23 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
-import com.redeterminaciones.Redeterminacion.entidades.DatosRecibidos;
+import com.redeterminaciones.Redeterminacion.entidades.AvanceObraReal;
+import com.redeterminaciones.Redeterminacion.utilidades.DatosRecibidos;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
-import com.redeterminaciones.Redeterminacion.entidades.ValoresIncidenciaLista;
+import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
+import com.redeterminaciones.Redeterminacion.utilidades.ConjuntoIdValorFecha;
+import com.redeterminaciones.Redeterminacion.servicios.AvanceRealServicio;
 import com.redeterminaciones.Redeterminacion.servicios.IncidenciaFactorServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
+import com.redeterminaciones.Redeterminacion.servicios.ValorMesServicio;
+import com.redeterminaciones.Redeterminacion.utilidades.DatosAvanceObra;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -34,6 +43,10 @@ public class ItemControlador {
     private ObraServicio obraServicio;
     @Autowired
     private IncidenciaFactorServicio incidenciaFactorServicio;
+    @Autowired
+    private AvanceRealServicio avanceRealServicio;
+    @Autowired
+    private ValorMesServicio valorMesServicio;
 
     @GetMapping("/lista/{nombre}")
     public String listasDeItems(@PathVariable String nombre, ModelMap map) {
@@ -50,10 +63,10 @@ public class ItemControlador {
     @PostMapping("/cargarIncidencia")
     public String cargarIncidenciaFactor(@RequestBody DatosRecibidos datos) {
         String nombreObra = datos.getNombreObra();
-        List<ValoresIncidenciaLista> listaIncidencias = datos.getListaDatos();
-        for (ValoresIncidenciaLista incidencia : listaIncidencias) {
-            if (incidencia.getIncidencia() != null) {
-                itemServicio.agregarFactor(incidencia.getItemId(), incidenciaFactorServicio.formatearValores(incidencia.getIncidencia()));
+        List<ConjuntoIdValorFecha> listaIncidencias = datos.getListaDatos();
+        for (ConjuntoIdValorFecha incidencia : listaIncidencias) {
+            if (incidencia.getValor() != null) {
+                itemServicio.agregarFactor(Long.valueOf(incidencia.getItemId()), incidenciaFactorServicio.formatearValores(incidencia.getValor()));
             }
         }
         return "redirect:/obra/listaItems/" + nombreObra;
@@ -101,4 +114,33 @@ public class ItemControlador {
         incidenciaFactorServicio.importarFactoresDeItemsPorExcel(fileExcel.getInputStream());
         return "redirect:/obra";
     }
+
+    @GetMapping("/avance_obra/{nombre}")
+    public String caragarAvanceDeObraReal(@PathVariable String nombre, ModelMap model) {
+        Obra obra = obraServicio.buscarPorNombre(nombre);
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("MM/yyyy");
+        if (obra.getItems() != null) {
+            model.addAttribute("items", obra.getItems());
+        }
+        model.addAttribute("fecha", fechaActual.format(formato));
+        return "form_avanceReal.html";
+    }
+
+    @PostMapping("/avance_carga")
+    public String cargaAvanceObra(@RequestBody DatosAvanceObra datos) throws ParseException {
+        List<ConjuntoIdValorFecha> conjuntoIdValorFechas = datos.getValorMes();
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/yyyy");
+        for (ConjuntoIdValorFecha valor : conjuntoIdValorFechas) {
+            if (valor.getValor() != null) {
+                Long idItem = Long.valueOf(valor.getItemId());
+                Item item = itemServicio.getOne(idItem);
+                ValorMes valMes = valorMesServicio.crear(formatter.parse(valor.getFecha()),Double.valueOf(valor.getValor()));
+                List<AvanceObraReal> lista = avanceRealServicio.cargarAvance(item, valMes);
+                itemServicio.agregarAvanceReal(idItem,lista);
+            }
+        }
+        return "form_avanceReal.html";
+    }
+
 }

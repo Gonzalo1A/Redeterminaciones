@@ -1,6 +1,6 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
-import com.redeterminaciones.Redeterminacion.entidades.EstilosDeExel;
+import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;

@@ -1,6 +1,7 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
-import com.redeterminaciones.Redeterminacion.entidades.EstilosDeExel;
+import com.redeterminaciones.Redeterminacion.entidades.AvanceObraReal;
+import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
@@ -119,6 +120,16 @@ public class ItemServicio {
         if (respuesta.isPresent()) {
             Item item = respuesta.get();
             item.setIncidenciaFactores(incidencias);
+            itemRepositorio.save(item);
+        }
+    }
+
+    @Transactional
+    public void agregarAvanceReal(Long idItem, List<AvanceObraReal> avanceReal) {
+        Optional<Item> respuesta = itemRepositorio.findById(idItem);
+        if (respuesta.isPresent()) {
+            Item item = respuesta.get();
+            item.setAvanceObraReal(avanceReal);
             itemRepositorio.save(item);
         }
     }
