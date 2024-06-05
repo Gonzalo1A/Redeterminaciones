@@ -17,84 +17,7 @@
             />
     </head>
     <body>
-        <div class="modal modal-sheet bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog" id="modalIngresoFactoreseXCEL">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content rounded-4 shadow">
-                    <div class="modal-header p-5 pb-4 border-bottom-0">
-                        <h1 class="fw-bold mb-0 fs-2">Incidencia Factor</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-5 pt-0">
-                        <form th:action="@{/obra/importFactoresExcel}" method="post" enctype="multipart/form-data">
-
-                            <div class="form-floating mb-3">
-                                <input type="file" class="form-control" id="listaIOP" name="fileExcel">
-                                    <label for="fileExcel">Importe Exel</label>
-                            </div>
-                            <div class="col-12">
-                                <button class="btn btn-primary" type="submit">Subir Factores</button>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal modal-sheet bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog" id="modalIngresoAvanceTeorico">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content rounded-4 shadow">
-                    <div class="modal-header p-5 pb-4 border-bottom-0">
-                        <h1 class="fw-bold mb-0 fs-2">Ingreso Avance Teorico</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-5 pt-0">
-                        <form th:action="@{/obra/importAvanceTeoricoPorExcel}" method="post" enctype="multipart/form-data">
-
-                            <div class="form-floating mb-3">
-                                <input type="file" class="form-control" id="listaIOP" name="fileExcel">
-                                    <label for="fileExcel">Importe Exel</label>
-                            </div>
-                            <div class="col-12">
-                                <button class="btn btn-primary" type="submit">Subir Avance</button>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         <header th:replace="fragments/header"></header>
-
-        <div>
-            <a
-                th:href="@{/obra/exportItem/__${obra.nombre}__}"
-                class="btn btn-primary"
-                tabindex="-1"
-                role="button"
-                >Exportar Exel</a
-            >
-            <a
-                th:href="@{/obra/registrar/item/__${obra.nombre}__}"
-                class="btn btn-primary"
-                tabindex="-1"
-                role="button"
-                >Importar Exel</a
-            >           
-            <a th:href="@{/obra/exportIncidenciaFactor/__${obra.nombre}__}" class="btn btn-primary" tabindex="-1" role="button">Planilla de ingreso de factores</a>
-            <a th:href="@{/obra/exportModeloDeAvanceDeObraTeorico/__${obra.nombre}__}" class="btn btn-primary" tabindex="-1" role="button">Excel Avance De Obra Teorico</a>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalIngresoFactoreseXCEL">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                </svg>
-            </button>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalIngresoAvanceTeorico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                </svg>
-            </button>
-        </div>
         <div>
             <table class="table table-striped">
                 <thead>
@@ -103,56 +26,44 @@
                         <th scope="col">Descripcion</th>
                         <th scope="col">Unidad</th>
                         <th scope="col">Cantidad</th>
-                        <th scope="col">Precio Unitario</th>
                         <th scope="col">Sub Total</th>
-                        <th scope="col">Incidencia Factores</th>
+                        <th scope="col" id="mes-actual" th:text="${fecha}"></th>
                     </tr>
                 </thead>
-                <tbody th:each="index : ${#numbers.sequence(0, #lists.size(items) - 1)}">
+                <tbody th:each="item : ${items}">
                     <tr>
-                        <td scope="row" th:text="${items[index].numeroItem}"></th>
-                            <td th:text="${items[index].descripcion}"></td>
-                            <td th:text="${items[index].unidad}"></td>
-                            <td th:text="${items[index].cantidad}"></td>
-                            <td th:text="${items[index].precioUnitario}"></td>
-                            <td th:text="${items[index].subTotal}"></td>
-                            <td >
-                                <div th:if="${!items[index].rubro}" class="col-md-6">
-                                    <div class="input-group">
-                                        <span class="input-group-text edit-button" id="basic-addon1">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="16"
-                                                height="16"
-                                                fill="currentColor"
-                                                class="bi bi-pencil-square"
-                                                viewBox="0 0 16 16"
-                                                >
-                                                <path
-                                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
-                                                    />
-                                                <path
-                                                    fill-rule="evenodd"
-                                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"
-                                                    />
-                                            </svg>
-                                        </span>
-                                        <input
-                                            type="text"
-                                            th:id="${items[index].id}"
-                                            class="form-control factor-input"
-                                            name="incidenciaFactor"
-                                            placeholder="ej de carga: 0.4 x F1 + 0.4 x F3 + 0.2 x F2"
-                                            th:value="${cadenasCargadas[__${index}__]}"
-                                            disabled
-                                            />
-                                    </div>
+                        <td scope="row" th:text="${item.numeroItem}"></th>
+                            <td th:text="${item.descripcion}"></td>
+                            <td th:text="${item.unidad}"></td>
+                            <td th:text="${item.cantidad}"></td>
+                            <td th:text="${item.subTotal}"></td>
+                            <td>
+                                <div th:if="${!item.rubro}" class="col-md-6 input-group">
+                                    <span class="input-group-text edit-button" id="basic-addon1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path
+                                                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
+                                                />
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"
+                                                />
+                                        </svg>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        th:id="${item.id}"
+                                        class="form-control avance-input"
+                                        name="cantidadAvance"
+                                        placeholder="1000.00"
+                                        disabled
+                                        />
                                 </div>
                             </td>
                     </tr>
                 </tbody>
             </table>
-            <button id="guardarDatosBtn" class="btn btn-primary" th:data-name="${obra.nombre}"  onclick="guardarDatos()">
+            <button id="guardarDatosBtn" class="btn btn-primary" onclick="guardarDatos()">
                 Guardar Datos
             </button>
         </div>
@@ -162,6 +73,6 @@
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"
         ></script>
-        <script src="/js/vistaObra.js"></script>
+        <script src="/js/items.js"></script>
     </body>
 </html>

@@ -14,7 +14,7 @@ function obtenerDatosInputs() {
     inputs.forEach(function(input) {
         var id = input.getAttribute('id'); // Obtén el ID del atributo th:data-name
         var valor = input.value; // Obtén el valor del input
-        listaInputs.push({itemId: id, incidencia: valor}); // Agrega el ID y el valor a la lista
+        listaInputs.push({itemId: id, valor: valor}); // Agrega el ID y el valor a la lista
     });
 
     return listaInputs; // Devuelve la lista de datos

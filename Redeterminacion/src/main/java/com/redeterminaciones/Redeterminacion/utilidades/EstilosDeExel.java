@@ -1,4 +1,4 @@
-package com.redeterminaciones.Redeterminacion.entidades;
+package com.redeterminaciones.Redeterminacion.utilidades;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
