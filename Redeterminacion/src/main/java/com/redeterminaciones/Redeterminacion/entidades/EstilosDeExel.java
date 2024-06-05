@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -54,6 +55,10 @@ public class EstilosDeExel {
         estilo.setBorderRight(BorderStyle.THIN);
         estilo.setDataFormat(libro.createDataFormat().getFormat("$#,##.00_);($#,##.00)"));
         return estilo;
+    }
+    
+    public static void insertarCaratulas(Sheet hoja){
+            hoja.shiftRows(0, hoja.getLastRowNum(), 0);
     }
 
 }

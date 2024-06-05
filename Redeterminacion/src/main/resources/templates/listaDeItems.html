@@ -95,7 +95,7 @@
                 </svg>
             </button>
         </div>
-        <div>
+        <div th:if="${items != null and !items.isEmpty()}" >
             <table class="table table-striped">
                 <thead>
                     <tr>
