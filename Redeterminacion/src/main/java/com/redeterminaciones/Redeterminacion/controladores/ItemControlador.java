@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -126,11 +128,13 @@ public class ItemControlador {
         model.addAttribute("fecha", fechaActual.format(formato));
         return "form_avanceReal.html";
     }
-
+//formatter.parse(valor.getFecha())
     @PostMapping("/avance_carga")
     public String cargaAvanceObra(@RequestBody DatosAvanceObra datos) throws ParseException {
         List<ConjuntoIdValorFecha> conjuntoIdValorFechas = datos.getValorMes();
         SimpleDateFormat formatter = new SimpleDateFormat("MM/yyyy");
+//        LocalDate fechaActual = LocalDate.of(2024, 7, 1);formatter.parse(fechaActual.format(formato))
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("MM/yyyy");
         for (ConjuntoIdValorFecha valor : conjuntoIdValorFechas) {
             if (valor.getValor() != null) {
                 Long idItem = Long.valueOf(valor.getItemId());
