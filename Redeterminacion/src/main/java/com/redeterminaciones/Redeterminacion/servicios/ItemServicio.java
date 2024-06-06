@@ -10,6 +10,7 @@ import com.redeterminaciones.Redeterminacion.repositorios.ItemRepositorio;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -42,6 +43,8 @@ public class ItemServicio {
     private ItemRepositorio itemRepositorio;
     @Autowired
     private ValorMesServicio valorMesServi;
+    @Autowired
+    private AvanceRealServicio avanceRealServicio;
 
     @Transactional
     public Item crearItem(String numeroItem, String descripcion, String unidad, Double cantidad, Double precioUnitario) {
@@ -448,6 +451,31 @@ public class ItemServicio {
                 }
                 if (id != null && !avanceTeorico.isEmpty()) {
                     agregarAvanceTeorico(id, avanceTeorico);
+                }
+            }
+            libro.close();
+        }
+    }
+
+    public void importarAvnaceRealMensualPorExel(InputStream archivo) throws IOException {
+        try (XSSFWorkbook libro = new XSSFWorkbook(archivo)) {
+            Sheet hoja = libro.getSheetAt(0);
+            Date fecha = null;
+            for (Row fila : hoja) {
+                Long id = null;
+                Double valor = null;
+                Cell celdaId = fila.getCell(0);
+                Cell celdaOcho = fila.getCell(7);
+                if (DateUtil.isCellDateFormatted(celdaOcho)) {
+                    fecha = celdaOcho.getDateCellValue();
+                }
+                if (celdaId.getCellType() == CellType.NUMERIC) {
+                    id = (long) celdaId.getNumericCellValue();
+                    valor = celdaOcho.getNumericCellValue();
+                }
+                if (id != null && valor != null && fecha != null) {
+                    Item carga = itemRepositorio.getById(id);
+                    agregarAvanceReal(id, avanceRealServicio.cargarAvance(carga, valorMesServi.crear(fecha, valor)));
                 }
             }
             libro.close();

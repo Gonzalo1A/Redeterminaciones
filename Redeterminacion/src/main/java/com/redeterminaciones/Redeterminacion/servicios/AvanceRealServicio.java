@@ -137,27 +137,5 @@ public class AvanceRealServicio {
         return new ByteArrayInputStream(stream.toByteArray());
     }
 
-    public void importarAvnaceRealMensualPorExel(InputStream archivo) throws IOException {
-        try (XSSFWorkbook libro = new XSSFWorkbook(archivo)) {
-            Sheet hoja = libro.getSheetAt(0);
-            Date fecha = null;
-            for (Row fila : hoja) {
-                Long id = null;
-                Double valor = null;
-                Cell celdaId = fila.getCell(0);
-                Cell celdaOcho = fila.getCell(7);
-                if (DateUtil.isCellDateFormatted(celdaOcho)) {
-                    fecha = celdaOcho.getDateCellValue();
-                }
-                if (celdaId.getCellType() == CellType.NUMERIC) {
-                    id = (long) celdaId.getNumericCellValue();
-                    valor = celdaOcho.getNumericCellValue();
-                }
-                if (id != null && valor != null && fecha != null) {
-                    
-                }
-            }
-            libro.close();
-        }
-    }
+    
 }

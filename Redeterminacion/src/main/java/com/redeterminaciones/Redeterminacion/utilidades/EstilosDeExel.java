@@ -1,9 +1,12 @@
 package com.redeterminaciones.Redeterminacion.utilidades;
 
+import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -57,8 +60,16 @@ public class EstilosDeExel {
         return estilo;
     }
     
-    public static void insertarCaratulas(Sheet hoja){
-            hoja.shiftRows(0, hoja.getLastRowNum(), 0);
+    public static XSSFCellStyle estiloBloqueado(XSSFWorkbook libro){
+        XSSFCellStyle estiloBloqueo = libro.createCellStyle();
+        estiloBloqueo.setLocked(true);
+        return estiloBloqueo;
+    }
+    
+    public static void insertarMembrete(XSSFWorkbook libro, Obra obra){
+            Sheet hojaMembrete = libro.createSheet("Membrete");
+            Row fila = hojaMembrete.createRow(0);
+            Cell celda = fila.createCell(0);
     }
 
 }

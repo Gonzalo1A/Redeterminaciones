@@ -18,7 +18,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import static org.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory.model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -135,12 +137,26 @@ public class ItemControlador {
             if (valor.getValor() != null) {
                 Long idItem = Long.valueOf(valor.getItemId());
                 Item item = itemServicio.getOne(idItem);
-                ValorMes valMes = valorMesServicio.crear(formatter.parse(valor.getFecha()),Double.valueOf(valor.getValor()));
+                ValorMes valMes = valorMesServicio.crear(formatter.parse(valor.getFecha()), Double.valueOf(valor.getValor()));
                 List<AvanceObraReal> lista = avanceRealServicio.cargarAvance(item, valMes);
-                itemServicio.agregarAvanceReal(idItem,lista);
+                itemServicio.agregarAvanceReal(idItem, lista);
             }
         }
         return "form_avanceReal.html";
     }
 
+    @GetMapping("/avanceObraRealExport/{nombre}")
+    public ResponseEntity<InputStreamResource> caragarAvanceDeObraRealPorExcel(@PathVariable String nombre, Date fecha) throws Exception {
+        Obra obra = obraServicio.buscarPorNombre(nombre);
+        ByteArrayInputStream stream = avanceRealServicio.exportarModeloDeCargaDeAvanceRealExcel(obra, fecha);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Factorizar.xlsx");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
+    }
+
+    @PostMapping("/importFactoresExcel")
+    public String importarAvanceRealPorExcel(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException, Exception {
+        itemServicio.importarAvnaceRealMensualPorExel(fileExcel.getInputStream());
+        return "form_avanceReal.html";
+    }
 }
