@@ -15,11 +15,8 @@ import com.redeterminaciones.Redeterminacion.utilidades.DatosAvanceObra;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -71,7 +68,7 @@ public class ItemControlador {
                 itemServicio.agregarFactor(Long.valueOf(incidencia.getItemId()), incidenciaFactorServicio.formatearValores(incidencia.getValor()));
             }
         }
-        return "redirect:/obra/listaItems/" + nombreObra;
+        return "redirect:/item/listaItems/" + nombreObra;
     }
 
     @GetMapping("/export/{nombre}")
@@ -97,9 +94,9 @@ public class ItemControlador {
                 obraServicio.calcularTotal(nombre);
                 itemServicio.calularIncidenciaItem(obraServicio.buscarPorNombre(nombre));
             }
-            return "redirect:/obra/listaItems/{nombre}";
+            return "redirect:/item/listaItems/{nombre}";
         } catch (Exception e) {
-            return "redirect:/obra/listaItems/{nombre}";
+            return "redirect:/item/listaItems/{nombre}";
         }
     }
 
