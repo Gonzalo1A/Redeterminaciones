@@ -17,8 +17,72 @@
             />
     </head>
     <body>
+        <!-- Modal  Exporta Excel de Avance real-->
+        <div class="modal fade" id="modalExportarAvanceRealEXCEL" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content rounded-4 shadow">
+                    <div class="modal-header p-5 pb-4 border-bottom-0">
+                        <h5 class="modal-title" id="modalLabel">Avance de Obra Real</h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-5 pt-0">
+                        <form id="exportForm" th:action="@{/item/avanceObraRealExport}" method="post">
+                            <input type="text" name="nombre"  hidden th:value="${obra.nombre}">
+                                <div class="form-group">
+                                    <label for="fecha">Fecha Objetiva:</label>
+                                    <input type="date" id="fecha" name="fecha" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary" type="submit">Descargar Excel</button>
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal modal-sheet bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog" id="modalIngresoAvanceRealEXCEL">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content rounded-4 shadow">
+                    <div class="modal-header p-5 pb-4 border-bottom-0">
+                        <h1 class="fw-bold mb-0 fs-2">Avance de Obra Real</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-5 pt-0">
+                        <form th:action="@{/item/importAvanceRealExcel}" method="post" enctype="multipart/form-data">
+                            <div class="form-floating mb-3">
+                                <input type="file" class="form-control" id="listaIOP" name="fileExcel">
+                                    <label for="fileExcel">Importe Exel</label>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-primary" type="submit">Subir Avance Mensual Real</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <header th:replace="fragments/header"></header>
+
+        <button type="button" class="btn btn-outline-success"data-bs-toggle="modal" data-bs-target="#modalExportarAvanceRealEXCEL">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+            </svg>
+            Descargar Exel Avance Obra Real
+        </button>
+
+        <button type="button" class="btn btn-outline-success"data-bs-toggle="modal" data-bs-target="#modalIngresoAvanceRealEXCEL">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+            </svg>
+            Importar Avance Obra Real
+        </button>
+
         <div>
+
             <table class="table table-striped">
                 <thead>
                     <tr>

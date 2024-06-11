@@ -5,6 +5,7 @@ import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.AvanceRealRepositorio;
+import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,6 +20,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,9 +77,10 @@ public class AvanceRealServicio {
             for (int i = 0; i < columnas.length; i++) {
                 Cell celda = fila.createCell(i);
                 celda.setCellValue(columnas[i]);
+                celda.setCellStyle(EstilosDeExel.estiloEncabesados(libro));
             }
             fila.createCell(7, CellType.NUMERIC).setCellValue(fechaObjetiva);
-
+            fila.getCell(7).setCellStyle(EstilosDeExel.estiloEncabesados(libro));
             int coordenadaRow = 1;
             for (Item item : items) {
                 fila = hoja.createRow(coordenadaRow);

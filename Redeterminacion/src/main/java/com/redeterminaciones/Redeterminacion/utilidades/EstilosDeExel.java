@@ -27,6 +27,7 @@ public class EstilosDeExel {
         estilo.setBorderRight(BorderStyle.THICK);
         estilo.setAlignment(HorizontalAlignment.CENTER);
         estilo.setFont(fuente);
+        estilo.setDataFormat(libro.createDataFormat().getFormat("MM-yyyy"));
         return estilo;
     }
 
@@ -59,17 +60,17 @@ public class EstilosDeExel {
         estilo.setDataFormat(libro.createDataFormat().getFormat("$#,##.00_);($#,##.00)"));
         return estilo;
     }
-    
-    public static XSSFCellStyle estiloBloqueado(XSSFWorkbook libro){
+
+    public static XSSFCellStyle estiloBloqueado(XSSFWorkbook libro) {
         XSSFCellStyle estiloBloqueo = libro.createCellStyle();
         estiloBloqueo.setLocked(true);
         return estiloBloqueo;
     }
-    
-    public static void insertarMembrete(XSSFWorkbook libro, Obra obra){
-            Sheet hojaMembrete = libro.createSheet("Membrete");
-            Row fila = hojaMembrete.createRow(0);
-            Cell celda = fila.createCell(0);
+
+    public static void insertarMembrete(XSSFWorkbook libro, Obra obra) {
+        Sheet hojaMembrete = libro.createSheet("Membrete");
+        Row fila = hojaMembrete.createRow(0);
+        Cell celda = fila.createCell(0);
     }
 
 }

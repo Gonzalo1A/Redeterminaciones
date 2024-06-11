@@ -192,7 +192,6 @@ public class IncidenciaFactorServicio {
                         factores = celda.getStringCellValue();
                     }
                 }
-                System.out.println(id + "       " + factores);
                 if (factores != null) {
                     List<IncidenciaFactor> incidencias = formatearValores(factores);
                     itemServi.agregarFactor(id, incidencias);

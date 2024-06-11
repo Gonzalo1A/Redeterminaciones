@@ -20,9 +20,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-import static org.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory.model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -122,6 +122,7 @@ public class ItemControlador {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         LocalDate fechaActual = LocalDate.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("MM/yyyy");
+        model.addAttribute("obra", obra);
         if (obra.getItems() != null) {
             model.addAttribute("items", obra.getItems());
         }
@@ -145,16 +146,16 @@ public class ItemControlador {
         return "form_avanceReal.html";
     }
 
-    @GetMapping("/avanceObraRealExport/{nombre}")
-    public ResponseEntity<InputStreamResource> caragarAvanceDeObraRealPorExcel(@PathVariable String nombre, Date fecha) throws Exception {
+    @PostMapping("/avanceObraRealExport")
+    public ResponseEntity<InputStreamResource> caragarAvanceDeObraRealPorExcel(@RequestParam String nombre, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha) throws Exception {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         ByteArrayInputStream stream = avanceRealServicio.exportarModeloDeCargaDeAvanceRealExcel(obra, fecha);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Factorizar.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Avance Real.xlsx");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
-    @PostMapping("/importFactoresExcel")
+    @PostMapping("/importAvanceRealExcel")
     public String importarAvanceRealPorExcel(@RequestParam("fileExcel") MultipartFile fileExcel) throws IOException, Exception {
         itemServicio.importarAvnaceRealMensualPorExel(fileExcel.getInputStream());
         return "form_avanceReal.html";
