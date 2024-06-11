@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -20,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import static org.apache.poi.hssf.usermodel.HeaderFooter.date;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -311,25 +313,25 @@ public class ItemServicio {
                 celda.setCellStyle(EstilosDeExel.estiloEncabesados(libro));
             }
 
-            List<Date> mesesDeObra = new ArrayList<>();
-            Calendar calendar = Calendar.getInstance();
-            Date fechaInicio = obra.getFechaDeReeplanteo();
-            calendar.setTime(fechaInicio);
-            calendar.add(Calendar.DAY_OF_MONTH, obra.getDiasPlazoDeObra());
+            List<LocalDate> mesesDeObra = new ArrayList<>();
+//            Calendar calendar = Calendar.getInstance();
+            LocalDate fechaInicio = obra.getFechaDeReeplanteo();
+//            calendar.setTime(fechaInicio);
+//            calendar.add(Calendar.DAY_OF_MONTH, obra.getDiasPlazoDeObra());
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date fechaFinal = calendar.getTime();
+//            Date fechaFinal = calendar.getTime();
 
-            LocalDate inicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1).plusMonths(1);
-            LocalDate fin = fechaFinal.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//            LocalDate inicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1).plusMonths(1);
+            LocalDate fin = obra.getFechaDeFinalizacion();
 
-            YearMonth comienso = YearMonth.from(inicio);
+            YearMonth comienso = YearMonth.from(fechaInicio);
             YearMonth finalisima = YearMonth.from(fin);
             YearMonth mesActual = comienso;
 
             while (!mesActual.isAfter(finalisima)) {
                 LocalDate ultimoDia = mesActual.atEndOfMonth();
-                Date convierte = (Date.from(ultimoDia.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-                mesesDeObra.add(convierte);
+//                Date convierte = (Date.from(ultimoDia.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                mesesDeObra.add(ultimoDia);
                 mesActual = mesActual.plusMonths(1);
             }
 
@@ -429,7 +431,7 @@ public class ItemServicio {
                 Row filaTitular = hoja.getRow(0);
                 Row fila = hoja.getRow(i);
                 Long id = null;
-                Date fecha;
+                LocalDate fecha;
                 Double valor;
                 Cell celda = fila.getCell(0);
                 if (celda != null) {
@@ -440,7 +442,8 @@ public class ItemServicio {
                             celda = fila.getCell(j);
                             if (celda != null && celda.getCellType() == CellType.NUMERIC) {
                                 valor = celda.getNumericCellValue();
-                                fecha = filaTitular.getCell(j).getDateCellValue();
+                                fecha = filaTitular.getCell(j).getLocalDateTimeCellValue().toLocalDate();
+                                
                                 avanceTeorico.add(valorMesServi.crear(fecha, valor));
                             }
                         }

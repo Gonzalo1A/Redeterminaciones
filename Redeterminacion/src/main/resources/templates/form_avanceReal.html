@@ -27,6 +27,7 @@
                         <th scope="col">Unidad</th>
                         <th scope="col">Cantidad</th>
                         <th scope="col">Sub Total</th>
+                        <th scope="col">Acum Anterior</th>
                         <th scope="col" id="mes-actual" th:text="${fecha}"></th>
                     </tr>
                 </thead>
@@ -37,6 +38,10 @@
                             <td th:text="${item.unidad}"></td>
                             <td th:text="${item.cantidad}"></td>
                             <td th:text="${item.subTotal}"></td>
+                            <td >
+                                <span th:if="${!item.avanceObraReal.empty}" th:text="${item.avanceObraReal[item.avanceObraReal.size() - 1].acumuladoAnterior}"></span>
+                                <span th:if="${item.avanceObraReal.empty}"></span>
+                            </td>
                             <td>
                                 <div th:if="${!item.rubro}" class="col-md-6 input-group">
                                     <span class="input-group-text edit-button" id="basic-addon1">

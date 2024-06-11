@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -40,11 +41,11 @@ public class IOPServicio {
     }
 
     @Transactional
-    public void agregarPorExel(Integer id, List<Date> fechas, List<Double> valores) {
+    public void agregarPorExel(Integer id, List<LocalDate> fechas, List<Double> valores) {
         IOP factor = iopRepo.getById(id);
         List<ValorMes> tablas = new ArrayList<>();
         for (int i = 0; i < fechas.size(); i++) {
-            Date fecha = fechas.get(i);
+            LocalDate fecha = fechas.get(i);
             Double valor = valores.get(i);
             tablas.add(fechaSer.crear(fecha, valor));
         }
@@ -129,7 +130,7 @@ public class IOPServicio {
     public void importarIOP(InputStream archivo) throws IOException {
         try (XSSFWorkbook libro = new XSSFWorkbook(archivo)) {
             Sheet hoja = libro.getSheetAt(0);
-            List<Date> fechasEncabesados = new ArrayList<>();
+            List<LocalDate> fechasEncabesados = new ArrayList<>();
 
             /*Registro y guardo los Factores*/
             for (Row fila : hoja) {
@@ -143,7 +144,7 @@ public class IOPServicio {
             Row fechas = hoja.getRow(0);
             for (Cell celda : fechas) {
                 if (celda.getColumnIndex() != 0 && celda.getColumnIndex() != 1) {
-                    Date fecha = celda.getDateCellValue();
+                    LocalDate fecha = celda.getLocalDateTimeCellValue().toLocalDate();
                     fechasEncabesados.add(fecha);
                 }
             }

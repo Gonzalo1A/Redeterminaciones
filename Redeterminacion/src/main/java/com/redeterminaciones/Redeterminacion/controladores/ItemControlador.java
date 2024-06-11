@@ -132,14 +132,14 @@ public class ItemControlador {
     @PostMapping("/avance_carga")
     public String cargaAvanceObra(@RequestBody DatosAvanceObra datos) throws ParseException {
         List<ConjuntoIdValorFecha> conjuntoIdValorFechas = datos.getValorMes();
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/yyyy");
+//        SimpleDateFormat formatter = new SimpleDateFormat("MM/yyyy");        DateTimeFormatter formato = DateTimeFormatter.ofPattern("MM/yyyy");
 //        LocalDate fechaActual = LocalDate.of(2024, 7, 1);formatter.parse(fechaActual.format(formato))
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("MM/yyyy");
         for (ConjuntoIdValorFecha valor : conjuntoIdValorFechas) {
             if (valor.getValor() != null) {
                 Long idItem = Long.valueOf(valor.getItemId());
                 Item item = itemServicio.getOne(idItem);
-                ValorMes valMes = valorMesServicio.crear(formatter.parse(valor.getFecha()),Double.valueOf(valor.getValor()));
+                LocalDate fechaActual = valorMesServicio.convertirStringALocalDate(valor.getFecha());
+                ValorMes valMes = valorMesServicio.crear(fechaActual,Double.valueOf(valor.getValor()));
                 List<AvanceObraReal> lista = avanceRealServicio.cargarAvance(item, valMes);
                 itemServicio.agregarAvanceReal(idItem,lista);
             }

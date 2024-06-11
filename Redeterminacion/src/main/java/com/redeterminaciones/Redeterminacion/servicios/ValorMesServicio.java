@@ -2,11 +2,14 @@ package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import jakarta.transaction.Transactional;
-import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import com.redeterminaciones.Redeterminacion.repositorios.ValorMesRepositorio;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Service
 public class ValorMesServicio {
@@ -15,7 +18,7 @@ public class ValorMesServicio {
     private ValorMesRepositorio IOPfechaRepo;
 
     @Transactional
-    public ValorMes crear(Date fecha, Double valor) {
+    public ValorMes crear(LocalDate fecha, Double valor) {
         ValorMes nuevo = new ValorMes();
         nuevo.setFecha(fecha);
         nuevo.setValor(valor);
@@ -24,7 +27,7 @@ public class ValorMesServicio {
     }
 
     @Transactional
-    public void modificarIndiceMensual(String id, Date fecha, Double valor) {
+    public void modificarIndiceMensual(String id, LocalDate fecha, Double valor) {
         Optional<ValorMes> respuesta = IOPfechaRepo.findById(id);
         respuesta.ifPresent(indiceMensual -> {
             indiceMensual.setFecha(fecha);
@@ -44,6 +47,17 @@ public class ValorMesServicio {
 
     public ValorMes buscaIndiceMensual(String id) {
         return IOPfechaRepo.getById(id);
+    }
+
+    public LocalDate convertirStringALocalDate(String fechaStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+        try {
+            YearMonth yearMonth = YearMonth.parse(fechaStr, formatter);
+            return yearMonth.atDay(1);
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

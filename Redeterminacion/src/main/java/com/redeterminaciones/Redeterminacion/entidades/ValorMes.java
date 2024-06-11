@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import java.util.Date;
+import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
@@ -18,9 +18,9 @@ public class ValorMes implements Comparable<ValorMes> {
     private Double valor;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "MM-yyyy")
-    private Date fecha;
+    private LocalDate fecha;
 
-    public ValorMes(Double valor, Date fecha) {
+    public ValorMes(Double valor, LocalDate fecha) {
         this.valor = valor;
         this.fecha = fecha;
     }
@@ -28,11 +28,11 @@ public class ValorMes implements Comparable<ValorMes> {
     public ValorMes() {
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 

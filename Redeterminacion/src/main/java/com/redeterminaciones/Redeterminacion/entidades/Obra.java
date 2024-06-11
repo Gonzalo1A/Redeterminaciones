@@ -8,9 +8,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import java.util.Date;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Data
@@ -22,18 +25,23 @@ public class Obra {
     
     private String nombre;
     private String total;
-    
-    private Date fechaPresentacionObra;
-    private Date fechaDeContrato;
-    private Date fechaDeReeplanteo;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate fechaPresentacionObra;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate fechaDeContrato;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate fechaDeReeplanteo;
     private Double porcentajeDeAnticipo;
     private int diasPlazoDeObra;
-    private Date fechaDeFinalizacion;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate fechaDeFinalizacion;
     private String comitente;
     @Enumerated(EnumType.STRING)
     private TipoDeRedeterminaciones tipoDeRedet;
-//    @OneToOne
-//    private ComputoYPresupuesto computoYPresupuesto;
     @OneToMany
     private List<Item> items;
 
