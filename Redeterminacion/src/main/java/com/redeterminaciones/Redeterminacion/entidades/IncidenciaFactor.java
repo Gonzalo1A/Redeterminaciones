@@ -8,17 +8,12 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Montos {
+public class IncidenciaFactor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private Double nuevoMonto;
-    private Double redeterminacionMonto;
-    private Double adecuacionProvisoriaMonto;
-    private Double incremento;
-
-    public Montos() {
-    }
+    private int indice;
+    private Float porcentajeIncidencia;
 
 }
