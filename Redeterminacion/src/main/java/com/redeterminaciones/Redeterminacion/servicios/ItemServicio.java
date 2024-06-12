@@ -463,14 +463,14 @@ public class ItemServicio {
     public void importarAvnaceRealMensualPorExel(InputStream archivo) throws IOException {
         try (XSSFWorkbook libro = new XSSFWorkbook(archivo)) {
             Sheet hoja = libro.getSheetAt(0);
-            Date fecha = null;
+            LocalDate fecha = null;
             for (Row fila : hoja) {
                 Long id = null;
                 Double valor = null;
                 Cell celdaId = fila.getCell(0);
                 Cell celdaOcho = fila.getCell(7);
                 if (DateUtil.isCellDateFormatted(celdaOcho)) {
-                    fecha = celdaOcho.getDateCellValue();
+                    fecha = celdaOcho.getLocalDateTimeCellValue().toLocalDate();
                 }
                 if (celdaId.getCellType() == CellType.NUMERIC) {
                     id = (long) celdaId.getNumericCellValue();

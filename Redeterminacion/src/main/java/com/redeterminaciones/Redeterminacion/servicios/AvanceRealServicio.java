@@ -108,15 +108,16 @@ public class AvanceRealServicio {
                     List<AvanceObraReal> avanceALaFecha = item.getAvanceObraReal();
                     if (!avanceALaFecha.isEmpty()) {
                         Calendar cal1 = Calendar.getInstance();
-                        Calendar cal2 = Calendar.getInstance();
+//                        Calendar cal2 = Calendar.getInstance();
                         for (AvanceObraReal avanceObraReal : avanceALaFecha) {
                             cal1.setTime(fechaObjetiva);
-                            cal2.setTime(avanceObraReal.getValorMes().getFecha());
+//                            cal2.setTime(avanceObraReal.getValorMes().getFecha());
                             int anio1 = cal1.get(Calendar.YEAR);
                             int mes1 = cal1.get(Calendar.MONTH);
-                            int anio2 = cal2.get(Calendar.YEAR);
-                            int mes2 = cal2.get(Calendar.MONTH);
-                            if (anio1 == anio2 && mes1 == mes2) {
+//                            int anio2 = cal2.get(Calendar.YEAR);                            int mes2 = cal2.get(Calendar.MONTH);
+                            int aniob = avanceObraReal.getValorMes().getFecha().getYear();
+                            int mesb = avanceObraReal.getValorMes().getFecha().getMonthValue();
+                            if (anio1 == aniob && mes1 == mesb) {
                                 cantAFecha.setCellValue(avanceObraReal.getAcumuladoAnterior());
                                 if (avanceObraReal.getValorMes().getValor() != null) {
                                     avanceMes.setCellValue(avanceObraReal.getValorMes().getValor());
@@ -140,5 +141,4 @@ public class AvanceRealServicio {
         return new ByteArrayInputStream(stream.toByteArray());
     }
 
-    
 }
