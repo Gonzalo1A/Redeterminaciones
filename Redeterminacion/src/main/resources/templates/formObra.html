@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="windows-1252">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+                    </head>
+                    <body>
+                        <header th:replace="fragments/header"></header>
+                        <div>
+                            <form th:action="@{/obra/registrarObra}" method="post" class="row g-3 align-items-center">
+                                <div class="form-floating col-auto">
+                                    <input type="text" class="form-control" id="nombre" placeholder="nombre" name="nombre">
+                                        <label for="nombre">nombre</label>
+                                </div>
+                                <div class="form-floating col-auto">
+                                    <input type="number" class="form-control" id="porcentajeDeAnticipo" placeholder="porcentajeDeAnticipo" name="porcentajeDeAnticipo">
+                                        <label for="porcentajeDeAnticipo">porcentajeDeAnticipo</label>
+                                </div>
+                                <div class="form-floating col-auto">
+                                    <input type="date" class="form-control" id="fechaDeContrato" placeholder="fechaDeContrato" name="fechaDeContrato">
+                                        <label for="fechaDeContrato">fechaDeContrato</label>
+                                </div>
+                                <div class="form-floating col-auto">
+                                    <input type="date" class="form-control" id="fechaDeReeplanteo" placeholder="fechaDeReeplanteo" name="fechaDeReeplanteo">
+                                        <label for="fechaDeReeplanteo">fechaDeReeplanteo</label>
+                                </div>
+                                <div class="form-floating col-auto">
+                                    <input type="number" class="form-control" id="diasPlazoDeObra" placeholder="diasPlazoDeObra" name="diasPlazoDeObra">
+                                        <label for="diasPlazoDeObra">diasPlazoDeObra</label>
+                                </div> 
+                                <div class="form-floating col-auto">
+                                    <input type="date" class="form-control" id="fechaPresentacionObra" placeholder="fechaPresentacionObra" name="fechaPresentacionObra">
+                                        <label for="fechaPresentacionObra">fechaPresentacionObra</label>
+                                </div>
+                                <div class="form-floating col-auto">
+                                    <input type="text" class="form-control" id="comitente" placeholder="comitente" name="comitente">
+                                        <label for="comitente">Comitente</label>
+                                </div>
+                                <select id="id" name="tipoDeRedeterminaciones">
+                                    <option th:value="decreto816">Decreto provincial 800/16</option>
+                                </select>
+
+                                <div class="col-12">
+                                    <button class="btn btn-primary" type="submit">Guardar Obra</button>
+                                </div>
+                            </form>
+                        </div>
+                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+                    </body>
+                    </html>
