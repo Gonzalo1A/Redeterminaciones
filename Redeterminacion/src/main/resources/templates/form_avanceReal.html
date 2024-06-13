@@ -23,11 +23,11 @@
                 <div class="modal-content rounded-4 shadow">
                     <div class="modal-header p-5 pb-4 border-bottom-0">
                         <h5 class="modal-title" id="modalLabel">Avance de Obra Real</h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-5 pt-0">
                         <form id="exportForm" th:action="@{/item/avanceObraRealExport}" method="post">
-                            <input type="text" name="nombre"  hidden th:value="${obra.nombre}">
+                                <input type="text" name="nombre" th:value="${obra.nombre}" hidden>
                                 <div class="form-group">
                                     <label for="fecha">Fecha Objetiva:</label>
                                     <input type="date" id="fecha" name="fecha" class="form-control" required>

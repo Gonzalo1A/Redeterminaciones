@@ -148,7 +148,7 @@ public class ItemControlador {
     }
 
     @PostMapping("/avanceObraRealExport")
-    public ResponseEntity<InputStreamResource> caragarAvanceDeObraRealPorExcel(@RequestParam String nombre, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha) throws Exception {
+    public ResponseEntity<InputStreamResource> caragarAvanceDeObraRealPorExcel(@RequestParam String nombre, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fecha) throws Exception {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         ByteArrayInputStream stream = avanceRealServicio.exportarModeloDeCargaDeAvanceRealExcel(obra, fecha);
         HttpHeaders headers = new HttpHeaders();

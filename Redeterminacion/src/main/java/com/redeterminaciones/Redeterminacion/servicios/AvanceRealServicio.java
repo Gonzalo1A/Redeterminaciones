@@ -9,18 +9,13 @@ import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,7 +60,7 @@ public class AvanceRealServicio {
         return avanceRealRepositorio.findAll();
     }
 
-    public ByteArrayInputStream exportarModeloDeCargaDeAvanceRealExcel(Obra obra, Date fechaObjetiva) throws Exception {
+    public ByteArrayInputStream exportarModeloDeCargaDeAvanceRealExcel(Obra obra, LocalDate fechaObjetiva) throws Exception {
         String[] columnas = {"ID", "Nro", "DESCRIPCION", "UNIDAD", "CANTIDAD", "PRECIO", "Cantidad certificada a la fecha"};
         List<Item> items = obra.getItems();
         ByteArrayOutputStream stream;
@@ -107,14 +102,9 @@ public class AvanceRealServicio {
                     precio.setCellValue(item.getSubTotal());
                     List<AvanceObraReal> avanceALaFecha = item.getAvanceObraReal();
                     if (!avanceALaFecha.isEmpty()) {
-                        Calendar cal1 = Calendar.getInstance();
-//                        Calendar cal2 = Calendar.getInstance();
                         for (AvanceObraReal avanceObraReal : avanceALaFecha) {
-                            cal1.setTime(fechaObjetiva);
-//                            cal2.setTime(avanceObraReal.getValorMes().getFecha());
-                            int anio1 = cal1.get(Calendar.YEAR);
-                            int mes1 = cal1.get(Calendar.MONTH);
-//                            int anio2 = cal2.get(Calendar.YEAR);                            int mes2 = cal2.get(Calendar.MONTH);
+                            int anio1 = fechaObjetiva.getYear();
+                            int mes1 = fechaObjetiva.getMonthValue();
                             int aniob = avanceObraReal.getValorMes().getFecha().getYear();
                             int mesb = avanceObraReal.getValorMes().getFecha().getMonthValue();
                             if (anio1 == aniob && mes1 == mesb) {
