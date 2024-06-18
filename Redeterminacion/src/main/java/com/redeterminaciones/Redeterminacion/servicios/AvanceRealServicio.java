@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -87,20 +88,28 @@ public class AvanceRealServicio {
 
                 Cell id = fila.createCell(0);
                 id.setCellValue(item.getId());
+                id.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 Cell numItem = fila.createCell(1);
                 numItem.setCellValue(item.getNumeroItem());
+                numItem.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 Cell descripcion = fila.createCell(2);
                 descripcion.setCellValue(item.getDescripcion());
+                descripcion.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 Cell unidad = fila.createCell(3);
                 unidad.setCellValue(item.getUnidad());
+                unidad.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 Cell cantidad = fila.createCell(4);
+                cantidad.setCellStyle(EstilosDeExel.estiloDatos(libro));
                 Cell precio = fila.createCell(5);
+                precio.setCellStyle(EstilosDeExel.estiloMoneda(libro));
                 Cell cantAFecha = fila.createCell(6);
+                cantAFecha.setCellStyle(EstilosDeExel.estiloDatos(libro));
                 Cell avanceMes = fila.createCell(7);
+                avanceMes.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 if (item.getCantidad() != null && item.getPrecioUnitario() != null && item.getSubTotal() != null) {
                     cantidad.setCellValue(item.getCantidad());
@@ -126,19 +135,17 @@ public class AvanceRealServicio {
                     }
                 } else {
                     CellRangeAddress rango = new CellRangeAddress(coordenadaRow, coordenadaRow, 3, 7);
-//                    for (int i = rango.getFirstColumn(); i <= rango.getLastColumn(); i++) {
-//                        Cell celdaRango = fila.createCell(i);
-//                        celdaRango.setCellStyle(estiloDatos);
-//                    }
+                    for (Cell cell : fila) {
+                        cell.setCellStyle(EstilosDeExel.estiloRubros(libro));
+                    }
                     hoja.addMergedRegion(rango);
                 }
                 coordenadaRow++;
             }
+            hoja.setColumnWidth(0, 1);
             libro.write(stream);
             libro.close();
         }
         return new ByteArrayInputStream(stream.toByteArray());
     }
-
-    
 }
