@@ -25,8 +25,6 @@ public class AvanceRealServicio {
 
     @Autowired
     private AvanceRealRepositorio avanceRealRepositorio;
-    @Autowired
-    private ValorMesServicio valorMesServicio;
 
     @Transactional
     public AvanceObraReal crearAvanceReal() {

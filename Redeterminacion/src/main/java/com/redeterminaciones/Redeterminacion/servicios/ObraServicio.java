@@ -107,8 +107,7 @@ public class ObraServicio {
         try {
             return LocalDate.parse(fechaStr, formatter);
         } catch (DateTimeParseException e) {
-            // Manejo de error en caso de formato inválido
-            e.printStackTrace();
+                        e.printStackTrace();
             return null;
         }
     }

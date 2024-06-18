@@ -111,6 +111,20 @@ public class ItemServicio {
         return cadenas;
     }
 
+    public Item getOne(Long id) {
+        return itemRepositorio.getOne(id);
+    }
+
+    public List<Item> getAll() {
+        List<Item> todos = itemRepositorio.findAll();
+        return todos;
+    }
+
+    @Transactional
+    public void eliminarItem(Long id) {
+        itemRepositorio.deleteById(id);
+    }
+
     @Transactional
     public void agregarFactor(Long idItem, List<IncidenciaFactor> incidencias) {
 
@@ -141,20 +155,6 @@ public class ItemServicio {
             item.setAvanceTeorico(avanceTeorico);
             itemRepositorio.save(item);
         }
-    }
-
-    public Item getOne(Long id) {
-        return itemRepositorio.getOne(id);
-    }
-
-    @Transactional
-    public void eliminarItem(Long id) {
-        itemRepositorio.deleteById(id);
-    }
-
-    public List<Item> getAll() {
-        List<Item> todos = itemRepositorio.findAll();
-        return todos;
     }
 
     public ByteArrayInputStream exportarModeloParaIngresarItemsPorExcel(Obra obra) throws Exception {
@@ -440,7 +440,7 @@ public class ItemServicio {
                             if (celda != null && celda.getCellType() == CellType.NUMERIC) {
                                 valor = celda.getNumericCellValue();
                                 fecha = filaTitular.getCell(j).getLocalDateTimeCellValue().toLocalDate();
-                                
+
                                 avanceTeorico.add(valorMesServi.crear(fecha, valor));
                             }
                         }

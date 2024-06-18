@@ -22,7 +22,6 @@ public class Obra {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    
     private String nombre;
     private String total;
     @Temporal(TemporalType.DATE)
@@ -45,6 +44,4 @@ public class Obra {
     @OneToMany
     private List<Item> items;
 
-
-  
 }
