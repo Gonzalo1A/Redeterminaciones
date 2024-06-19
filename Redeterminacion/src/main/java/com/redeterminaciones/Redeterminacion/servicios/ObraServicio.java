@@ -7,7 +7,9 @@ import com.redeterminaciones.Redeterminacion.repositorios.ObraRepositorio;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +22,15 @@ public class ObraServicio {
     private ObraRepositorio obraRepositorio;
 
     @Transactional
-    public Obra crearObra(String nombre, Date fechaPresentacionObra, Date fechaDeContrato,
-            Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPlazoDeObra,
+    public Obra crearObra(String nombre, String fechaPresentacionObra, String fechaDeContrato,
+            String fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPlazoDeObra,
             TipoDeRedeterminaciones tipoDeRedet, String comitente) {
         Obra nuevaObra = new Obra();
         nuevaObra.setNombre(nombre);
-        nuevaObra.setFechaPresentacionObra(fechaPresentacionObra);
-        nuevaObra.setFechaDeContrato(fechaDeContrato);
-        nuevaObra.setFechaDeReeplanteo(fechaDeReeplanteo);
-        nuevaObra.setFechaDeFinalizacion(calularFecha(fechaDeReeplanteo, diasPlazoDeObra));
+        nuevaObra.setFechaPresentacionObra(convertirStringALocalDate(fechaPresentacionObra));
+        nuevaObra.setFechaDeContrato(convertirStringALocalDate(fechaDeContrato));
+        nuevaObra.setFechaDeReeplanteo(convertirStringALocalDate(fechaDeReeplanteo));
+        nuevaObra.setFechaDeFinalizacion(calcularFecha(convertirStringALocalDate(fechaDeReeplanteo), diasPlazoDeObra));
         nuevaObra.setPorcentajeDeAnticipo(porcentajeDeAnticipo);
         nuevaObra.setDiasPlazoDeObra(diasPlazoDeObra);
         nuevaObra.setTipoDeRedet(tipoDeRedet);
@@ -39,9 +41,9 @@ public class ObraServicio {
 
     @Transactional
     public void modificarObra(String idObra, String nuevoNombre,
-            String total, Date fechaPresentacionObra, Date fechaDeContrato,
-            Date fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPazoDeObra,
-            Date fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet,
+            String total, LocalDate fechaPresentacionObra, LocalDate fechaDeContrato,
+            LocalDate fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPazoDeObra,
+            LocalDate fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet,
             List<Item> items) {
         Optional<Obra> respuesta = obraRepositorio.findById(idObra);
         if (respuesta != null) {
@@ -82,9 +84,12 @@ public class ObraServicio {
         return total;
     }
 
-    private Date calularFecha(Date fechaReplanteo, int dias) {
-        long a = fechaReplanteo.getTime() + dias * 86400000;
-        return new Date(a);
+//    private Date calcularFecha(Date fechaReplanteo, int dias) {
+//        long a = fechaReplanteo.getTime() + dias * 86400000;
+//        return new Date(a);
+//    }
+    private LocalDate calcularFecha(LocalDate fechaReplanteo, int dias) {
+        return fechaReplanteo.plusDays(dias);
     }
 
     public Obra buscarPorNombre(String nombre) {
@@ -95,5 +100,15 @@ public class ObraServicio {
     public void eliminarObra(String nombre) {
         Obra obraAEliminar = buscarPorNombre(nombre);
         obraRepositorio.delete(obraAEliminar);
+    }
+
+    private LocalDate convertirStringALocalDate(String fechaStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            return LocalDate.parse(fechaStr, formatter);
+        } catch (DateTimeParseException e) {
+                        e.printStackTrace();
+            return null;
+        }
     }
 }

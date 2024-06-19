@@ -12,6 +12,4 @@ public interface ObraRepositorio extends JpaRepository<Obra, String> {
     @Query("SELECT o FROM Obra o WHERE o.nombre LIKE %:nombre%")
     public Obra buscarObraPorNombre(@Param("nombre") String nombre);
 
-    
-
 }

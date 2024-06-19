@@ -15,10 +15,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,7 +29,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -115,6 +111,20 @@ public class ItemServicio {
         return cadenas;
     }
 
+    public Item getOne(Long id) {
+        return itemRepositorio.getOne(id);
+    }
+
+    public List<Item> getAll() {
+        List<Item> todos = itemRepositorio.findAll();
+        return todos;
+    }
+
+    @Transactional
+    public void eliminarItem(Long id) {
+        itemRepositorio.deleteById(id);
+    }
+
     @Transactional
     public void agregarFactor(Long idItem, List<IncidenciaFactor> incidencias) {
 
@@ -145,20 +155,6 @@ public class ItemServicio {
             item.setAvanceTeorico(avanceTeorico);
             itemRepositorio.save(item);
         }
-    }
-
-    public Item getOne(Long id) {
-        return itemRepositorio.getOne(id);
-    }
-
-    @Transactional
-    public void eliminarItem(Long id) {
-        itemRepositorio.deleteById(id);
-    }
-
-    public List<Item> getAll() {
-        List<Item> todos = itemRepositorio.findAll();
-        return todos;
     }
 
     public ByteArrayInputStream exportarModeloParaIngresarItemsPorExcel(Obra obra) throws Exception {
@@ -314,25 +310,25 @@ public class ItemServicio {
                 celda.setCellStyle(EstilosDeExel.estiloEncabesados(libro));
             }
 
-            List<Date> mesesDeObra = new ArrayList<>();
-            Calendar calendar = Calendar.getInstance();
-            Date fechaInicio = obra.getFechaDeReeplanteo();
-            calendar.setTime(fechaInicio);
-            calendar.add(Calendar.DAY_OF_MONTH, obra.getDiasPlazoDeObra());
+            List<LocalDate> mesesDeObra = new ArrayList<>();
+//            Calendar calendar = Calendar.getInstance();
+            LocalDate fechaInicio = obra.getFechaDeReeplanteo();
+//            calendar.setTime(fechaInicio);
+//            calendar.add(Calendar.DAY_OF_MONTH, obra.getDiasPlazoDeObra());
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date fechaFinal = calendar.getTime();
+//            Date fechaFinal = calendar.getTime();
 
-            LocalDate inicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1).plusMonths(1);
-            LocalDate fin = fechaFinal.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//            LocalDate inicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1).plusMonths(1);
+            LocalDate fin = obra.getFechaDeFinalizacion();
 
-            YearMonth comienso = YearMonth.from(inicio);
+            YearMonth comienso = YearMonth.from(fechaInicio);
             YearMonth finalisima = YearMonth.from(fin);
             YearMonth mesActual = comienso;
 
             while (!mesActual.isAfter(finalisima)) {
                 LocalDate ultimoDia = mesActual.atEndOfMonth();
-                Date convierte = (Date.from(ultimoDia.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-                mesesDeObra.add(convierte);
+//                Date convierte = (Date.from(ultimoDia.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                mesesDeObra.add(ultimoDia);
                 mesActual = mesActual.plusMonths(1);
             }
 
@@ -432,7 +428,7 @@ public class ItemServicio {
                 Row filaTitular = hoja.getRow(0);
                 Row fila = hoja.getRow(i);
                 Long id = null;
-                Date fecha;
+                LocalDate fecha;
                 Double valor;
                 Cell celda = fila.getCell(0);
                 if (celda != null) {
@@ -443,7 +439,8 @@ public class ItemServicio {
                             celda = fila.getCell(j);
                             if (celda != null && celda.getCellType() == CellType.NUMERIC) {
                                 valor = celda.getNumericCellValue();
-                                fecha = filaTitular.getCell(j).getDateCellValue();
+                                fecha = filaTitular.getCell(j).getLocalDateTimeCellValue().toLocalDate();
+
                                 avanceTeorico.add(valorMesServi.crear(fecha, valor));
                             }
                         }
@@ -460,14 +457,14 @@ public class ItemServicio {
     public void importarAvnaceRealMensualPorExel(InputStream archivo) throws IOException {
         try (XSSFWorkbook libro = new XSSFWorkbook(archivo)) {
             Sheet hoja = libro.getSheetAt(0);
-            Date fecha = null;
+            LocalDate fecha = null;
             for (Row fila : hoja) {
                 Long id = null;
                 Double valor = null;
                 Cell celdaId = fila.getCell(0);
                 Cell celdaOcho = fila.getCell(7);
                 if (DateUtil.isCellDateFormatted(celdaOcho)) {
-                    fecha = celdaOcho.getDateCellValue();
+                    fecha = celdaOcho.getLocalDateTimeCellValue().toLocalDate();
                 }
                 if (celdaId.getCellType() == CellType.NUMERIC) {
                     id = (long) celdaId.getNumericCellValue();

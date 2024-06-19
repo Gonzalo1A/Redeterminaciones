@@ -9,19 +9,13 @@ import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +25,6 @@ public class AvanceRealServicio {
 
     @Autowired
     private AvanceRealRepositorio avanceRealRepositorio;
-    @Autowired
-    private ValorMesServicio valorMesServicio;
 
     @Transactional
     public AvanceObraReal crearAvanceReal() {
@@ -66,7 +58,7 @@ public class AvanceRealServicio {
         return avanceRealRepositorio.findAll();
     }
 
-    public ByteArrayInputStream exportarModeloDeCargaDeAvanceRealExcel(Obra obra, Date fechaObjetiva) throws Exception {
+    public ByteArrayInputStream exportarModeloDeCargaDeAvanceRealExcel(Obra obra, LocalDate fechaObjetiva) throws Exception {
         String[] columnas = {"ID", "Nro", "DESCRIPCION", "UNIDAD", "CANTIDAD", "PRECIO", "Cantidad certificada a la fecha"};
         List<Item> items = obra.getItems();
         ByteArrayOutputStream stream;
@@ -88,44 +80,32 @@ public class AvanceRealServicio {
 
                 Cell id = fila.createCell(0);
                 id.setCellValue(item.getId());
-                id.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 Cell numItem = fila.createCell(1);
                 numItem.setCellValue(item.getNumeroItem());
-                numItem.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 Cell descripcion = fila.createCell(2);
                 descripcion.setCellValue(item.getDescripcion());
-                descripcion.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 Cell unidad = fila.createCell(3);
                 unidad.setCellValue(item.getUnidad());
-                unidad.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 Cell cantidad = fila.createCell(4);
-                cantidad.setCellStyle(EstilosDeExel.estiloDatos(libro));
                 Cell precio = fila.createCell(5);
-                precio.setCellStyle(EstilosDeExel.estiloMoneda(libro));
                 Cell cantAFecha = fila.createCell(6);
-                cantAFecha.setCellStyle(EstilosDeExel.estiloDatos(libro));
                 Cell avanceMes = fila.createCell(7);
-                avanceMes.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
                 if (item.getCantidad() != null && item.getPrecioUnitario() != null && item.getSubTotal() != null) {
                     cantidad.setCellValue(item.getCantidad());
                     precio.setCellValue(item.getSubTotal());
                     List<AvanceObraReal> avanceALaFecha = item.getAvanceObraReal();
                     if (!avanceALaFecha.isEmpty()) {
-                        Calendar cal1 = Calendar.getInstance();
-                        Calendar cal2 = Calendar.getInstance();
                         for (AvanceObraReal avanceObraReal : avanceALaFecha) {
-                            cal1.setTime(fechaObjetiva);
-                            cal2.setTime(avanceObraReal.getValorMes().getFecha());
-                            int anio1 = cal1.get(Calendar.YEAR);
-                            int mes1 = cal1.get(Calendar.MONTH);
-                            int anio2 = cal2.get(Calendar.YEAR);
-                            int mes2 = cal2.get(Calendar.MONTH);
-                            if (anio1 == anio2 && mes1 == mes2) {
+                            int anio1 = fechaObjetiva.getYear();
+                            int mes1 = fechaObjetiva.getMonthValue();
+                            int aniob = avanceObraReal.getValorMes().getFecha().getYear();
+                            int mesb = avanceObraReal.getValorMes().getFecha().getMonthValue();
+                            if (anio1 == aniob && mes1 == mesb) {
                                 cantAFecha.setCellValue(avanceObraReal.getAcumuladoAnterior());
                                 if (avanceObraReal.getValorMes().getValor() != null) {
                                     avanceMes.setCellValue(avanceObraReal.getValorMes().getValor());
@@ -135,17 +115,18 @@ public class AvanceRealServicio {
                     }
                 } else {
                     CellRangeAddress rango = new CellRangeAddress(coordenadaRow, coordenadaRow, 3, 7);
-                    for (Cell cell : fila) {
-                        cell.setCellStyle(EstilosDeExel.estiloRubros(libro));
-                    }
+//                    for (int i = rango.getFirstColumn(); i <= rango.getLastColumn(); i++) {
+//                        Cell celdaRango = fila.createCell(i);
+//                        celdaRango.setCellStyle(estiloDatos);
+//                    }
                     hoja.addMergedRegion(rango);
                 }
                 coordenadaRow++;
             }
-            hoja.setColumnWidth(0, 1);
             libro.write(stream);
             libro.close();
         }
         return new ByteArrayInputStream(stream.toByteArray());
     }
+
 }

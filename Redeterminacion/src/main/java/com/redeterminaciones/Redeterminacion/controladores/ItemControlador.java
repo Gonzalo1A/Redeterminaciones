@@ -15,7 +15,6 @@ import com.redeterminaciones.Redeterminacion.utilidades.DatosAvanceObra;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -71,7 +70,7 @@ public class ItemControlador {
                 itemServicio.agregarFactor(Long.valueOf(incidencia.getItemId()), incidenciaFactorServicio.formatearValores(incidencia.getValor()));
             }
         }
-        return "redirect:/obra/listaItems/" + nombreObra;
+        return "redirect:/item/listaItems/" + nombreObra;
     }
 
     @GetMapping("/export/{nombre}")
@@ -97,9 +96,9 @@ public class ItemControlador {
                 obraServicio.calcularTotal(nombre);
                 itemServicio.calularIncidenciaItem(obraServicio.buscarPorNombre(nombre));
             }
-            return "redirect:/obra/listaItems/{nombre}";
+            return "redirect:/item/listaItems/{nombre}";
         } catch (Exception e) {
-            return "redirect:/obra/listaItems/{nombre}";
+            return "redirect:/item/listaItems/{nombre}";
         }
     }
 
@@ -129,16 +128,18 @@ public class ItemControlador {
         model.addAttribute("fecha", fechaActual.format(formato));
         return "form_avanceReal.html";
     }
-
+//formatter.parse(valor.getFecha())
     @PostMapping("/avance_carga")
     public String cargaAvanceObra(@RequestBody DatosAvanceObra datos) throws ParseException {
         List<ConjuntoIdValorFecha> conjuntoIdValorFechas = datos.getValorMes();
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/yyyy");
+//        SimpleDateFormat formatter = new SimpleDateFormat("MM/yyyy");        DateTimeFormatter formato = DateTimeFormatter.ofPattern("MM/yyyy");
+//        LocalDate fechaActual = LocalDate.of(2024, 7, 1);formatter.parse(fechaActual.format(formato))
         for (ConjuntoIdValorFecha valor : conjuntoIdValorFechas) {
             if (valor.getValor() != null) {
                 Long idItem = Long.valueOf(valor.getItemId());
                 Item item = itemServicio.getOne(idItem);
-                ValorMes valMes = valorMesServicio.crear(formatter.parse(valor.getFecha()), Double.valueOf(valor.getValor()));
+                LocalDate fechaActual = valorMesServicio.convertirStringALocalDate(valor.getFecha());
+                ValorMes valMes = valorMesServicio.crear(fechaActual,Double.valueOf(valor.getValor()));
                 List<AvanceObraReal> lista = avanceRealServicio.cargarAvance(item, valMes);
                 itemServicio.agregarAvanceReal(idItem, lista);
             }
@@ -147,7 +148,7 @@ public class ItemControlador {
     }
 
     @PostMapping("/avanceObraRealExport")
-    public ResponseEntity<InputStreamResource> caragarAvanceDeObraRealPorExcel(@RequestParam String nombre, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha) throws Exception {
+    public ResponseEntity<InputStreamResource> caragarAvanceDeObraRealPorExcel(@RequestParam String nombre, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fecha) throws Exception {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         ByteArrayInputStream stream = avanceRealServicio.exportarModeloDeCargaDeAvanceRealExcel(obra, fecha);
         HttpHeaders headers = new HttpHeaders();
