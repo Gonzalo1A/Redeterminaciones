@@ -4,12 +4,11 @@ import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.repositorios.ObraRepositorio;
+import static com.redeterminaciones.Redeterminacion.utilidades.FechaUtilidades.convertirStringALocalDate;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,13 +101,4 @@ public class ObraServicio {
         obraRepositorio.delete(obraAEliminar);
     }
 
-    private LocalDate convertirStringALocalDate(String fechaStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        try {
-            return LocalDate.parse(fechaStr, formatter);
-        } catch (DateTimeParseException e) {
-                        e.printStackTrace();
-            return null;
-        }
-    }
 }

@@ -12,12 +12,12 @@ import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ValorMesServicio;
 import com.redeterminaciones.Redeterminacion.utilidades.DatosAvanceObra;
+import com.redeterminaciones.Redeterminacion.utilidades.FechaUtilidades;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -129,6 +129,7 @@ public class ItemControlador {
         return "form_avanceReal.html";
     }
 //formatter.parse(valor.getFecha())
+
     @PostMapping("/avance_carga")
     public String cargaAvanceObra(@RequestBody DatosAvanceObra datos) throws ParseException {
         List<ConjuntoIdValorFecha> conjuntoIdValorFechas = datos.getValorMes();
@@ -138,8 +139,8 @@ public class ItemControlador {
             if (valor.getValor() != null) {
                 Long idItem = Long.valueOf(valor.getItemId());
                 Item item = itemServicio.getOne(idItem);
-                LocalDate fechaActual = valorMesServicio.convertirStringALocalDate(valor.getFecha());
-                ValorMes valMes = valorMesServicio.crear(fechaActual,Double.valueOf(valor.getValor()));
+                LocalDate fechaActual = FechaUtilidades.convertirStringALocalDateFormato2(valor.getFecha());
+                ValorMes valMes = valorMesServicio.crear(fechaActual, Double.valueOf(valor.getValor()));
                 List<AvanceObraReal> lista = avanceRealServicio.cargarAvance(item, valMes);
                 itemServicio.agregarAvanceReal(idItem, lista);
             }

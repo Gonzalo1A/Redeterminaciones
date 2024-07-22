@@ -43,5 +43,7 @@ public class Obra {
     private TipoDeRedeterminaciones tipoDeRedet;
     @OneToMany
     private List<Item> items;
+    @OneToMany
+    private List<Redeterminacion> redeterminaciones;
 
 }

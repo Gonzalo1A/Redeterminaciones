@@ -2,6 +2,8 @@ package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
+import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
+import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.IOPRepositorio;
 import jakarta.transaction.Transactional;
@@ -71,6 +73,32 @@ public class IOPServicio {
 
     public IOP buscarIOP(int id) {
         return iopRepo.getReferenceById(id);
+    }
+    
+    public double getValorPorMes(String fecha, Integer idIop){
+        return fechaSer.buscarValorPorFecha(fecha, idIop);
+    }
+
+    public Double ponderadorTotal(int orden, List<Item> items) {
+        double ponderador = 0;
+        double ponderadorTotal = 0;
+        double montoTotalFactor = 0;
+
+        for (Item item : items) {
+            List<IncidenciaFactor> factores = item.getIncidenciaFactores();
+            if (!factores.isEmpty()) {
+                for (IncidenciaFactor incFactor : factores) {
+                    if (incFactor.getIndice() == orden) {
+                        ponderador = item.getIncidenciaItem() * incFactor.getPorcentajeIncidencia();
+                        ponderadorTotal = ponderadorTotal + ponderador;
+                        montoTotalFactor = montoTotalFactor + (incFactor.getPorcentajeIncidencia() * item.getSubTotal());
+                        break;
+                    }
+                }
+            }
+        }
+
+        return ponderadorTotal;
     }
 
     public ByteArrayInputStream exportarIOP() throws IOException {
