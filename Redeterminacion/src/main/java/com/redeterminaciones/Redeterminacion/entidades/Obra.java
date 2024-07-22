@@ -44,6 +44,6 @@ public class Obra {
     @OneToMany
     private List<Item> items;
     @OneToMany
-    private List<Redeterminacion> redeterminacioones;
+    private List<Redeterminacion> redeterminaciones;
 
 }

@@ -20,6 +20,9 @@ public class Redeterminacion {
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate mesSolicitud;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate mesSolictudAnterior;
     private Double variacionReferencia;
 
 }
