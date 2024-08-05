@@ -75,14 +75,13 @@ public class IOPServicio {
         return iopRepo.getReferenceById(id);
     }
     
-    public double getValorPorMes(String fecha, Integer idIop){
+    public double getValorPorMes(LocalDate fecha, Integer idIop){
         return fechaSer.buscarValorPorFecha(fecha, idIop);
     }
 
     public Double ponderadorTotal(int orden, List<Item> items) {
         double ponderador = 0;
         double ponderadorTotal = 0;
-        double montoTotalFactor = 0;
 
         for (Item item : items) {
             List<IncidenciaFactor> factores = item.getIncidenciaFactores();
@@ -91,7 +90,6 @@ public class IOPServicio {
                     if (incFactor.getIndice() == orden) {
                         ponderador = item.getIncidenciaItem() * incFactor.getPorcentajeIncidencia();
                         ponderadorTotal = ponderadorTotal + ponderador;
-                        montoTotalFactor = montoTotalFactor + (incFactor.getPorcentajeIncidencia() * item.getSubTotal());
                         break;
                     }
                 }

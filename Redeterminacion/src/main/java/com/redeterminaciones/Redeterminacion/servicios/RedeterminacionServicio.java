@@ -17,13 +17,12 @@ public class RedeterminacionServicio {
     private RedeterminacionRepositorio redeterminacionRepositorio;
 
     @Transactional
-    public void crearRedeterminacion(LocalDate mesSolicitud, LocalDate mesOferta) {
+    public Redeterminacion crearRedeterminacion(LocalDate mesSolicitud, LocalDate mesOferta) {
         Redeterminacion redeterminacion = new Redeterminacion();
         redeterminacion.setMesSolicitud(mesSolicitud);
-        if (redeterminacion.getMesSolictudAnterior() == null) {
-            redeterminacion.setMesSolictudAnterior(mesOferta);
-        }
+        redeterminacion.setMesSolictudAnterior(mesOferta);
         redeterminacionRepositorio.save(redeterminacion);
+        return redeterminacion;
     }
 
     @Transactional

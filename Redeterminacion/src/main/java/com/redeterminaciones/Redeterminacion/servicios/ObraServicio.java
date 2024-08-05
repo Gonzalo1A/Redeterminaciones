@@ -12,14 +12,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ObraServicio {
-
+    
     @Autowired
     private ObraRepositorio obraRepositorio;
-
+    
     @Transactional
     public Obra crearObra(String nombre, String fechaPresentacionObra, String fechaDeContrato,
             String fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPlazoDeObra,
@@ -37,7 +38,7 @@ public class ObraServicio {
         obraRepositorio.save(nuevaObra);
         return nuevaObra;
     }
-
+    
     @Transactional
     public void modificarObra(String idObra, String nuevoNombre,
             String total, LocalDate fechaPresentacionObra, LocalDate fechaDeContrato,
@@ -60,14 +61,14 @@ public class ObraServicio {
             obraRepositorio.save(obra);
         }
     }
-
+    
     @Transactional
     public void agregarItem(List<Item> items, String nombreObra) {
         Obra obra = buscarPorNombre(nombreObra);
         obra.setItems(items);
         obraRepositorio.save(obra);
     }
-
+    
     @Transactional
     public Double calcularTotal(String nombreObra) {
         Obra obra = buscarPorNombre(nombreObra);
@@ -90,15 +91,20 @@ public class ObraServicio {
     private LocalDate calcularFecha(LocalDate fechaReplanteo, int dias) {
         return fechaReplanteo.plusDays(dias);
     }
-
+    
     public Obra buscarPorNombre(String nombre) {
         return obraRepositorio.buscarObraPorNombre(nombre);
     }
 
+    public @DateTimeFormat(pattern = "yyyy-MM-dd")
+    LocalDate buscarMesSolicitudAnterior(String ObraId) {
+        return obraRepositorio.buscarMesUltimaSolicitud(ObraId);
+    }
+    
     @Transactional
     public void eliminarObra(String nombre) {
         Obra obraAEliminar = buscarPorNombre(nombre);
         obraRepositorio.delete(obraAEliminar);
     }
-
+    
 }

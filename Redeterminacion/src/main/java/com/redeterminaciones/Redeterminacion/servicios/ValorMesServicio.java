@@ -46,9 +46,8 @@ public class ValorMesServicio {
         return valorMesRepo.getById(id);
     }
 
-    public Double buscarValorPorFecha(String fecha, Integer iopID) {
-        LocalDate fechaDate = FechaUtilidades.convertirStringALocalDateFormato2(fecha);
-        return valorMesRepo.buscarValorPorFecha(iopID, fechaDate);
+    public Double buscarValorPorFecha(LocalDate fecha, Integer iopID) {
+        return valorMesRepo.buscarValorPorFecha(iopID, fecha);
     }
 
 }

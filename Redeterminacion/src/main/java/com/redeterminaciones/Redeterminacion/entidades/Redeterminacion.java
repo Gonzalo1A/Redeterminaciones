@@ -16,7 +16,7 @@ public class Redeterminacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Integer idRedet;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate mesSolicitud;
