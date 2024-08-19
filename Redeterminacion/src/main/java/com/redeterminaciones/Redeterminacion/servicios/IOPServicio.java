@@ -74,9 +74,17 @@ public class IOPServicio {
     public IOP buscarIOP(int id) {
         return iopRepo.getReferenceById(id);
     }
-    
-    public double getValorPorMes(LocalDate fecha, Integer idIop){
-        return fechaSer.buscarValorPorFecha(fecha, idIop);
+
+    public double getValorPorMes(LocalDate fecha, Integer idIop) {
+        IOP iop = buscarIOP(idIop);
+        List<ValorMes> lista = iop.getFechas();
+        for (ValorMes valorMes : lista) {
+            LocalDate fechaBD = valorMes.getFecha();
+            if (fechaBD.getYear() == fecha.getYear() && fechaBD.getMonth() == fecha.getMonth()) {
+                return valorMes.getValor();
+            }
+        }
+        return 0;
     }
 
     public Double ponderadorTotal(int orden, List<Item> items) {

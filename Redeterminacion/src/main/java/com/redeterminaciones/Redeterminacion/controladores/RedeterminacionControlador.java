@@ -7,7 +7,6 @@ import com.redeterminaciones.Redeterminacion.servicios.IOPServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import com.redeterminaciones.Redeterminacion.servicios.RedeterminacionServicio;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -28,26 +27,29 @@ public class RedeterminacionControlador {
     @Autowired
     private IOPServicio iopServicio;
 
-    @GetMapping("/valor_referencia")
+    @GetMapping("/valor_referencia/{nombre}")
     public String calcularRedeterminacion(@PathVariable String nombre,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM") LocalDate mesSolicitud,
             ModelMap map) {
         Double polinomica = 0d;
+        LocalDate mesSolicitud = LocalDate.now();
         Obra obra = obraServicio.buscarPorNombre(nombre);
-        crearRedterminacion(mesSolicitud, obra);
+        Redeterminacion redet = crearRedeterminacion(mesSolicitud.plusMonths(2), obra);
+        obraServicio.agregarRedeterminacion(redet, nombre);
         for (IOP indice : iopServicio.todosLosIndices()) {
             int orden = indice.getId();
-            Double indiceNuevo = valorMes(mesSolicitud, orden);
-            Double indiceBase = valorMes(obraServicio.buscarMesSolicitudAnterior(nombre), orden);
+            Double indiceNuevo = valorMes(mesSolicitud.plusMonths(2), orden);
+            Double indiceBase = valorMes(redet.getMesSolictudAnterior(), orden);
             polinomica += redetServicio.calcularVR(iopServicio.ponderadorTotal(orden, obra.getItems()), indiceNuevo, indiceBase);
         }
-        map.addAttribute("valorReferencia", polinomica);
+        redetServicio.modificar(polinomica, redet.getIdRedet());
+        map.addAttribute("valorReferencia", polinomica*100);
         return "redeterminacion.html";
     }
 
-    private Redeterminacion crearRedterminacion(LocalDate mesSol, Obra obra) {
-        if (obra.getRedeterminaciones() != null) {
-            return redetServicio.crearRedeterminacion(mesSol, obraServicio.buscarMesSolicitudAnterior(obra.getNombre()));
+    private Redeterminacion crearRedeterminacion(LocalDate mesSol, Obra obra) {
+        LocalDate mesSolAnt = obraServicio.buscarMesSolicitudAnterior(obra.getId());
+        if (mesSolAnt != null) {
+            return redetServicio.crearRedeterminacion(mesSol, mesSolAnt);
         } else {
             return redetServicio.crearRedeterminacion(mesSol, obra.getFechaDeContrato());
         }

@@ -10,7 +10,7 @@
                     <body>
 
                         <header th:replace="fragments/header"></header>
-                        <table class="table-primary">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th scope="col">*</th>
@@ -19,12 +19,12 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <th class="table-success" scope="row">1</th>
+                                    <th class="table-primary" scope="row" >1</th>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <th class="table-success" scope="row">2</th>
-                                    <td></td>
+                                    <th scope="row"></th>
+                                    <td class="table-success" th:text=${valorReferencia}></td>
                                 </tr>
                             </tbody>
                         </table>

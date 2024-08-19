@@ -1,6 +1,7 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.AvanceObraReal;
+import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.utilidades.DatosRecibidos;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
@@ -65,9 +66,12 @@ public class ItemControlador {
     public String cargarIncidenciaFactor(@RequestBody DatosRecibidos datos) {
         String nombreObra = datos.getNombreObra();
         List<ConjuntoIdValorFecha> listaIncidencias = datos.getListaDatos();
+        ;
         for (ConjuntoIdValorFecha incidencia : listaIncidencias) {
+            System.out.println(incidencia.getValor());
             if (incidencia.getValor() != null) {
-                itemServicio.agregarFactor(Long.valueOf(incidencia.getItemId()), incidenciaFactorServicio.formatearValores(incidencia.getValor()));
+                List<IncidenciaFactor> listaIncFac = incidenciaFactorServicio.formatearValores(incidencia.getValor());
+                itemServicio.agregarFactor(Long.valueOf(incidencia.getItemId()), listaIncFac);
             }
         }
         return "redirect:/item/listaItems/" + nombreObra;
@@ -96,9 +100,9 @@ public class ItemControlador {
                 obraServicio.calcularTotal(nombre);
                 itemServicio.calularIncidenciaItem(obraServicio.buscarPorNombre(nombre));
             }
-            return "redirect:/item/listaItems/{nombre}";
+            return "redirect:/item/lista/{nombre}";
         } catch (Exception e) {
-            return "redirect:/item/listaItems/{nombre}";
+            return "redirect:/item/lista/{nombre}";
         }
     }
 

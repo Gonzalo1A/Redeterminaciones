@@ -42,7 +42,7 @@ public class IncidenciaFactorServicio {
         return incidenciaFactor;
     }
 
-    @Transactional
+    
     public List<IncidenciaFactor> formatearValores(String cadena) {
         List<IncidenciaFactor> listIncidencia = new ArrayList<>();
         Matcher matcher = patron.matcher(cadena);

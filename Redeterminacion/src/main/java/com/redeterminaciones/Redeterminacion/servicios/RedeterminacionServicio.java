@@ -26,7 +26,7 @@ public class RedeterminacionServicio {
     }
 
     @Transactional
-    public void modificar(Double remanente, String id) {
+    public void modificar(Double remanente, Integer id) {
         Optional<Redeterminacion> res = redeterminacionRepositorio.findById(id);
         if (res.isPresent()) {
             Redeterminacion redeterminacionMod = res.get();
@@ -35,7 +35,7 @@ public class RedeterminacionServicio {
         }
     }
 
-    public Redeterminacion buscarRedeterminacion(String id) {
+    public Redeterminacion buscarRedeterminacion(Integer id) {
         return redeterminacionRepositorio.getReferenceById(id);
     }
 
@@ -44,11 +44,14 @@ public class RedeterminacionServicio {
     }
 
     @Transactional
-    public void eliminarRedeterminacion(String id) {
+    public void eliminarRedeterminacion(Integer id) {
         redeterminacionRepositorio.deleteById(id);
     }
 
     public Double calcularVR(Double ponderadorTotal, Double valMesBase, Double valMesAnterior) {
+        if (valMesBase == 0.0d) {
+            return 0.0d;
+        }
         return (valMesAnterior / valMesBase) * ponderadorTotal;
     }
 
