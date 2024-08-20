@@ -117,6 +117,10 @@ public class ObraServicio {
     LocalDate buscarMesSolicitudAnterior(String ObraId) {
         return obraRepositorio.buscarMesUltimaSolicitud(ObraId);
     }
+    
+    public Redeterminacion buscarUltimaRedeterminacion(String ObraId) {
+        return obraRepositorio.buscarUltimaRedet(ObraId);
+    }
 
     @Transactional
     public void eliminarObra(String nombre) {

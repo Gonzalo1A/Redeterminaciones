@@ -1,18 +1,21 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
+import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
 import com.redeterminaciones.Redeterminacion.servicios.IOPServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import com.redeterminaciones.Redeterminacion.servicios.RedeterminacionServicio;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -34,29 +37,42 @@ public class RedeterminacionControlador {
         LocalDate mesSolicitud = LocalDate.now();
         Obra obra = obraServicio.buscarPorNombre(nombre);
         Redeterminacion redet = crearRedeterminacion(mesSolicitud.plusMonths(2), obra);
-        obraServicio.agregarRedeterminacion(redet, nombre);
+
         for (IOP indice : iopServicio.todosLosIndices()) {
             int orden = indice.getId();
-            Double indiceNuevo = valorMes(mesSolicitud.plusMonths(2), orden);
-            Double indiceBase = valorMes(redet.getMesSolictudAnterior(), orden);
+            Double indiceNuevo = iopServicio.getValorPorMes(redet.getMesSolicitud(), orden);
+            Double indiceBase = iopServicio.getValorPorMes(redet.getMesSolictudAnterior(), orden);
             polinomica += redetServicio.calcularVR(iopServicio.ponderadorTotal(orden, obra.getItems()), indiceNuevo, indiceBase);
         }
         redetServicio.modificar(polinomica, redet.getIdRedet());
-        map.addAttribute("valorReferencia", polinomica*100);
+        map.addAttribute("valorReferencia", polinomica * 100);
+        return "redeterminacion.html";
+    }
+
+    @GetMapping("")
+    public String reporteRedetermincaion(@PathVariable String nombre, @RequestParam Integer idRedet, ModelMap map) {
+        Obra obra = obraServicio.buscarPorNombre(nombre);
+        Redeterminacion redet = redetServicio.buscarRedeterminacion(idRedet);
+        map.addAttribute("factoresRedet", redetServicio.factoresRedet(obra, redet));
         return "redeterminacion.html";
     }
 
     private Redeterminacion crearRedeterminacion(LocalDate mesSol, Obra obra) {
         LocalDate mesSolAnt = obraServicio.buscarMesSolicitudAnterior(obra.getId());
+        Redeterminacion res;
         if (mesSolAnt != null) {
-            return redetServicio.crearRedeterminacion(mesSol, mesSolAnt);
+            if (mesSolAnt.getYear() == mesSol.getYear() && mesSolAnt.getMonth() == mesSol.getMonth()) {
+                return obraServicio.buscarUltimaRedeterminacion(obra.getId());
+            } else {
+                res = redetServicio.crearRedeterminacion(mesSol, mesSolAnt);
+                obraServicio.agregarRedeterminacion(res, obra.getNombre());
+                return res;
+            }
         } else {
-            return redetServicio.crearRedeterminacion(mesSol, obra.getFechaDeContrato());
+            res = redetServicio.crearRedeterminacion(mesSol, obra.getFechaDeContrato());
+            obraServicio.agregarRedeterminacion(res, obra.getNombre());
+            return res;
         }
     }
 
-    private Double valorMes(LocalDate mes, Integer idIOP) {
-        LocalDate mesAnterior = mes.minusMonths(1);
-        return iopServicio.getValorPorMes(mesAnterior, idIOP);
-    }
 }

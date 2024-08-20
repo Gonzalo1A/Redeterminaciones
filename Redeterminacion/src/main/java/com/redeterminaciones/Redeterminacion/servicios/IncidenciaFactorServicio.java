@@ -34,7 +34,7 @@ public class IncidenciaFactorServicio {
     private final Pattern patron = Pattern.compile("(\\d+[,.]\\d+)\\s*?[Xx*.]\\s*?[Ff](\\d+)");
 
     @Transactional
-    public IncidenciaFactor crearIncidenciaFactor(int factorReferencia, float porcentaje) {
+    public IncidenciaFactor crearIncidenciaFactor(int factorReferencia, Double porcentaje) {
         IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
         incidenciaFactor.setIndice(factorReferencia);
         incidenciaFactor.setPorcentajeIncidencia(porcentaje);
@@ -50,7 +50,7 @@ public class IncidenciaFactorServicio {
             String numeroStr = matcher.group(1);
             String porcentajeStr = numeroStr;
             String fValueStr = matcher.group(2);
-            float porcentaje = Float.parseFloat(porcentajeStr);
+            Double porcentaje = Double.parseDouble(porcentajeStr);
             int numero = Integer.parseInt(fValueStr);
             IncidenciaFactor incFac = crearIncidenciaFactor(numero, porcentaje);
             listIncidencia.add(incFac);

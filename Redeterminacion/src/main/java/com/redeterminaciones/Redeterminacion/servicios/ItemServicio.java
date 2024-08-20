@@ -136,6 +136,10 @@ public class ItemServicio {
             itemRepositorio.save(item);
         }
     }
+//    public void agregarFactorRedet(Double factorRedet, Item item){
+//        item.setFactorRedet(factorRedet);
+//        itemRepositorio.
+//    }
 
     @Transactional
     public void agregarAvanceReal(Long idItem, List<AvanceObraReal> avanceReal) {

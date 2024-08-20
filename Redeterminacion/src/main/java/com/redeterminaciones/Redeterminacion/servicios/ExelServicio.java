@@ -83,7 +83,7 @@ public class ExelServicio {
                     Cell incFactores = fila.createCell(7);
                     incFactores.setCellStyle(estiloDatos);
                     boolean bandera = false;
-                    Float sumatoria = 0f;
+                    Double sumatoria = 0d;
                     int ordenRepetido = 0;
 
                     if (!factores.isEmpty()) {

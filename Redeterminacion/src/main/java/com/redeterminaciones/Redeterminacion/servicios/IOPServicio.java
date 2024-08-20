@@ -33,7 +33,7 @@ public class IOPServicio {
 
     @Transactional
     public void crearIOP(String nombre) {
-        IOP op = iopRepo.buscarObraPorNombre(nombre);
+        IOP op = iopRepo.buscarFactorPorID(nombre);
         if (op == null) {
             IOP nueva = new IOP();
             nueva.setNombreFactor(nombre);
@@ -60,7 +60,7 @@ public class IOPServicio {
     }
 
     public IOP buscarFactorPorNombre(String nombreFactor) {
-        return iopRepo.buscarObraPorNombre(nombreFactor);
+        return iopRepo.buscarFactorPorID(nombreFactor);
     }
 
     public IOP buscarIndice(Integer orden) {
@@ -77,10 +77,11 @@ public class IOPServicio {
 
     public double getValorPorMes(LocalDate fecha, Integer idIop) {
         IOP iop = buscarIOP(idIop);
+        LocalDate mesAnterior = fecha.minusMonths(1);
         List<ValorMes> lista = iop.getFechas();
         for (ValorMes valorMes : lista) {
             LocalDate fechaBD = valorMes.getFecha();
-            if (fechaBD.getYear() == fecha.getYear() && fechaBD.getMonth() == fecha.getMonth()) {
+            if (fechaBD.getYear() == mesAnterior.getYear() && fechaBD.getMonth() == mesAnterior.getMonth()) {
                 return valorMes.getValor();
             }
         }
