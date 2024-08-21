@@ -75,6 +75,7 @@ public class IOPServicio {
         return iopRepo.getReferenceById(id);
     }
 
+
     public double getValorPorMes(LocalDate fecha, Integer idIop) {
         IOP iop = buscarIOP(idIop);
         LocalDate mesAnterior = fecha.minusMonths(1);
@@ -86,6 +87,7 @@ public class IOPServicio {
             }
         }
         return 0;
+
     }
 
     public Double ponderadorTotal(int orden, List<Item> items) {
