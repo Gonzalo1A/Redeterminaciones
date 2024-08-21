@@ -29,5 +29,5 @@ public class Item {
     private Double incidenciaItem;
     @OneToMany
     private List<AvanceObraReal> avanceObraReal;
-
+    private Double factorRedet;
 }

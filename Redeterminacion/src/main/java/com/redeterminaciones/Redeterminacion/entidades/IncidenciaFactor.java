@@ -14,6 +14,6 @@ public class IncidenciaFactor {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private int indice;
-    private Float porcentajeIncidencia;
+    private Double porcentajeIncidencia;
 
 }

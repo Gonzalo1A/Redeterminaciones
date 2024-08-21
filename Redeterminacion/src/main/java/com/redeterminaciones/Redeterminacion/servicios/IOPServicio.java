@@ -33,7 +33,7 @@ public class IOPServicio {
 
     @Transactional
     public void crearIOP(String nombre) {
-        IOP op = iopRepo.buscarObraPorNombre(nombre);
+        IOP op = iopRepo.buscarFactorPorID(nombre);
         if (op == null) {
             IOP nueva = new IOP();
             nueva.setNombreFactor(nombre);
@@ -60,7 +60,7 @@ public class IOPServicio {
     }
 
     public IOP buscarFactorPorNombre(String nombreFactor) {
-        return iopRepo.buscarObraPorNombre(nombreFactor);
+        return iopRepo.buscarFactorPorID(nombreFactor);
     }
 
     public IOP buscarIndice(Integer orden) {
@@ -75,14 +75,22 @@ public class IOPServicio {
         return iopRepo.getReferenceById(id);
     }
 
-    public double getValorPorMes(String fecha, Integer idIop) {
-        return fechaSer.buscarValorPorFecha(fecha, idIop);
+    public double getValorPorMes(LocalDate fecha, Integer idIop) {
+        IOP iop = buscarIOP(idIop);
+        LocalDate mesAnterior = fecha.minusMonths(1);
+        List<ValorMes> lista = iop.getFechas();
+        for (ValorMes valorMes : lista) {
+            LocalDate fechaBD = valorMes.getFecha();
+            if (fechaBD.getYear() == mesAnterior.getYear() && fechaBD.getMonth() == mesAnterior.getMonth()) {
+                return valorMes.getValor();
+            }
+        }
+        return 0;
     }
 
     public Double ponderadorTotal(int orden, List<Item> items) {
         double ponderador = 0;
         double ponderadorTotal = 0;
-        double montoTotalFactor = 0;
 
         for (Item item : items) {
             List<IncidenciaFactor> factores = item.getIncidenciaFactores();
@@ -91,7 +99,6 @@ public class IOPServicio {
                     if (incFactor.getIndice() == orden) {
                         ponderador = item.getIncidenciaItem() * incFactor.getPorcentajeIncidencia();
                         ponderadorTotal = ponderadorTotal + ponderador;
-                        montoTotalFactor = montoTotalFactor + (incFactor.getPorcentajeIncidencia() * item.getSubTotal());
                         break;
                     }
                 }
