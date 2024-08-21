@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.apache.poi.ss.usermodel.Cell;
@@ -155,6 +156,61 @@ public class ItemServicio {
             item.setAvanceTeorico(avanceTeorico);
             itemRepositorio.save(item);
         }
+    }
+
+    public Double remanenteDelAvenceTeorico(Item item, LocalDate fechaDeSolicitud) {
+        if (!item.isRubro()) {
+            List<ValorMes> avanceTeorico = item.getAvanceTeorico();
+            Double acumulado = 0.0;
+            Double cantidad = item.getCantidad();
+            //Llevo la fecha al ultimo dia del mes
+            fechaDeSolicitud = fechaDeSolicitud.withDayOfMonth(fechaDeSolicitud.lengthOfMonth());
+            if (avanceTeorico != null && !avanceTeorico.isEmpty()) {
+                Collections.sort(avanceTeorico);
+                for (ValorMes valorMes : avanceTeorico) {
+                    if (valorMes.getFecha().isBefore(fechaDeSolicitud)) {
+                        acumulado += valorMes.getValor();
+                    }
+                }
+            }
+            return cantidad - acumulado;
+        }
+        return null;
+    }
+
+    public Double remanenteDelAvanceReal(Item item, LocalDate fechaDeSolicitud) {
+        if (!item.isRubro()) {
+            List<AvanceObraReal> avanceReal = item.getAvanceObraReal();
+            Double cantidad = item.getCantidad();
+            //Llevo la fecha al ultimo dia del mes
+            fechaDeSolicitud.minusMonths(1);
+            fechaDeSolicitud = fechaDeSolicitud.withDayOfMonth(fechaDeSolicitud.lengthOfMonth());
+            if (!avanceReal.isEmpty()) {
+                for (AvanceObraReal avanceObraReal : avanceReal) {
+                    LocalDate fechaDelAvance = avanceObraReal.getValorMes().getFecha();
+                    fechaDelAvance = fechaDelAvance.withDayOfMonth(fechaDelAvance.lengthOfMonth());
+                    if (fechaDeSolicitud.equals(fechaDelAvance)) {
+                        return cantidad - avanceObraReal.getAcumuladoActual();
+                    }
+                }
+            } else {
+                return 0.0;
+            }
+        }
+        return null;
+    }
+
+    @Transactional
+    public Double redeterminacionDePrecio(Item item, Double factorDeDeterminacion, Double menorRemanente) {
+        if (!item.isRubro()) {
+            Double nuevoPrecioUn = item.getPrecioUnitario() * factorDeDeterminacion;
+            Double incrementoDelSubTotal = menorRemanente * (nuevoPrecioUn - item.getPrecioUnitario());
+            item.setPrecioUnitario(nuevoPrecioUn);
+            item.setSubTotal(item.getSubTotal() + incrementoDelSubTotal);
+            itemRepositorio.save(item);
+            return incrementoDelSubTotal;
+        }
+        return null;
     }
 
     public ByteArrayInputStream exportarModeloParaIngresarItemsPorExcel(Obra obra) throws Exception {

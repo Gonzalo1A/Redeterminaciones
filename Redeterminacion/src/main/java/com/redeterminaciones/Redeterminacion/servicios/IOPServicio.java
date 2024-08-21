@@ -74,8 +74,8 @@ public class IOPServicio {
     public IOP buscarIOP(int id) {
         return iopRepo.getReferenceById(id);
     }
-    
-    public double getValorPorMes(String fecha, Integer idIop){
+
+    public double getValorPorMes(String fecha, Integer idIop) {
         return fechaSer.buscarValorPorFecha(fecha, idIop);
     }
 
