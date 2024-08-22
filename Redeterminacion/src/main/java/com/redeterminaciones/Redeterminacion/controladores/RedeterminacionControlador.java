@@ -1,21 +1,17 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
-import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
 import com.redeterminaciones.Redeterminacion.servicios.IOPServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import com.redeterminaciones.Redeterminacion.servicios.RedeterminacionServicio;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
