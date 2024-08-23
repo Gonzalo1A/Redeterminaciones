@@ -61,7 +61,7 @@ public class ObraControlador {
     }
 
     @GetMapping("/computo&presupuesto/{nombre}")
-    public String calculoCYP(@PathVariable String nombre, HttpSession session, ModelMap map) {
+    public String calculoCYP(@PathVariable String nombre, ModelMap map) {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         obraServicio.calcularTotal(nombre);
         map.addAttribute("items", obra.getItems());

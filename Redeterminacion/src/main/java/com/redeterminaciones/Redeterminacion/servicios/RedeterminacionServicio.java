@@ -1,13 +1,16 @@
 package com.redeterminaciones.Redeterminacion.servicios;
 
+import com.redeterminaciones.Redeterminacion.entidades.AvanceObraReal;
 import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
+import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.RedeterminacionRepositorio;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,11 +73,117 @@ public class RedeterminacionServicio {
 
     private Double valorFactorRede(Item item, LocalDate mesSolicitud, LocalDate mesAnterior) {
         Double factorRedet = 0.0d;
-        for (IncidenciaFactor inFac : item.getIncidenciaFactores()) {
-            Double indiceNuevo = iopServ.getValorPorMes(mesSolicitud, inFac.getIndice());
-            Double indiceBase = iopServ.getValorPorMes(mesAnterior, inFac.getIndice());
-            factorRedet += calcularVR(inFac.getPorcentajeIncidencia(), indiceNuevo, indiceBase);
+        if (!item.isRubro()) {
+            for (IncidenciaFactor inFac : item.getIncidenciaFactores()) {
+                Double indiceNuevo = iopServ.getValorPorMes(mesSolicitud, inFac.getIndice());
+                Double indiceBase = iopServ.getValorPorMes(mesAnterior, inFac.getIndice());
+                factorRedet += calcularVR(inFac.getPorcentajeIncidencia(), indiceNuevo, indiceBase);
+            }
+            return factorRedet;
         }
-        return factorRedet;
+        return null;
     }
+
+    public List<Double> listaRemanenteTeorico(List<Item> items, LocalDate fechaDeSolicitud) {
+        List<Double> listaRes = new ArrayList<>();
+        for (Item item : items) {
+            listaRes.add(remanenteDelAvenceTeorico(item, fechaDeSolicitud));
+        }
+        return listaRes;
+    }
+
+    private Double remanenteDelAvenceTeorico(Item item, LocalDate fechaDeSolicitud) {
+        if (!item.isRubro()) {
+            List<ValorMes> avanceTeorico = item.getAvanceTeorico();
+            Double acumulado = 0.0;
+            Double cantidad = item.getCantidad();
+            //Llevo la fecha al ultimo dia del mes
+            fechaDeSolicitud = fechaDeSolicitud.withDayOfMonth(fechaDeSolicitud.lengthOfMonth());
+            if (avanceTeorico != null && !avanceTeorico.isEmpty()) {
+                Collections.sort(avanceTeorico);
+                for (ValorMes valorMes : avanceTeorico) {
+                    if (valorMes.getFecha().isBefore(fechaDeSolicitud)) {
+                        acumulado += valorMes.getValor();
+                    }
+                }
+            }
+            return cantidad - acumulado;
+        }
+        return null;
+    }
+
+    
+    public List<Double> listaRemanenteReal(List<Item> items, LocalDate fechaDeSolicitud) {
+        List<Double> listaRes = new ArrayList<>();
+        for (Item item : items) {
+            listaRes.add(remanenteDelAvanceReal(item, fechaDeSolicitud));
+        }
+        return listaRes;
+    }
+   // public List<Double>
+
+    private Double remanenteDelAvanceReal(Item item, LocalDate fechaDeSolicitud) {
+        if (!item.isRubro()) {
+            List<AvanceObraReal> avanceReal = item.getAvanceObraReal();
+            Double cantidad = item.getCantidad();
+            //Llevo la fecha al ultimo dia del mes
+            fechaDeSolicitud.minusMonths(1);
+            fechaDeSolicitud = fechaDeSolicitud.withDayOfMonth(fechaDeSolicitud.lengthOfMonth());
+            if (!avanceReal.isEmpty()) {
+                for (AvanceObraReal avanceObraReal : avanceReal) {
+                    LocalDate fechaDelAvance = avanceObraReal.getValorMes().getFecha();
+                    fechaDelAvance = fechaDelAvance.withDayOfMonth(fechaDelAvance.lengthOfMonth());
+                    if (fechaDeSolicitud.equals(fechaDelAvance)) {
+                        return cantidad - avanceObraReal.getAcumuladoActual();
+                    }
+                }
+            } else {
+                return 0.0;
+            }
+        }
+        return null;
+    }
+
+    public List<Double> menorRemanentes(List<Double> remanenteTeorico, List<Double> remanenteReal) {
+        List<Double> listaMinimos = new ArrayList<>();
+        for (int i = 0; i < remanenteTeorico.size(); i++) {
+            listaMinimos.add(Math.min(remanenteTeorico.get(i), remanenteReal.get(i)));
+        }
+        return listaMinimos;
+    }
+
+    public List<Double> listaIncrementosSubTotal(List<Item> items, List<Double> factoresRedet, List<Double> menorRemanente) {
+        List<Double> listaRes = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            listaRes.add(redeterminacionDePrecio(items.get(i), factoresRedet.get(i), menorRemanente.get(i)));
+        }
+        return listaRes;
+    }
+
+    private Double redeterminacionDePrecio(Item item, Double factorDeDeterminacion, Double menorRemanente) {
+        if (!item.isRubro()) {
+            Double nuevoPrecioUn = calculoNuevoPrecioUnitario(item.getPrecioUnitario(), factorDeDeterminacion);
+            Double incrementoDelSubTotal = menorRemanente * (nuevoPrecioUn - item.getPrecioUnitario());
+            return incrementoDelSubTotal;
+        }
+        return null;
+    }
+
+    public List<Double> listaPreciosUnitariosNuevos(List<Item> items, List<Double> factoresRedet) {
+        List<Double> listaRes = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            if (!items.get(i).isRubro()) {
+                listaRes.add(calculoNuevoPrecioUnitario(items.get(i).getPrecioUnitario(), factoresRedet.get(i)));
+            }
+            listaRes.add(null);
+        }
+        return listaRes;
+    }
+
+    public Double calculoNuevoPrecioUnitario(Double precioViejo, Double factorRedet) {
+        return precioViejo * factorRedet;
+    }
+    
+
+
 }
