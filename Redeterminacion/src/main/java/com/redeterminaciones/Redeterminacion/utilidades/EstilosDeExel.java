@@ -30,6 +30,17 @@ public class EstilosDeExel {
         estilo.setDataFormat(libro.createDataFormat().getFormat("MM-yyyy"));
         return estilo;
     }
+    
+        public static XSSFCellStyle estiloRubros(XSSFWorkbook libro) {
+        XSSFCellStyle estilo = libro.createCellStyle();
+         estilo.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        estilo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//        estilo.setBorderBottom(BorderStyle.THIN);
+//        estilo.setBorderTop(BorderStyle.THIN);
+//        estilo.setBorderLeft(BorderStyle.THIN);
+//        estilo.setBorderRight(BorderStyle.THIN);
+        return estilo;
+    }
 
     public static XSSFCellStyle estiloDatos(XSSFWorkbook libro) {
         XSSFCellStyle estilo = libro.createCellStyle();

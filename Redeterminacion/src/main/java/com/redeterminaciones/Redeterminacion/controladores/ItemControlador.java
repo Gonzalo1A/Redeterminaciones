@@ -1,6 +1,7 @@
 package com.redeterminaciones.Redeterminacion.controladores;
 
 import com.redeterminaciones.Redeterminacion.entidades.AvanceObraReal;
+import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.utilidades.DatosRecibidos;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
@@ -12,12 +13,12 @@ import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ValorMesServicio;
 import com.redeterminaciones.Redeterminacion.utilidades.DatosAvanceObra;
+import com.redeterminaciones.Redeterminacion.utilidades.FechaUtilidades;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -65,9 +66,12 @@ public class ItemControlador {
     public String cargarIncidenciaFactor(@RequestBody DatosRecibidos datos) {
         String nombreObra = datos.getNombreObra();
         List<ConjuntoIdValorFecha> listaIncidencias = datos.getListaDatos();
+        ;
         for (ConjuntoIdValorFecha incidencia : listaIncidencias) {
+            System.out.println(incidencia.getValor());
             if (incidencia.getValor() != null) {
-                itemServicio.agregarFactor(Long.valueOf(incidencia.getItemId()), incidenciaFactorServicio.formatearValores(incidencia.getValor()));
+                List<IncidenciaFactor> listaIncFac = incidenciaFactorServicio.formatearValores(incidencia.getValor());
+                itemServicio.agregarFactor(Long.valueOf(incidencia.getItemId()), listaIncFac);
             }
         }
         return "redirect:/item/listaItems/" + nombreObra;
@@ -96,9 +100,9 @@ public class ItemControlador {
                 obraServicio.calcularTotal(nombre);
                 itemServicio.calularIncidenciaItem(obraServicio.buscarPorNombre(nombre));
             }
-            return "redirect:/item/listaItems/{nombre}";
+            return "redirect:/item/lista/{nombre}";
         } catch (Exception e) {
-            return "redirect:/item/listaItems/{nombre}";
+            return "redirect:/item/lista/{nombre}";
         }
     }
 
@@ -129,6 +133,7 @@ public class ItemControlador {
         return "form_avanceReal.html";
     }
 //formatter.parse(valor.getFecha())
+
     @PostMapping("/avance_carga")
     public String cargaAvanceObra(@RequestBody DatosAvanceObra datos) throws ParseException {
         List<ConjuntoIdValorFecha> conjuntoIdValorFechas = datos.getValorMes();
@@ -138,8 +143,8 @@ public class ItemControlador {
             if (valor.getValor() != null) {
                 Long idItem = Long.valueOf(valor.getItemId());
                 Item item = itemServicio.getOne(idItem);
-                LocalDate fechaActual = valorMesServicio.convertirStringALocalDate(valor.getFecha());
-                ValorMes valMes = valorMesServicio.crear(fechaActual,Double.valueOf(valor.getValor()));
+                LocalDate fechaActual = FechaUtilidades.convertirStringALocalDateFormato2(valor.getFecha());
+                ValorMes valMes = valorMesServicio.crear(fechaActual, Double.valueOf(valor.getValor()));
                 List<AvanceObraReal> lista = avanceRealServicio.cargarAvance(item, valMes);
                 itemServicio.agregarAvanceReal(idItem, lista);
             }
@@ -148,7 +153,7 @@ public class ItemControlador {
     }
 
     @PostMapping("/avanceObraRealExport")
-    public ResponseEntity<InputStreamResource> caragarAvanceDeObraRealPorExcel(@RequestParam String nombre, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha) throws Exception {
+    public ResponseEntity<InputStreamResource> caragarAvanceDeObraRealPorExcel(@RequestParam String nombre, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fecha) throws Exception {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         ByteArrayInputStream stream = avanceRealServicio.exportarModeloDeCargaDeAvanceRealExcel(obra, fecha);
         HttpHeaders headers = new HttpHeaders();

@@ -10,20 +10,19 @@ import java.time.LocalDate;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-@Data
 @Entity
-public class ValorMes implements Comparable<ValorMes> {
+@Data
+public class Redeterminacion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-    private Double valor;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idRedet;
     @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "MM-yyyy")
-    private LocalDate fecha;
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate mesSolicitud;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate mesSolictudAnterior;
+    private Double variacionReferencia;
 
-    @Override
-    public int compareTo(ValorMes other) {
-        return this.fecha.compareTo(other.fecha);
-    }
 }

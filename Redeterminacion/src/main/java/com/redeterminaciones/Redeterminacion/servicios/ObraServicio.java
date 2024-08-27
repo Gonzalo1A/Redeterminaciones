@@ -2,17 +2,20 @@ package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
+import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.repositorios.ObraRepositorio;
+import static com.redeterminaciones.Redeterminacion.utilidades.FechaUtilidades.convertirStringALocalDate;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -70,6 +73,20 @@ public class ObraServicio {
     }
 
     @Transactional
+    public void agregarRedeterminacion(Redeterminacion redet, String nombreObra) {
+        Obra obra = buscarPorNombre(nombreObra);
+        if (obra != null) {
+            if (obra.getRedeterminaciones() == null) {
+                obra.setRedeterminaciones(new ArrayList<>());
+            }
+            obra.getRedeterminaciones().add(redet);
+        } else {
+            throw new EntityNotFoundException("Obra con nombre " + nombreObra + " no encontrada");
+        }
+        obraRepositorio.save(obra);
+    }
+
+    @Transactional
     public Double calcularTotal(String nombreObra) {
         Obra obra = buscarPorNombre(nombreObra);
         double total = 0d;
@@ -96,20 +113,19 @@ public class ObraServicio {
         return obraRepositorio.buscarObraPorNombre(nombre);
     }
 
+    public @DateTimeFormat(pattern = "yyyy-MM")
+    LocalDate buscarMesSolicitudAnterior(String ObraId) {
+        return obraRepositorio.buscarMesUltimaSolicitud(ObraId);
+    }
+    
+    public Redeterminacion buscarUltimaRedeterminacion(String ObraId) {
+        return obraRepositorio.buscarUltimaRedet(ObraId);
+    }
+
     @Transactional
     public void eliminarObra(String nombre) {
         Obra obraAEliminar = buscarPorNombre(nombre);
         obraRepositorio.delete(obraAEliminar);
     }
 
-    private LocalDate convertirStringALocalDate(String fechaStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        try {
-            return LocalDate.parse(fechaStr, formatter);
-        } catch (DateTimeParseException e) {
-            // Manejo de error en caso de formato inválido
-            e.printStackTrace();
-            return null;
-        }
-    }
 }

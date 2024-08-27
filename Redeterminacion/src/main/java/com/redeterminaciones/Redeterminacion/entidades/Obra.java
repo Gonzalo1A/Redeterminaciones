@@ -22,7 +22,6 @@ public class Obra {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    
     private String nombre;
     private String total;
     @Temporal(TemporalType.DATE)
@@ -44,7 +43,7 @@ public class Obra {
     private TipoDeRedeterminaciones tipoDeRedet;
     @OneToMany
     private List<Item> items;
+    @OneToMany
+    private List<Redeterminacion> redeterminaciones;
 
-
-  
 }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface IOPRepositorio extends JpaRepository<IOP, Integer> {
 
     @Query("SELECT i FROM IOP i WHERE i.nombreFactor =:nombreFactor")
-    public IOP buscarObraPorNombre(@Param("nombreFactor") String nombreFactor);
+    public IOP buscarFactorPorID(@Param("nombreFactor") String nombreFactor);
+    
+    
     
 }

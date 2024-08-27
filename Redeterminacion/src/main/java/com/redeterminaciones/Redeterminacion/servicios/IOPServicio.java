@@ -2,6 +2,8 @@ package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
+import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
+import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.IOPRepositorio;
 import jakarta.transaction.Transactional;
@@ -12,7 +14,6 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -32,7 +33,7 @@ public class IOPServicio {
 
     @Transactional
     public void crearIOP(String nombre) {
-        IOP op = iopRepo.buscarObraPorNombre(nombre);
+        IOP op = iopRepo.buscarFactorPorID(nombre);
         if (op == null) {
             IOP nueva = new IOP();
             nueva.setNombreFactor(nombre);
@@ -59,7 +60,7 @@ public class IOPServicio {
     }
 
     public IOP buscarFactorPorNombre(String nombreFactor) {
-        return iopRepo.buscarObraPorNombre(nombreFactor);
+        return iopRepo.buscarFactorPorID(nombreFactor);
     }
 
     public IOP buscarIndice(Integer orden) {
@@ -72,6 +73,40 @@ public class IOPServicio {
 
     public IOP buscarIOP(int id) {
         return iopRepo.getReferenceById(id);
+    }
+
+    public double getValorPorMes(LocalDate fecha, Integer idIop) {
+        IOP iop = buscarIOP(idIop);
+        LocalDate mesAnterior = fecha.minusMonths(1);
+        List<ValorMes> lista = iop.getFechas();
+        for (ValorMes valorMes : lista) {
+            LocalDate fechaBD = valorMes.getFecha();
+            if (fechaBD.getYear() == mesAnterior.getYear() && fechaBD.getMonth() == mesAnterior.getMonth()) {
+                return valorMes.getValor();
+            }
+        }
+        return 0;
+
+    }
+
+    public Double ponderadorTotal(int orden, List<Item> items) {
+        double ponderador = 0;
+        double ponderadorTotal = 0;
+
+        for (Item item : items) {
+            List<IncidenciaFactor> factores = item.getIncidenciaFactores();
+            if (!factores.isEmpty()) {
+                for (IncidenciaFactor incFactor : factores) {
+                    if (incFactor.getIndice() == orden) {
+                        ponderador = item.getIncidenciaItem() * incFactor.getPorcentajeIncidencia();
+                        ponderadorTotal = ponderadorTotal + ponderador;
+
+                        break;
+                    }
+                }
+            }
+        }
+        return ponderadorTotal;
     }
 
     public ByteArrayInputStream exportarIOP() throws IOException {

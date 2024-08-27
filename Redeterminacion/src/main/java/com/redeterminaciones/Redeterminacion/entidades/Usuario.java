@@ -21,8 +21,5 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     protected Roles rol;
 
-    
-    public Usuario() {
-    }
 
 }
