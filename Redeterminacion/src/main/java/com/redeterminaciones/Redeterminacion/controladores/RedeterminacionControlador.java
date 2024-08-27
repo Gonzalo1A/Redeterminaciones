@@ -17,7 +17,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -43,10 +42,10 @@ public class RedeterminacionControlador {
             int orden = indice.getId();
             Double indiceNuevo = iopServicio.getValorPorMes(redet.getMesSolicitud(), orden);
             Double indiceBase = iopServicio.getValorPorMes(redet.getMesSolictudAnterior(), orden);
-            polinomica += redetServicio.calcularVR(iopServicio.ponderadorTotal(orden, obra.getItems()), indiceNuevo, indiceBase);
+            polinomica += redetServicio.calcularVR(iopServicio.ponderadorTotal(orden, obra.getItems()), indiceBase, indiceNuevo);
         }
         redetServicio.modificar(polinomica, redet.getIdRedet());
-        map.addAttribute("valorReferencia", polinomica * 100);
+        map.addAttribute("valorReferencia", polinomica);
         map.addAttribute("nombreObra", obra.getNombre());
         return "redeterminacion.html";
     }
@@ -59,7 +58,7 @@ public class RedeterminacionControlador {
         List<Double> factorRedet = redetServicio.factoresRedet(obra, redet);
         List<Double> remaTeorico = redetServicio.listaRemanenteTeorico(obra.getItems(), redet.getMesSolicitud());
         List<Double> remaReal = redetServicio.listaRemanenteReal(obra.getItems(), redet.getMesSolicitud());
-        List<Double> minimo = redetServicio.menorRemanentes(factorRedet, factorRedet);
+        List<Double> minimo = redetServicio.menorRemanentes(remaTeorico, remaReal);
         Map<String, Object> data = new HashMap<>();
         data.put("items", obra.getItems());
         data.put("factoresRedet", factorRedet);
@@ -90,11 +89,3 @@ public class RedeterminacionControlador {
     }
 
 }
-//        map.addAttribute("minimo", minimo);
-//        map.addAttribute("items", obra.getItems());
-//        map.addAttribute("nuevosUnitarios", redetServicio.listaPreciosUnitariosNuevos(obra.getItems(), factorRedet));
-//        map.addAttribute("remanenteReal", remaReal);
-//        map.addAttribute("remanenteTeorico", remaTeorico);
-//        map.addAttribute("incrementosSubtotal", redetServicio.listaIncrementosSubTotal(obra.getItems(), factorRedet, minimo));
-//        map.addAttribute("factoresRedet", factorRedet);
-//        map.addAttribute("valorReferencia", valorReferencia);
