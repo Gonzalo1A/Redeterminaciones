@@ -7,12 +7,20 @@ import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.RedeterminacionRepositorio;
+import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import jakarta.transaction.Transactional;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -112,7 +120,6 @@ public class RedeterminacionServicio {
         return null;
     }
 
-    
     public List<Double> listaRemanenteReal(List<Item> items, LocalDate fechaDeSolicitud) {
         List<Double> listaRes = new ArrayList<>();
         for (Item item : items) {
@@ -120,7 +127,7 @@ public class RedeterminacionServicio {
         }
         return listaRes;
     }
-   // public List<Double>
+    // public List<Double>
 
     private Double remanenteDelAvanceReal(Item item, LocalDate fechaDeSolicitud) {
         if (!item.isRubro()) {
@@ -183,7 +190,95 @@ public class RedeterminacionServicio {
     public Double calculoNuevoPrecioUnitario(Double precioViejo, Double factorRedet) {
         return precioViejo * factorRedet;
     }
-    
 
+    public ByteArrayInputStream exportarRepoteDeRedeterminacion(Obra obra, LocalDate mesSolicitud, LocalDate mesAnterior) throws Exception {
+        String[] columnas = {"Item", "Descripcion", "Unidad", "Cantidad", "Precio unitario previo", "Precio anterior", "Factor de redeterminacion", "Nuevo precio Unitario", "Remanente real", "Remanente teorico", "Menor Remanente", "Incremento de Precio Unit.", "Nuevo Precio"};
+        List<Item> todos = obra.getItems();
+        ByteArrayOutputStream stream;
+        try (XSSFWorkbook libro = new XSSFWorkbook()) {
+            stream = new ByteArrayOutputStream();
+            Sheet hoja = libro.createSheet("Redeterminacion");
+            Row fila = hoja.createRow(0);
+            //Creo los titulares del Reporte
+            for (int i = 0; i < columnas.length; i++) {
+                Cell celdaTitu = fila.createCell(i);
+                celdaTitu.setCellValue(columnas[i]);
+                celdaTitu.setCellStyle(EstilosDeExel.estiloEncabesados(libro));
+            }
+            int coordenadaRow = 1;
+            for (Item item : todos) {
+                fila = hoja.createRow(coordenadaRow);
+                Cell numItem = fila.createCell(0);
+                numItem.setCellValue(item.getNumeroItem());
+                numItem.setCellStyle(EstilosDeExel.estiloDatos(libro));
 
+                Cell descripcion = fila.createCell(1);
+                descripcion.setCellValue(item.getDescripcion());
+                descripcion.setCellStyle(EstilosDeExel.estiloDatos(libro));
+
+                if (!item.isRubro()) {
+                    Cell unidad = fila.createCell(2);
+                    unidad.setCellValue(item.getUnidad());
+                    unidad.setCellStyle(EstilosDeExel.estiloDatos(libro));
+
+                    Cell cantidad = fila.createCell(3);
+                    cantidad.setCellValue(item.getCantidad());
+                    cantidad.setCellStyle(EstilosDeExel.estiloDatos(libro));
+
+                    Cell precioUn = fila.createCell(4);
+                    precioUn.setCellValue(item.getPrecioUnitario());
+                    precioUn.setCellStyle(EstilosDeExel.estiloMoneda(libro));
+
+                    Cell subTotalAnt = fila.createCell(5);
+                    subTotalAnt.setCellValue(item.getSubTotal());
+                    subTotalAnt.setCellStyle(EstilosDeExel.estiloMoneda(libro));
+                    //Calculo del factor de redeterminacion
+                    Cell factorRed = fila.createCell(6);
+                    factorRed.setCellValue(valorFactorRede(item, mesSolicitud, mesAnterior));
+                    factorRed.setCellStyle(EstilosDeExel.estiloDatos(libro));
+                    //Calculo del nuevo Precio unitario
+                    Cell nuevoPrecioUn = fila.createCell(7);
+                    nuevoPrecioUn.setCellValue(item.getPrecioUnitario() * factorRed.getNumericCellValue());
+                    nuevoPrecioUn.setCellStyle(EstilosDeExel.estiloMoneda(libro));
+                    
+                    Double remanenteReal = remanenteDelAvanceReal(item, mesSolicitud);
+                    Cell remReal = fila.createCell(8);
+                    remReal.setCellValue(remanenteReal);
+                    remReal.setCellStyle(EstilosDeExel.estiloDatos(libro));
+
+                    Double remanenteTeorico = remanenteDelAvenceTeorico(item, mesSolicitud);
+                    Cell remTeorico = fila.createCell(9);
+                    remTeorico.setCellValue(remanenteTeorico);
+                    remTeorico.setCellStyle(EstilosDeExel.estiloDatos(libro));
+                    //Asigno el menor remanente
+                    Cell menorRem = fila.createCell(10);
+                    menorRem.setCellValue(remanenteTeorico);
+                    if (remanenteReal < remanenteTeorico) {
+                        menorRem.setCellValue(remanenteReal);
+                    }
+                    menorRem.setCellStyle(EstilosDeExel.estiloDatos(libro));
+                    //Calculo del incremento del Sub Total
+                    Double incremento = menorRem.getNumericCellValue() * (nuevoPrecioUn.getNumericCellValue() - precioUn.getNumericCellValue());
+                    Cell incrementoSub = fila.createCell(11);
+                    incrementoSub.setCellValue(incremento);
+                    incrementoSub.setCellStyle(EstilosDeExel.estiloMoneda(libro));
+                    //Suma de la diferencia de precio para el nuevo Sub Total
+                    Cell nuevoSubtotal = fila.createCell(12);
+                    nuevoSubtotal.setCellValue(item.getSubTotal() + incremento);
+                    nuevoSubtotal.setCellStyle(EstilosDeExel.estiloMoneda(libro));
+                } else {
+                    CellRangeAddress rango = new CellRangeAddress(coordenadaRow, coordenadaRow, 2, 12);
+                    for (int i = rango.getFirstColumn(); i <= rango.getLastColumn(); i++) {
+                        Cell celdaRango = fila.createCell(i);
+                        celdaRango.setCellStyle(EstilosDeExel.estiloDatos(libro));
+                    }
+                    hoja.addMergedRegion(rango);
+                }
+                coordenadaRow++;
+            }
+            libro.write(stream);
+            libro.close();
+            return new ByteArrayInputStream(stream.toByteArray());
+        }
+    }
 }
