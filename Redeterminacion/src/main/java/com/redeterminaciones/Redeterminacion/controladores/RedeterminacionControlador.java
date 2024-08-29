@@ -6,11 +6,14 @@ import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
 import com.redeterminaciones.Redeterminacion.servicios.IOPServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import com.redeterminaciones.Redeterminacion.servicios.RedeterminacionServicio;
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -69,6 +72,14 @@ public class RedeterminacionControlador {
         data.put("incrementosSubtotal", redetServicio.listaIncrementosSubTotal(obra.getItems(), factorRedet, minimo));
         return ResponseEntity.ok(data);
     }
+
+//    @GetMapping("/export/{nombre}")
+//    public ResponseEntity<InputStreamResource> exportarItems(@PathVariable String nombre) throws Exception {
+//        ByteArrayInputStream stream = itemServicio.exportarModeloParaIngresarItemsPorExcel(obraServicio.buscarPorNombre(nombre));
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Items.xlsx");
+//        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
+//    }
 
     private Redeterminacion crearRedeterminacion(LocalDate mesSol, Obra obra) {
         LocalDate mesSolAnt = obraServicio.buscarMesSolicitudAnterior(obra.getId());

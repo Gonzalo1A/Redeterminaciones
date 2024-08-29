@@ -90,9 +90,8 @@ public class IOPServicio {
     }
 
     public Double ponderadorTotal(int orden, List<Item> items) {
-        double ponderador = 0;
+        double ponderador;
         double ponderadorTotal = 0;
-
         for (Item item : items) {
             List<IncidenciaFactor> factores = item.getIncidenciaFactores();
             if (!factores.isEmpty()) {
