@@ -1,4 +1,4 @@
-package com.redeterminaciones.Redeterminacion.servicios;
+    package com.redeterminaciones.Redeterminacion.servicios;
 
 import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import com.redeterminaciones.Redeterminacion.entidades.IOP;
@@ -86,7 +86,6 @@ public class IOPServicio {
             }
         }
         return 0;
-
     }
 
     public Double ponderadorTotal(int orden, List<Item> items) {
