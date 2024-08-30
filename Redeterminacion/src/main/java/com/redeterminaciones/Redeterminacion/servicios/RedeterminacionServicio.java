@@ -87,7 +87,8 @@ public class RedeterminacionServicio {
             for (IncidenciaFactor inFac : item.getIncidenciaFactores()) {
                 Double indiceNuevo = iopServ.getValorPorMes(mesSolicitud, inFac.getIndice());
                 Double indiceBase = iopServ.getValorPorMes(mesAnterior, inFac.getIndice());
-                factorRedet += calcularVR(inFac.getPorcentajeIncidencia(), indiceNuevo, indiceBase);
+
+                factorRedet += calcularVR(inFac.getPorcentajeIncidencia(), indiceBase, indiceNuevo);
             }
             BigDecimal bd = new BigDecimal(factorRedet).setScale(4, RoundingMode.HALF_UP);
             double valorCon4Decimales = bd.doubleValue();
@@ -131,7 +132,6 @@ public class RedeterminacionServicio {
         }
         return listaRes;
     }
-    // public List<Double>
 
     private Double remanenteDelAvanceReal(Item item, LocalDate fechaDeSolicitud) {
         if (!item.isRubro()) {
@@ -146,6 +146,8 @@ public class RedeterminacionServicio {
                     fechaDelAvance = fechaDelAvance.withDayOfMonth(fechaDelAvance.lengthOfMonth());
                     if (fechaDeSolicitud.equals(fechaDelAvance)) {
                         return cantidad - avanceObraReal.getAcumuladoActual();
+                    } else {
+                        return 0.0;
                     }
                 }
             } else {
@@ -158,7 +160,13 @@ public class RedeterminacionServicio {
     public List<Double> menorRemanentes(List<Double> remanenteTeorico, List<Double> remanenteReal) {
         List<Double> listaMinimos = new ArrayList<>();
         for (int i = 0; i < remanenteTeorico.size(); i++) {
-            listaMinimos.add(Math.min(remanenteTeorico.get(i), remanenteReal.get(i)));
+            Double valor1 = remanenteTeorico.get(i);
+            Double valor2 = remanenteReal.get(i);
+            if (valor1 != null && valor2 != null) {
+                listaMinimos.add(Math.min(valor1, valor2));
+            } else {
+                listaMinimos.add(null);
+            }
         }
         return listaMinimos;
     }
@@ -166,7 +174,11 @@ public class RedeterminacionServicio {
     public List<Double> listaIncrementosSubTotal(List<Item> items, List<Double> factoresRedet, List<Double> menorRemanente) {
         List<Double> listaRes = new ArrayList<>();
         for (int i = 0; i < items.size(); i++) {
-            listaRes.add(redeterminacionDePrecio(items.get(i), factoresRedet.get(i), menorRemanente.get(i)));
+            if (!items.get(i).isRubro()) {
+                listaRes.add(redeterminacionDePrecio(items.get(i), factoresRedet.get(i), menorRemanente.get(i)));
+            } else {
+                listaRes.add(null);
+            }
         }
         return listaRes;
     }
@@ -185,8 +197,9 @@ public class RedeterminacionServicio {
         for (int i = 0; i < items.size(); i++) {
             if (!items.get(i).isRubro()) {
                 listaRes.add(calculoNuevoPrecioUnitario(items.get(i).getPrecioUnitario(), factoresRedet.get(i)));
+            } else {
+                listaRes.add(null);
             }
-            listaRes.add(null);
         }
         return listaRes;
     }
@@ -282,6 +295,26 @@ public class RedeterminacionServicio {
             libro.write(stream);
             libro.close();
             return new ByteArrayInputStream(stream.toByteArray());
+        }
+    }
+
+    public byte[] convertInputStreamToByteArray(ByteArrayInputStream inputStream) throws Exception {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[1024];
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        return buffer.toByteArray();
+    }
+
+    @Transactional
+    public void guardarResumen(byte[] resumen, Integer id) {
+        Optional<Redeterminacion> res = redeterminacionRepositorio.findById(id);
+        if (res.isPresent()) {
+            Redeterminacion redet = res.get();
+            redet.setResumenRedet(resumen);
+            redeterminacionRepositorio.save(redet);
         }
     }
 }

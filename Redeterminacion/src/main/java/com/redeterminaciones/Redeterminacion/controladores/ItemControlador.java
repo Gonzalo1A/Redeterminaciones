@@ -66,7 +66,6 @@ public class ItemControlador {
     public String cargarIncidenciaFactor(@RequestBody DatosRecibidos datos) {
         String nombreObra = datos.getNombreObra();
         List<ConjuntoIdValorFecha> listaIncidencias = datos.getListaDatos();
-        ;
         for (ConjuntoIdValorFecha incidencia : listaIncidencias) {
             System.out.println(incidencia.getValor());
             if (incidencia.getValor() != null) {

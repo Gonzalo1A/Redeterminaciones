@@ -6,16 +6,23 @@ import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
 import com.redeterminaciones.Redeterminacion.servicios.IOPServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import com.redeterminaciones.Redeterminacion.servicios.RedeterminacionServicio;
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,11 +50,12 @@ public class RedeterminacionControlador {
             int orden = indice.getId();
             Double indiceNuevo = iopServicio.getValorPorMes(redet.getMesSolicitud(), orden);
             Double indiceBase = iopServicio.getValorPorMes(redet.getMesSolictudAnterior(), orden);
-            polinomica += redetServicio.calcularVR(iopServicio.ponderadorTotal(orden, obra.getItems()), indiceNuevo, indiceBase);
+            polinomica += redetServicio.calcularVR(iopServicio.ponderadorTotal(orden, obra.getItems()), indiceBase, indiceNuevo);
         }
         redetServicio.modificar(polinomica, redet.getIdRedet());
-        map.addAttribute("valorReferencia", polinomica * 100);
+        map.addAttribute("valorReferencia", polinomica);
         map.addAttribute("nombreObra", obra.getNombre());
+        map.addAttribute("idRedet", redet.getIdRedet());
         return "redeterminacion.html";
     }
 
@@ -59,7 +67,7 @@ public class RedeterminacionControlador {
         List<Double> factorRedet = redetServicio.factoresRedet(obra, redet);
         List<Double> remaTeorico = redetServicio.listaRemanenteTeorico(obra.getItems(), redet.getMesSolicitud());
         List<Double> remaReal = redetServicio.listaRemanenteReal(obra.getItems(), redet.getMesSolicitud());
-        List<Double> minimo = redetServicio.menorRemanentes(factorRedet, factorRedet);
+        List<Double> minimo = redetServicio.menorRemanentes(remaTeorico, remaReal);
         Map<String, Object> data = new HashMap<>();
         data.put("items", obra.getItems());
         data.put("factoresRedet", factorRedet);
@@ -69,6 +77,21 @@ public class RedeterminacionControlador {
         data.put("minimo", minimo);
         data.put("incrementosSubtotal", redetServicio.listaIncrementosSubTotal(obra.getItems(), factorRedet, minimo));
         return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/descargar_resumen/{nombre}")
+    public ResponseEntity<InputStreamResource> exportarItems(@PathVariable String nombre, @RequestParam Integer idRedet) {
+        Redeterminacion redet = redetServicio.buscarRedeterminacion(idRedet);
+        ByteArrayInputStream stream = null;
+        try {
+            stream = redetServicio.exportarRepoteDeRedeterminacion(obraServicio.buscarPorNombre(nombre), redet.getMesSolicitud(), redet.getMesSolictudAnterior());
+            redetServicio.guardarResumen(redetServicio.convertInputStreamToByteArray(stream), idRedet);
+        } catch (Exception ex) {
+            Logger.getLogger(RedeterminacionControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Resumen.xlsx");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
     }
 
     private Redeterminacion crearRedeterminacion(LocalDate mesSol, Obra obra) {
@@ -90,11 +113,3 @@ public class RedeterminacionControlador {
     }
 
 }
-//        map.addAttribute("minimo", minimo);
-//        map.addAttribute("items", obra.getItems());
-//        map.addAttribute("nuevosUnitarios", redetServicio.listaPreciosUnitariosNuevos(obra.getItems(), factorRedet));
-//        map.addAttribute("remanenteReal", remaReal);
-//        map.addAttribute("remanenteTeorico", remaTeorico);
-//        map.addAttribute("incrementosSubtotal", redetServicio.listaIncrementosSubTotal(obra.getItems(), factorRedet, minimo));
-//        map.addAttribute("factoresRedet", factorRedet);
-//        map.addAttribute("valorReferencia", valorReferencia);
