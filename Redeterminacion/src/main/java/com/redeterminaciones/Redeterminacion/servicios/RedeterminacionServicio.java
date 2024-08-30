@@ -11,6 +11,8 @@ import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,7 +89,9 @@ public class RedeterminacionServicio {
                 Double indiceBase = iopServ.getValorPorMes(mesAnterior, inFac.getIndice());
                 factorRedet += calcularVR(inFac.getPorcentajeIncidencia(), indiceNuevo, indiceBase);
             }
-            return factorRedet;
+            BigDecimal bd = new BigDecimal(factorRedet).setScale(4, RoundingMode.HALF_UP);
+            double valorCon4Decimales = bd.doubleValue();
+            return valorCon4Decimales;
         }
         return null;
     }
@@ -191,9 +195,8 @@ public class RedeterminacionServicio {
         return precioViejo * factorRedet;
     }
 
-    public ByteArrayInputStream exportarRepoteDeRedeterminacion(Obra obra, LocalDate mesSolicitud, LocalDate mesAnterior) throws Exception {
+    public ByteArrayInputStream exportarRepoteDeRedeterminacion(Obra obra, LocalDate mesSolicitud, LocalDate ultimaRedeterminacion) throws Exception {
         String[] columnas = {"Item", "Descripcion", "Unidad", "Cantidad", "Precio unitario previo", "Precio anterior", "Factor de redeterminacion", "Nuevo precio Unitario", "Remanente real", "Remanente teorico", "Menor Remanente", "Incremento de Precio Unit.", "Nuevo Precio"};
-        List<Item> todos = obra.getItems();
         ByteArrayOutputStream stream;
         try (XSSFWorkbook libro = new XSSFWorkbook()) {
             stream = new ByteArrayOutputStream();
@@ -206,7 +209,7 @@ public class RedeterminacionServicio {
                 celdaTitu.setCellStyle(EstilosDeExel.estiloEncabesados(libro));
             }
             int coordenadaRow = 1;
-            for (Item item : todos) {
+            for (Item item : obra.getItems()) {
                 fila = hoja.createRow(coordenadaRow);
                 Cell numItem = fila.createCell(0);
                 numItem.setCellValue(item.getNumeroItem());
@@ -234,13 +237,13 @@ public class RedeterminacionServicio {
                     subTotalAnt.setCellStyle(EstilosDeExel.estiloMoneda(libro));
                     //Calculo del factor de redeterminacion
                     Cell factorRed = fila.createCell(6);
-                    factorRed.setCellValue(valorFactorRede(item, mesSolicitud, mesAnterior));
+                    factorRed.setCellValue(valorFactorRede(item, mesSolicitud, ultimaRedeterminacion));
                     factorRed.setCellStyle(EstilosDeExel.estiloDatos(libro));
                     //Calculo del nuevo Precio unitario
                     Cell nuevoPrecioUn = fila.createCell(7);
                     nuevoPrecioUn.setCellValue(item.getPrecioUnitario() * factorRed.getNumericCellValue());
                     nuevoPrecioUn.setCellStyle(EstilosDeExel.estiloMoneda(libro));
-                    
+
                     Double remanenteReal = remanenteDelAvanceReal(item, mesSolicitud);
                     Cell remReal = fila.createCell(8);
                     remReal.setCellValue(remanenteReal);
