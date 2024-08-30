@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +21,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -50,6 +55,7 @@ public class RedeterminacionControlador {
         redetServicio.modificar(polinomica, redet.getIdRedet());
         map.addAttribute("valorReferencia", polinomica);
         map.addAttribute("nombreObra", obra.getNombre());
+        map.addAttribute("idRedet", redet.getIdRedet());
         return "redeterminacion.html";
     }
 
@@ -73,13 +79,20 @@ public class RedeterminacionControlador {
         return ResponseEntity.ok(data);
     }
 
-//    @GetMapping("/export/{nombre}")
-//    public ResponseEntity<InputStreamResource> exportarItems(@PathVariable String nombre) throws Exception {
-//        ByteArrayInputStream stream = itemServicio.exportarModeloParaIngresarItemsPorExcel(obraServicio.buscarPorNombre(nombre));
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Items.xlsx");
-//        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
-//    }
+    @GetMapping("/descargar_resumen/{nombre}")
+    public ResponseEntity<InputStreamResource> exportarItems(@PathVariable String nombre, @RequestParam Integer idRedet) {
+        Redeterminacion redet = redetServicio.buscarRedeterminacion(idRedet);
+        ByteArrayInputStream stream = null;
+        try {
+            stream = redetServicio.exportarRepoteDeRedeterminacion(obraServicio.buscarPorNombre(nombre), redet.getMesSolicitud(), redet.getMesSolictudAnterior());
+            redetServicio.guardarResumen(redetServicio.convertInputStreamToByteArray(stream), idRedet);
+        } catch (Exception ex) {
+            Logger.getLogger(RedeterminacionControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + nombre + " Resumen.xlsx");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
+    }
 
     private Redeterminacion crearRedeterminacion(LocalDate mesSol, Obra obra) {
         LocalDate mesSolAnt = obraServicio.buscarMesSolicitudAnterior(obra.getId());

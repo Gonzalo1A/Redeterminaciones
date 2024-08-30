@@ -85,7 +85,7 @@ public class RedeterminacionServicio {
             for (IncidenciaFactor inFac : item.getIncidenciaFactores()) {
                 Double indiceNuevo = iopServ.getValorPorMes(mesSolicitud, inFac.getIndice());
                 Double indiceBase = iopServ.getValorPorMes(mesAnterior, inFac.getIndice());
-                
+
                 factorRedet += calcularVR(inFac.getPorcentajeIncidencia(), indiceBase, indiceNuevo);
             }
             return factorRedet;
@@ -204,7 +204,6 @@ public class RedeterminacionServicio {
         return precioViejo * factorRedet;
     }
 
-
     public ByteArrayInputStream exportarRepoteDeRedeterminacion(Obra obra, LocalDate mesSolicitud, LocalDate mesAnterior) throws Exception {
         String[] columnas = {"Item", "Descripcion", "Unidad", "Cantidad", "Precio unitario previo", "Precio anterior", "Factor de redeterminacion", "Nuevo precio Unitario", "Remanente real", "Remanente teorico", "Menor Remanente", "Incremento de Precio Unit.", "Nuevo Precio"};
         List<Item> todos = obra.getItems();
@@ -225,7 +224,6 @@ public class RedeterminacionServicio {
                 Cell numItem = fila.createCell(0);
                 numItem.setCellValue(item.getNumeroItem());
                 numItem.setCellStyle(EstilosDeExel.estiloDatos(libro));
-
 
                 Cell descripcion = fila.createCell(1);
                 descripcion.setCellValue(item.getDescripcion());
@@ -255,7 +253,7 @@ public class RedeterminacionServicio {
                     Cell nuevoPrecioUn = fila.createCell(7);
                     nuevoPrecioUn.setCellValue(item.getPrecioUnitario() * factorRed.getNumericCellValue());
                     nuevoPrecioUn.setCellStyle(EstilosDeExel.estiloMoneda(libro));
-                    
+
                     Double remanenteReal = remanenteDelAvanceReal(item, mesSolicitud);
                     Cell remReal = fila.createCell(8);
                     remReal.setCellValue(remanenteReal);
@@ -294,6 +292,26 @@ public class RedeterminacionServicio {
             libro.write(stream);
             libro.close();
             return new ByteArrayInputStream(stream.toByteArray());
+        }
+    }
+
+    public byte[] convertInputStreamToByteArray(ByteArrayInputStream inputStream) throws Exception {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[1024];
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        return buffer.toByteArray();
+    }
+
+    @Transactional
+    public void guardarResumen(byte[] resumen, Integer id) {
+        Optional<Redeterminacion> res = redeterminacionRepositorio.findById(id);
+        if (res.isPresent()) {
+            Redeterminacion redet = res.get();
+            redet.setResumenRedet(resumen);
+            redeterminacionRepositorio.save(redet);
         }
     }
 }
