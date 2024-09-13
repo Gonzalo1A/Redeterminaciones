@@ -5,6 +5,7 @@ import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.repositorios.IncidenciaFactorRepositorio;
+import com.redeterminaciones.Redeterminacion.utilidades.FormatearDecimal;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,7 +38,7 @@ public class IncidenciaFactorServicio {
     public IncidenciaFactor crearIncidenciaFactor(int factorReferencia, Double porcentaje) {
         IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
         incidenciaFactor.setIndice(factorReferencia);
-        incidenciaFactor.setPorcentajeIncidencia(porcentaje);
+        incidenciaFactor.setPorcentajeIncidencia(FormatearDecimal.porcentajes(porcentaje));
         incidenciaFactorRepositorio.save(incidenciaFactor);
         return incidenciaFactor;
     }
@@ -50,25 +51,15 @@ public class IncidenciaFactorServicio {
             String numeroStr = matcher.group(1);
             String porcentajeStr = numeroStr;
             String fValueStr = matcher.group(2);
-            Double porcentaje = Double.parseDouble(porcentajeStr);
+            Double porcentaje = Double.valueOf(porcentajeStr);
             int numero = Integer.parseInt(fValueStr);
-            IncidenciaFactor incFac = crearIncidenciaFactor(numero, porcentaje);
+            IncidenciaFactor incFac = crearIncidenciaFactor(numero, FormatearDecimal.cuatroDecimales(porcentaje));
             listIncidencia.add(incFac);
         }
         return listIncidencia;
 
     }
 
-//    public List<ValoresIncidenciaLista> listaPreparada(Map<String, Object> datosIncidencia) {
-//        List<Map<String, Object>> listaIncidenciasMap = (List<Map<String, Object>>) datosIncidencia.get("listaIncidancias");
-//        List<ValoresIncidenciaLista> listaIncidencias = new ArrayList<>();
-//
-//        for (Map<String, Object> incidenciaMap : listaIncidenciasMap) {
-//            ValoresIncidenciaLista incidencia = new ValoresIncidenciaLista();
-//            incidencia.setIncidencia(incidenciaMap.get("incidencia"));
-//            listaIncidencias.add(incidencia);
-//        }
-//    }
 //    public void modificarIncidenciaFactor(Float porcentaje, IOP factorReferencia) {
 //        IncidenciaFactor incidenciaFactor = new IncidenciaFactor();
 //        incidenciaFactor.setIndice(factorReferencia);
@@ -165,7 +156,7 @@ public class IncidenciaFactorServicio {
             celdaText.setCellValue("Total:");
             celdaText.setCellStyle(estiloDatos);
             Cell total = fila.createCell(6);
-            total.setCellValue(Double.parseDouble(obra.getTotal()));
+            total.setCellValue(obra.getTotal());
             total.setCellStyle(estiloMoneda);
             for (int i = 0; i < columnas.length; i++) {
                 hoja.autoSizeColumn(i);

@@ -7,6 +7,7 @@ import com.redeterminaciones.Redeterminacion.servicios.ClienteEmpresaServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ExelServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ItemServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
+import com.redeterminaciones.Redeterminacion.utilidades.FormatearDecimal;
 import jakarta.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class ObraControlador {
         Obra obra = obraServicio.buscarPorNombre(nombre);
         obraServicio.calcularTotal(nombre);
         map.addAttribute("items", obra.getItems());
-        map.addAttribute("total", obra.getTotal());
+        map.addAttribute("total", FormatearDecimal.dosDecimales(obra.getTotal()));
         return "obraView.html";
     }
 

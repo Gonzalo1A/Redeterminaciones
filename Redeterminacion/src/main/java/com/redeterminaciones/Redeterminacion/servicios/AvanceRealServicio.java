@@ -6,6 +6,7 @@ import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.AvanceRealRepositorio;
 import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
+import com.redeterminaciones.Redeterminacion.utilidades.FormatearDecimal;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,7 +42,7 @@ public class AvanceRealServicio {
         if (listaAvance != null && listaAvance.size() > 1) {
             int aux = listaAvance.size() - 1;
             avanceObraReal.setAcumuladoAnterior(listaAvance.get(aux).getAcumuladoActual());
-            avanceObraReal.setAcumuladoActual(avanceObraReal.getAcumuladoAnterior() + valorMes.getValor());
+            avanceObraReal.setAcumuladoActual(avanceObraReal.getAcumuladoAnterior() + FormatearDecimal.cuatroDecimales(valorMes.getValor()));
         } else {
             avanceObraReal.setAcumuladoActual(valorMes.getValor());
         }

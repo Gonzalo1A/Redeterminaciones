@@ -122,7 +122,7 @@ public class ExelServicio {
             celdaText.setCellValue("Total:");
             celdaText.setCellStyle(estiloDatos);
             Cell total = fila.createCell(5);
-            total.setCellValue(Double.parseDouble(obraServicio.buscarPorNombre(nombreObra).getTotal()));
+            total.setCellValue(obraServicio.buscarPorNombre(nombreObra).getTotal());
             total.setCellStyle(estiloMoneda);
             for (int i = 0; i < columnas.length; i++) {
                 hoja.autoSizeColumn(i);
@@ -213,7 +213,7 @@ public class ExelServicio {
             celdaTitular.setCellStyle(estiloPorcentaje);
 
             celdaTitular = filaPolin.createCell(3);
-            celdaTitular.setCellValue(Double.parseDouble(obraServicio.buscarPorNombre(nombreObra).getTotal()));
+            celdaTitular.setCellValue(obraServicio.buscarPorNombre(nombreObra).getTotal());
             celdaTitular.setCellStyle(estiloMonto);
 
             libro.write(stream);

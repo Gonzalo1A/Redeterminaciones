@@ -7,6 +7,7 @@ import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.Obra;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.ItemRepositorio;
+import com.redeterminaciones.Redeterminacion.utilidades.FormatearDecimal;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,7 +52,7 @@ public class ItemServicio {
         item.setNumeroItem(numeroItem);
         item.setUnidad(unidad);
         if (cantidad != null || precioUnitario != null) {
-            item.setCantidad(cantidad);
+            item.setCantidad(FormatearDecimal.cuatroDecimales(cantidad));
             item.setPrecioUnitario(precioUnitario);
             Double resultado = cantidad * precioUnitario;
             resultado = (double) (Math.round(resultado * 10000)) / 10000;
@@ -78,17 +79,17 @@ public class ItemServicio {
             item.setDescripcion(descripcion);
             item.setNumeroItem(numeroItem);
             item.setUnidad(unidad);
-            item.setCantidad(cantidad);
+            item.setCantidad(FormatearDecimal.cuatroDecimales(cantidad));
             itemRepositorio.save(item);
         }
     }
 
     @Transactional
     public void calularIncidenciaItem(Obra obra) {
-        Double total = Double.parseDouble(obra.getTotal());
+        Double total = obra.getTotal();
         for (Item item : obra.getItems()) {
             if (item.getSubTotal() != null) {
-                item.setIncidenciaItem(item.getSubTotal() / total);
+                item.setIncidenciaItem(FormatearDecimal.cuatroDecimales(item.getSubTotal() / total));
                 itemRepositorio.save(item);
             }
         }
@@ -222,7 +223,7 @@ public class ItemServicio {
                 celdaText.setCellValue("Total:");
                 celdaText.setCellStyle(estilo);
                 total.setCellStyle(estiloMoneda);
-                total.setCellValue(Double.parseDouble(obra.getTotal()));
+                total.setCellValue(obra.getTotal());
             }
 
             for (int i = 0; i < columnas.length; i++) {

@@ -23,7 +23,7 @@ public class Obra {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String nombre;
-    private String total;
+    private Double total;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate fechaPresentacionObra;

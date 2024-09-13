@@ -6,6 +6,7 @@ import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
 import com.redeterminaciones.Redeterminacion.enumeraciones.TipoDeRedeterminaciones;
 import com.redeterminaciones.Redeterminacion.repositorios.ObraRepositorio;
 import static com.redeterminaciones.Redeterminacion.utilidades.FechaUtilidades.convertirStringALocalDate;
+import com.redeterminaciones.Redeterminacion.utilidades.FormatearDecimal;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
@@ -34,7 +35,7 @@ public class ObraServicio {
         nuevaObra.setFechaDeContrato(convertirStringALocalDate(fechaDeContrato));
         nuevaObra.setFechaDeReeplanteo(convertirStringALocalDate(fechaDeReeplanteo));
         nuevaObra.setFechaDeFinalizacion(calcularFecha(convertirStringALocalDate(fechaDeReeplanteo), diasPlazoDeObra));
-        nuevaObra.setPorcentajeDeAnticipo(porcentajeDeAnticipo);
+        nuevaObra.setPorcentajeDeAnticipo(FormatearDecimal.porcentajes(porcentajeDeAnticipo));
         nuevaObra.setDiasPlazoDeObra(diasPlazoDeObra);
         nuevaObra.setTipoDeRedet(tipoDeRedet);
         nuevaObra.setComitente(comitente);
@@ -44,7 +45,7 @@ public class ObraServicio {
 
     @Transactional
     public void modificarObra(String idObra, String nuevoNombre,
-            String total, LocalDate fechaPresentacionObra, LocalDate fechaDeContrato,
+            Double total, LocalDate fechaPresentacionObra, LocalDate fechaDeContrato,
             LocalDate fechaDeReeplanteo, Double porcentajeDeAnticipo, int diasPazoDeObra,
             LocalDate fechaDeFinalizacion, TipoDeRedeterminaciones tipoDeRedet,
             List<Item> items) {
@@ -56,7 +57,7 @@ public class ObraServicio {
             obra.setFechaPresentacionObra(fechaPresentacionObra);
             obra.setFechaDeContrato(fechaDeContrato);
             obra.setFechaDeReeplanteo(fechaDeReeplanteo);
-            obra.setPorcentajeDeAnticipo(porcentajeDeAnticipo);
+            obra.setPorcentajeDeAnticipo(FormatearDecimal.porcentajes(porcentajeDeAnticipo));
             obra.setDiasPlazoDeObra(diasPazoDeObra);
             obra.setFechaDeFinalizacion(fechaDeFinalizacion);
             obra.setTipoDeRedet(tipoDeRedet);
@@ -95,8 +96,8 @@ public class ObraServicio {
                 total += item.getSubTotal();
             }
         }
-        BigDecimal resultado = new BigDecimal(total);
-        obra.setTotal(resultado.setScale(4, RoundingMode.HALF_UP).toString());
+
+        obra.setTotal(FormatearDecimal.cuatroDecimales(total));
         obraRepositorio.save(obra);
         return total;
     }

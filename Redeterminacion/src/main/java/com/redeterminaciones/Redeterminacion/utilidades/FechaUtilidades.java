@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FechaUtilidades {
 
@@ -26,5 +28,26 @@ public class FechaUtilidades {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static int cantidadMeses(LocalDate inicioObra, LocalDate actual) {
+        int difM = 0;
+        if (actual.withDayOfMonth(actual.lengthOfMonth()).isAfter(actual)) {
+            int difA = actual.getYear() - inicioObra.getYear();
+            difM = difA * 12 + actual.getMonthValue() - inicioObra.getMonthValue();
+        } else {
+            actual.minusMonths(1);
+            int difA = actual.getYear() - inicioObra.getYear();
+            difM = difA * 12 + actual.getMonthValue() - inicioObra.getMonthValue();
+        }
+        return difM;
+    }
+
+    public static List<LocalDate> generarListaFechas(LocalDate fechaInicial, int numeroFechas) {
+        List<LocalDate> listaFechas = new ArrayList<>();
+        for (int i = 0; i < numeroFechas; i++) {
+            listaFechas.add(fechaInicial.plusMonths(i));
+        }
+        return listaFechas;
     }
 }

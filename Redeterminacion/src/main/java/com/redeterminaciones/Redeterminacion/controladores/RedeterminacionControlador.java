@@ -6,6 +6,7 @@ import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
 import com.redeterminaciones.Redeterminacion.servicios.IOPServicio;
 import com.redeterminaciones.Redeterminacion.servicios.ObraServicio;
 import com.redeterminaciones.Redeterminacion.servicios.RedeterminacionServicio;
+import com.redeterminaciones.Redeterminacion.utilidades.FormatearDecimal;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class RedeterminacionControlador {
         Double polinomica = 0d;
         LocalDate mesSolicitud = LocalDate.now();
         Obra obra = obraServicio.buscarPorNombre(nombre);
-        Redeterminacion redet = crearRedeterminacion(mesSolicitud.plusMonths(2), obra);
+        Redeterminacion redet = crearRedeterminacion(mesSolicitud.plusMonths(4), obra);
 
         for (IOP indice : iopServicio.todosLosIndices()) {
             int orden = indice.getId();
@@ -51,7 +52,7 @@ public class RedeterminacionControlador {
             polinomica += redetServicio.calcularVR(iopServicio.ponderadorTotal(orden, obra.getItems()), indiceBase, indiceNuevo);
         }
         redetServicio.modificar(polinomica, redet.getIdRedet());
-        map.addAttribute("valorReferencia", polinomica);
+        map.addAttribute("valorReferencia", FormatearDecimal.dosDecimales(polinomica));
         map.addAttribute("nombreObra", obra.getNombre());
         map.addAttribute("idRedet", redet.getIdRedet());
         return "redeterminacion.html";

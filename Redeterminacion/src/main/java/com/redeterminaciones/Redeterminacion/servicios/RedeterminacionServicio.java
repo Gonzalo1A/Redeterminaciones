@@ -8,6 +8,7 @@ import com.redeterminaciones.Redeterminacion.entidades.Redeterminacion;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.RedeterminacionRepositorio;
 import com.redeterminaciones.Redeterminacion.utilidades.EstilosDeExel;
+import com.redeterminaciones.Redeterminacion.utilidades.FormatearDecimal;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,7 +47,7 @@ public class RedeterminacionServicio {
         Optional<Redeterminacion> res = redeterminacionRepositorio.findById(id);
         if (res.isPresent()) {
             Redeterminacion redeterminacionMod = res.get();
-            redeterminacionMod.setVariacionReferencia(remanente);
+            redeterminacionMod.setVariacionReferencia(FormatearDecimal.porcentajes(remanente));
             redeterminacionRepositorio.save(redeterminacionMod);
         }
     }
@@ -68,7 +69,7 @@ public class RedeterminacionServicio {
         if (valMesBase == 0.0d) {
             return 0.0d;
         }
-        return (valMesAnterior / valMesBase) * ponderadorTotal;
+        return FormatearDecimal.cuatroDecimales((valMesAnterior / valMesBase) * ponderadorTotal);
     }
 
     public List<Double> factoresRedet(Obra obra, Redeterminacion redet) {
@@ -183,7 +184,7 @@ public class RedeterminacionServicio {
         if (!item.isRubro()) {
             Double nuevoPrecioUn = calculoNuevoPrecioUnitario(item.getPrecioUnitario(), factorDeDeterminacion);
             Double incrementoDelSubTotal = menorRemanente * (nuevoPrecioUn - item.getPrecioUnitario());
-            return incrementoDelSubTotal;
+            return FormatearDecimal.cuatroDecimales(incrementoDelSubTotal);
         }
         return null;
     }
@@ -201,7 +202,7 @@ public class RedeterminacionServicio {
     }
 
     public Double calculoNuevoPrecioUnitario(Double precioViejo, Double factorRedet) {
-        return precioViejo * factorRedet;
+        return FormatearDecimal.cuatroDecimales(precioViejo * factorRedet);
     }
 
     public ByteArrayInputStream exportarRepoteDeRedeterminacion(Obra obra, LocalDate mesSolicitud, LocalDate mesAnterior) throws Exception {

@@ -122,16 +122,16 @@ public class ItemControlador {
     @GetMapping("/avance_obra/{nombre}")
     public String caragarAvanceDeObraReal(@PathVariable String nombre, ModelMap model) {
         Obra obra = obraServicio.buscarPorNombre(nombre);
-        LocalDate fechaActual = LocalDate.now();
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("MM/yyyy");
+        int cantMeses = FechaUtilidades.cantidadMeses(obra.getFechaDeReeplanteo(), LocalDate.now());
+        List<LocalDate> listaMeses = FechaUtilidades.generarListaFechas(obra.getFechaDeReeplanteo(), cantMeses);
         model.addAttribute("obra", obra);
         if (obra.getItems() != null) {
             model.addAttribute("items", obra.getItems());
         }
-        model.addAttribute("fecha", fechaActual.format(formato));
+        model.addAttribute("fechas", listaMeses);
         return "form_avanceReal.html";
     }
-//formatter.parse(valor.getFecha())
+
 
     @PostMapping("/avance_carga")
     public String cargaAvanceObra(@RequestBody DatosAvanceObra datos) throws ParseException {

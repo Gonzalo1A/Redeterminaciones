@@ -6,6 +6,7 @@ import com.redeterminaciones.Redeterminacion.entidades.IncidenciaFactor;
 import com.redeterminaciones.Redeterminacion.entidades.Item;
 import com.redeterminaciones.Redeterminacion.entidades.ValorMes;
 import com.redeterminaciones.Redeterminacion.repositorios.IOPRepositorio;
+import com.redeterminaciones.Redeterminacion.utilidades.FormatearDecimal;
 import jakarta.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -104,7 +105,7 @@ public class IOPServicio {
                 }
             }
         }
-        return ponderadorTotal;
+        return FormatearDecimal.cuatroDecimales(ponderadorTotal);
     }
 
     public ByteArrayInputStream exportarIOP() throws IOException {
