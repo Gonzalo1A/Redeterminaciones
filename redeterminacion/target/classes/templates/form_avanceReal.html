@@ -27,7 +27,7 @@
                     </div>
                     <div class="modal-body p-5 pt-0">
                         <form id="exportForm" th:action="@{/item/avanceObraRealExport}" method="post">
-                            <input type="text" name="nombre" th:value="${obra.nombre}" hidden>
+                                <input type="text" name="nombre" th:value="${obra.nombre}" hidden>
                                 <div class="form-group">
                                     <label for="fecha">Fecha Objetiva:</label>
                                     <input type="date" id="fecha" name="fecha" class="form-control" required>
@@ -82,12 +82,8 @@
         </button>
 
         <div>
-            <select id="mesCarga">
-                <option>Seleccionar mes</option>
-                <option th:each="mes : ${fechas}" th:value="${mes}" th:text="${mes}"></option>
-            </select>
-            <button onclick="prepararTabla()">Seleccionar</button>
-            <table id="cargaReal" class="table table-striped cargaReal" hidden="true">
+
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th scope="col">N° Item</th>
@@ -96,7 +92,7 @@
                         <th scope="col">Cantidad</th>
                         <th scope="col">Sub Total</th>
                         <th scope="col">Acum Anterior</th>
-                        <th scope="col" id="mes-actual"></th>
+                        <th scope="col" id="mes-actual" th:text="${fecha}"></th>
                     </tr>
                 </thead>
                 <tbody th:each="item : ${items}">
@@ -128,6 +124,7 @@
                                         th:id="${item.id}"
                                         class="form-control avance-input"
                                         name="cantidadAvance"
+                                        placeholder="1000.00"
                                         disabled
                                         />
                                 </div>
@@ -135,7 +132,7 @@
                     </tr>
                 </tbody>
             </table>
-            <button id="guardarDatosBtn" class="btn btn-primary" onclick="guardarDatos()" hidden="true">
+            <button id="guardarDatosBtn" class="btn btn-primary" onclick="guardarDatos()">
                 Guardar Datos
             </button>
         </div>
